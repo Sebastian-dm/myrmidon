@@ -1,5 +1,6 @@
 [Oo]bj/
 [Bb]in/
+.vs/*
 .nuget/
 _ReSharper.*
 packages/
@@ -9,3 +10,4 @@ artifacts/
 *.userprefs
 *DS_Store
 *.sln.ide
+

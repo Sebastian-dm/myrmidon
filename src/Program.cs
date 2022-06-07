@@ -1,50 +1,50 @@
-﻿using SadConsole;
-using SadRogue.Primitives;
-using System;
+﻿using System;
+using SadConsole;
 using Console = SadConsole.Console;
+
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace clodd
 {
     internal class Program
     {
+        public const int SCREEN_WIDTH = 80;
+        public const int SCREEN_HEIGHT = 25;
         private static void Main(string[] args)
         {
-            var SCREEN_WIDTH = 80;
-            var SCREEN_HEIGHT = 25;
-
-            SadConsole.Settings.WindowTitle = "SadConsole Game";
             SadConsole.Settings.UseDefaultExtendedFont = true;
 
             SadConsole.Game.Create(SCREEN_WIDTH, SCREEN_HEIGHT);
-            SadConsole.Game.Instance.OnStart = Init;
+            SadConsole.Game.OnInitialize = Init;
+            SadConsole.Game.OnUpdate = Update;
             SadConsole.Game.Instance.Run();
+            //
+            // Code here will not run until the game window closes.
+            //
             SadConsole.Game.Instance.Dispose();
         }
 
         private static void Init()
         {
-            // This code uses the default console created for you at start
-            var startingConsole = Game.Instance.StartingConsole;
+            // Any custom loading and prep. We will use a sample console for now
 
-            startingConsole.FillWithRandomGarbage(SadConsole.Game.Instance.StartingConsole.Font);
-            startingConsole.Fill(new Rectangle(3, 3, 23, 3), Color.Violet, Color.Black, 0, Mirror.None);
-            startingConsole.Print(4, 4, "Hello from SadConsole");
+            Console startingConsole = new Console(SCREEN_WIDTH, SCREEN_HEIGHT);
+            startingConsole.FillWithRandomGarbage();
+            startingConsole.Fill(new Rectangle(3, 3, 27, 5), null, Color.Black, 0, SpriteEffects.None);
+            startingConsole.Print(6, 5, "Hello from SadConsole", ColorAnsi.CyanBright);
 
-            // --------------------------------------------------------------
-            // This code replaces the default starting console with your own.
-            // If you use this code, delete the code above.
-            // --------------------------------------------------------------
-            /*
-            var console = new Console(Game.Instance.ScreenCellsX, SadConsole.Game.Instance.ScreenCellsY);
-            console.FillWithRandomGarbage(console.Font);
-            console.Fill(new Rectangle(3, 3, 23, 3), Color.Violet, Color.Black, 0, 0);
-            console.Print(4, 4, "Hello from SadConsole");
+            // Set our new console as the thing to render and process
+            SadConsole.Global.CurrentScreen = startingConsole;
 
-            Game.Instance.Screen = console;
+        }
 
-            // This is needed because we replaced the initial screen object with our own.
-            Game.Instance.DestroyDefaultStartingConsole();
-            */
+        private static void Update(GameTime time) {
+            // Called each logic update.
+            // As an example, we'll use the F5 key to make the game full screen
+            if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.F5)) {
+                SadConsole.Settings.ToggleFullScreen();
+            }
         }
     }
 }
