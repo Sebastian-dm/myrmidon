@@ -9,11 +9,11 @@ namespace clodd {
     public abstract class TileBase : Cell {
 
         // Movement and Line of Sight Flags
-        protected bool IsBlockingMove;
-        protected bool IsBlockingLineOfSigth;
+        public bool IsBlockingMove;
+        public bool IsBlockingLineOfSigth;
 
         // Tile's name
-        protected string Name;
+        public string Name;
 
         // TileBase is an abstract base class representing the most basic form of all Tiles used.
         // Every TileBase has a Foreground Colour, Background Colour, and Glyph

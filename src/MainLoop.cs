@@ -12,7 +12,7 @@ namespace clodd
         public const int Width = 80;
         public const int Height = 25;
 
-        public static SadConsole.Entities.Entity player;
+        public static Player player;
         public static Console MainConsole;
 
         private static void Main(string[] args)
@@ -38,7 +38,8 @@ namespace clodd
             MainConsole = new ScrollingConsole(Width, Height, Global.FontDefault, new Rectangle(0, 0, Width, Height), Map._tiles);
 
             //Create player
-            player = new Player();
+            player = new Player(Color.Yellow, Color.Transparent);
+            player.Position = new Point(5, 5);
             MainConsole.Children.Add(player);
 
             // Set our new console as the thing to render and process
@@ -54,6 +55,9 @@ namespace clodd
             InputHandler.Update();
             
         }
+
+
+
 
     }
 }
