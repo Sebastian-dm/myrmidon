@@ -1,54 +1,43 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using clodd;
 
 namespace clodd {
-    internal static class Map {
 
-        public static TileBase[] _tiles; // an array of TileBase that contains all of the tiles for a map
-        private const int _roomWidth = 10; // demo room width
-        private const int _roomHeight = 20; // demo room height
+    public class Map {
+
+        private TileBase[] _tiles; // contain all tile objects
+        private int _width;
+        private int _height;
+
+        public TileBase[] Tiles { get { return _tiles; } set { _tiles = value; } }
+        public int Width { get { return _width; } set { _width = value; } }
+        public int Height { get { return _height; } set { _height = value; } }
 
 
-        public static void CreateMap() {
-            CreateWalls();
-            CreateFloors();
+        /// <summary>
+        /// Build a new map with a specified width and height
+        /// </summary>
+        /// <param name="width">Width of the map in tiles</param>
+        /// <param name="height">Height of the map in tiles</param>
+        public Map(int width, int height) {
+            _width = width;
+            _height = height;
+            Tiles = new TileBase[width * height];
         }
 
-        // Flood the map using the TileWall class
-        public static void CreateWalls() {
-            // Create an empty array of tiles that is equal to the map size
-            _tiles = new TileBase[MainLoop.Width * MainLoop.Height];
 
-            //Fill the entire tile array with floors
-            for (int i = 0; i < _tiles.Length; i++) {
-                _tiles[i] = new TileWall();
-            }
-        }
-
-        public static void CreateFloors() {
-            //Carve out a rectangle of floors in the tile array
-            for (int x = 0; x < _roomWidth; x++) {
-                for (int y = 0; y < _roomHeight; y++) {
-                    // Calculates the appropriate position (index) in the array
-                    // based on the y of tile, width of map, and x of tile
-                    _tiles[y * MainLoop.Width + x] = new TileFloor();
-                }
-            }
-        }
-
-        // IsTileWalkable checks
-        // to see if the actor has tried
-        // to walk off the map or into a non-walkable tile
-        // Returns true if the tile location is walkable
-        // false if tile location is not walkable or is off-map
-        public static bool IsTileWalkable(Point location) {
+        /// <summary>
+        /// Checks the tile at the given location to see if it is walkable
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns>false if tile location is not walkable or is off-map</returns>
+        public bool IsTileWalkable(Point location) {
             // first make sure that actor isn't trying to move
             // off the limits of the map
-            if (location.X < 0 || location.Y < 0 || location.X >= MainLoop.Width || location.Y >= MainLoop.Height)
+            if (location.X < 0 || location.Y < 0 || location.X >= Width || location.Y >= Height)
                 return false;
             // then return whether the tile is walkable
-            return !_tiles[location.Y * MainLoop.Width + location.X].IsBlockingMove;
+            return !_tiles[location.Y * Width + location.X].IsBlockingMove;
         }
 
 
