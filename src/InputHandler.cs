@@ -27,38 +27,46 @@ namespace clodd {
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up)
                 || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad8)) {
                 MainLoop.player.MoveBy(new Point(0, -1));
+                MainLoop.CenterOnActor(MainLoop.player);
             }
             // Keyboard movement for Player character: Down arrow
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down)
                 || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad2)) {
                 MainLoop.player.MoveBy(new Point(0, 1));
+                MainLoop.CenterOnActor(MainLoop.player);
             }
             // Keyboard movement for Player character: Left arrow
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left)
                 || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad4)) {
                 MainLoop.player.MoveBy(new Point(-1, 0));
+                MainLoop.CenterOnActor(MainLoop.player);
             }
             // Keyboard movement for Player character: Right arrow
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right)
                 || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad6)) {
                 MainLoop.player.MoveBy(new Point(1, 0));
+                MainLoop.CenterOnActor(MainLoop.player);
             }
 
             // Keyboard movement for Player character: Right+up
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad9)) {
                 MainLoop.player.MoveBy(new Point(1, -1));
+                MainLoop.CenterOnActor(MainLoop.player);
             }
             // Keyboard movement for Player character: Left+Up
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad7)) {
                 MainLoop.player.MoveBy(new Point(-1, -1));
+                MainLoop.CenterOnActor(MainLoop.player);
             }
             // Keyboard movement for Player character: Right+down
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad3)) {
                 MainLoop.player.MoveBy(new Point(1, 1));
+                MainLoop.CenterOnActor(MainLoop.player);
             }
             // Keyboard movement for Player character: Left+down
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad1)) {
                 MainLoop.player.MoveBy(new Point(-1, 1));
+                MainLoop.CenterOnActor(MainLoop.player);
             }
         }
 

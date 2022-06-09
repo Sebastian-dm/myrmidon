@@ -9,7 +9,7 @@ namespace clodd
 {
     internal class MainLoop
     {
-        public static Console MainConsole;
+        public static ScrollingConsole StartingConsole;
 
         public const int Width = 80;
         public const int Height = 25;
@@ -53,15 +53,17 @@ namespace clodd
             GameMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms, _minRoomSize, _maxRoomSize);
 
             // Create a console using gameMap's tiles
-            Console MainConsole = new ScrollingConsole(GameMap.Width, GameMap.Height, Global.FontDefault, new Rectangle(0, 0, Width, Height), GameMap.Tiles);
-
+            StartingConsole = new ScrollingConsole(GameMap.Width, GameMap.Height, Global.FontDefault, new Rectangle(0, 0, Width, Height), GameMap.Tiles);
+            // Constrain console's viewport to a smaller area
+            //StartingConsole.ViewPort = new Rectangle(0, 0, Width - 10, Height - 10);
             // Set our new console as the thing to render and process
-            SadConsole.Global.CurrentScreen = MainConsole;
+            SadConsole.Global.CurrentScreen = StartingConsole;
 
             // Create player
             player = new Player(Color.Yellow, Color.Transparent);
             player.Position = new Point(5, 5);
-            MainConsole.Children.Add(player);
+            player.Components.Add(new SadConsole.Components.EntityViewSyncComponent());
+            StartingConsole.Children.Add(player);
 
         }
 
@@ -74,7 +76,13 @@ namespace clodd
             
         }
 
-
+        /// <summary>
+        /// centers the viewport camera on an Actor
+        /// </summary>
+        /// <param name="actor"></param>
+        public static void CenterOnActor(Actor actor) {
+            StartingConsole.CenterViewPortOnPoint(actor.Position);
+        }
 
 
     }

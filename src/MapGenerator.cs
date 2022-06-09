@@ -14,17 +14,14 @@ namespace clodd {
         Map _map; // Temporarily store the map currently worked on
 
         public Map GenerateMap(int mapWidth, int mapHeight, int maxRooms, int minRoomSize, int maxRoomSize) {
-            // create an empty map of size (mapWidth x mapHeight)
-            _map = new Map(mapWidth, mapHeight);
 
-            // Create a random number generator
+            
             Random randNum = new Random();
 
-            // store a list of the rooms created so far
+            _map = new Map(mapWidth, mapHeight);
             List<Rectangle> Rooms = new List<Rectangle>();
 
-            // create up to (maxRooms) rooms on the map
-            // and make sure the rooms do not overlap with each other
+            // create up to maxRooms non-overlapping rooms
             for (int i = 0; i < maxRooms; i++) {
                 // set the room's (width, height) as a random size between (minRoomSize, maxRoomSize)
                 int newRoomWidth = randNum.Next(minRoomSize, maxRoomSize);
@@ -45,16 +42,57 @@ namespace clodd {
                 }
             }
 
-            // This is a dungeon, so begin by flooding the map with walls.
+            // Fill the map with walls
             FloodWalls();
 
-            // carve out rooms for every room in the Rooms list
+            // Carve out rooms for every room in the Rooms list
             foreach (Rectangle room in Rooms) {
                 CreateRoom(room);
             }
 
+            // carve out tunnels between all rooms based on the Positions of their centers
+            for (int r = 1; r < Rooms.Count; r++) {
+                //for all remaining rooms get the center of the room and the previous room
+                Point previousRoomCenter = Rooms[r - 1].Center;
+                Point currentRoomCenter = Rooms[r].Center;
+
+                // give a 50/50 chance of which 'L' shaped connecting hallway to tunnel out
+                if (randNum.Next(1, 2) == 1) {
+                    CreateHorizontalTunnel(previousRoomCenter.X, currentRoomCenter.X, previousRoomCenter.Y);
+                    CreateVerticalTunnel(previousRoomCenter.Y, currentRoomCenter.Y, currentRoomCenter.X);
+                }
+                else {
+                    CreateVerticalTunnel(previousRoomCenter.Y, currentRoomCenter.Y, previousRoomCenter.X);
+                    CreateHorizontalTunnel(previousRoomCenter.X, currentRoomCenter.X, currentRoomCenter.Y);
+                }
+            }
+
             // spit out the final map
             return _map;
+        }
+
+        /// <summary>
+        /// carve a tunnel out of the map parallel to the x-axis
+        /// </summary>
+        /// <param name="xStart"></param>
+        /// <param name="xEnd"></param>
+        /// <param name="yPosition"></param>
+        private void CreateHorizontalTunnel(int xStart, int xEnd, int yPosition) {
+            for (int x = Math.Min(xStart, xEnd); x <= Math.Max(xStart, xEnd); x++) {
+                CreateFloor(new Point(x, yPosition));
+            }
+        }
+
+        /// <summary>
+        /// carve a tunnel using the y-axis
+        /// </summary>
+        /// <param name="yStart"></param>
+        /// <param name="yEnd"></param>
+        /// <param name="xPosition"></param>
+        private void CreateVerticalTunnel(int yStart, int yEnd, int xPosition) {
+            for (int y = Math.Min(yStart, yEnd); y <= Math.Max(yStart, yEnd); y++) {
+                CreateFloor(new Point(xPosition, y));
+            }
         }
 
         // Builds a room composed of walls and floors using the supplied Rectangle
@@ -76,24 +114,36 @@ namespace clodd {
             }
         }
 
-        // Creates a Floor tile at the specified X/Y location
+        /// <summary>
+        /// Creates a Floor tile at the specified X/Y location
+        /// </summary>
+        /// <param name="location"></param>
         private void CreateFloor(Point location) {
             _map.Tiles[location.ToIndex(_map.Width)] = new TileFloor();
         }
 
-        // Creates a Wall tile at the specified X/Y location
+        /// <summary>
+        /// Creates a Wall tile at the specified X/Y location
+        /// </summary>
+        /// <param name="location"></param>
         private void CreateWall(Point location) {
             _map.Tiles[location.ToIndex(_map.Width)] = new TileWall();
         }
 
-        // Fills the map with walls
+        /// <summary>
+        /// Fills the map with walls
+        /// </summary>
         private void FloodWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
                 _map.Tiles[i] = new TileWall();
             }
         }
 
-        // Returns a list of points expressing the perimeter of a rectangle
+        /// <summary>
+        /// Returns a list of points expressing the perimeter of a rectangle
+        /// </summary>
+        /// <param name="room"></param>
+        /// <returns></returns>
         private List<Point> GetBorderCellLocations(Rectangle room) {
             //establish room boundaries
             int xMin = room.Left;
@@ -111,8 +161,14 @@ namespace clodd {
             return borderCells;
         }
 
-        // returns a collection of Points which represent
-        // locations along a line
+        /// <summary>
+        /// Returns a collection of Points which represent locations along a line
+        /// </summary>
+        /// <param name="xOrigin"></param>
+        /// <param name="yOrigin"></param>
+        /// <param name="xDestination"></param>
+        /// <param name="yDestination"></param>
+        /// <returns></returns>
         public IEnumerable<Point> GetTileLocationsAlongLine(int xOrigin, int yOrigin, int xDestination, int yDestination) {
             // prevent line from overflowing
             // boundaries of the map
@@ -146,26 +202,22 @@ namespace clodd {
             }
         }
 
-        // sets X coordinate between right and left edges of map
-        // to prevent any out-of-bounds errors
+        /// <summary>
+        /// Sets X coordinate between right and left edges of map to prevent any out-of-bounds errors
+        /// </summary>
+        /// <param name="x">X coordinate</param>
+        /// <returns>Clamped X coordinate</returns>
         private int ClampX(int x) {
-            if (x < 0)
-                x = 0;
-            else if (x > _map.Width - 1)
-                x = _map.Width - 1;
-            return x;
-            // OR using ternary conditional operators: return (x < 0) ? 0 : (x > _map.Width - 1) ? _map.Width - 1 : x;
+            return (x < 0) ? 0 : (x > _map.Width - 1) ? _map.Width - 1 : x;
         }
 
-        // sets Y coordinate between top and bottom edges of map
-        // to prevent any out-of-bounds errors
+        /// <summary>
+        /// Sets Y coordinate between top and bottom edges of map to prevent any out-of-bounds errors
+        /// </summary>
+        /// <param name="y">Y coordinate</param>
+        /// <returns>Clamped Y coordinate</returns>
         private int ClampY(int y) {
-            if (y < 0)
-                y = 0;
-            else if (y > _map.Height - 1)
-                y = _map.Height - 1;
-            return y;
-            // OR using ternary conditional operators: return (y < 0) ? 0 : (y > _map.Height - 1) ? _map.Height - 1 : y;
+            return (y < 0) ? 0 : (y > _map.Height - 1) ? _map.Height - 1 : y;
         }
     }
 }
