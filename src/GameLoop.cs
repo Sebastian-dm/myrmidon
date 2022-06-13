@@ -20,6 +20,7 @@ namespace clodd {
             // Setup the engine and create the main window.
             SadConsole.Game.Create(GameWidth, GameHeight);
 
+
             // Hook the start event so we can add consoles to the system.
             SadConsole.Game.OnInitialize = Init;
 
@@ -52,5 +53,8 @@ namespace clodd {
         private static void Update(GameTime time) {
 
         }
+
+
+
     }
 }

@@ -28,6 +28,12 @@ namespace clodd.UI {
         /// Initializes all consoles and windows
         /// </summary>
         public void Init() {
+
+            // Set square font
+            FontMaster fontMaster = SadConsole.Global.LoadFont("res/fonts/Square_12x12.font");
+            Font normalSizedFont = fontMaster.GetFont(SadConsole.Font.FontSizes.One);
+            SadConsole.Global.FontDefault = normalSizedFont;
+
             CreateConsoles();
 
             // Add map windows
@@ -40,36 +46,7 @@ namespace clodd.UI {
             MessageLog.Position = new Point(0, GameLoop.GameHeight / 2);
 
             // TEST CODE
-            MessageLog.Add("Testing 123");
-            MessageLog.Add("Testing 1224");
-            MessageLog.Add("Testing 123");
-            MessageLog.Add("Testing 12543");
-            MessageLog.Add("Testing 123");
-            MessageLog.Add("Testing 1253");
-            MessageLog.Add("Testing 1212");
-            MessageLog.Add("Testing 1");
-            MessageLog.Add("Testing");
-            MessageLog.Add("Testing 122");
-            MessageLog.Add("Testing 51");
-            MessageLog.Add("Testing");
-            MessageLog.Add("Testing 162");
-            MessageLog.Add("Testing 16");
-            MessageLog.Add("Testing Last");
-            MessageLog.Add("Testing 123");
-            MessageLog.Add("Testing 1224");
-            MessageLog.Add("Testing 123");
-            MessageLog.Add("Testing 12543");
-            MessageLog.Add("Testing 123");
-            MessageLog.Add("Testing 1253");
-            MessageLog.Add("Testing 1212");
-            MessageLog.Add("Testing 1");
-            MessageLog.Add("Testing");
-            MessageLog.Add("Testing 122");
-            MessageLog.Add("Testing 51");
-            MessageLog.Add("Testing");
-            MessageLog.Add("Testing 162");
-            MessageLog.Add("Testing 16");
-            MessageLog.Add("Testing Last");
+            MessageLog.Add(System.IO.Directory.GetCurrentDirectory());
         }
 
 

@@ -1,0 +1,10 @@
+{
+  "Name": "Square_12x12",
+  "FilePath": "Square_12x12.png",
+  "GlyphHeight": 12,
+  "GlyphPadding": 1,
+  "GlyphWidth": 12,
+  "SolidGlyphIndex": 219,
+  "Columns": 16,
+  "IsSadExtended": false
+}
