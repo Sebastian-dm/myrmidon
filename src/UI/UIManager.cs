@@ -29,11 +29,6 @@ namespace clodd.UI {
         /// </summary>
         public void Init() {
 
-            // Set square font
-            FontMaster fontMaster = SadConsole.Global.LoadFont("res/fonts/Square_12x12.font");
-            Font normalSizedFont = fontMaster.GetFont(SadConsole.Font.FontSizes.One);
-            SadConsole.Global.FontDefault = normalSizedFont;
-
             CreateConsoles();
 
             // Add map windows

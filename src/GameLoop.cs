@@ -10,7 +10,7 @@ namespace clodd {
     class GameLoop {
 
         public const int GameWidth = 160;
-        public const int GameHeight = 50;
+        public const int GameHeight = 80;
 
         // Managers
         public static UIManager UIManager;
@@ -18,7 +18,7 @@ namespace clodd {
 
         static void Main(string[] args) {
             // Setup the engine and create the main window.
-            SadConsole.Game.Create(GameWidth, GameHeight);
+            SadConsole.Game.Create("res/fonts/Square_12x12.font", GameWidth, GameHeight);
 
 
             // Hook the start event so we can add consoles to the system.
