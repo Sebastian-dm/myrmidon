@@ -23,7 +23,7 @@ namespace clodd {
         /// <returns>true if actor was able to move, false if failed to move</returns>
         public bool MoveBy(Point positionChange) {
             // Check the map if we can move to this new position
-            if (MainLoop.GameMap.IsTileWalkable(Position + positionChange)) {
+            if (GameLoop.World.CurrentMap.IsTileWalkable(Position + positionChange)) {
                 Position += positionChange;
                 return true;
             }
