@@ -4,12 +4,13 @@ using Console = SadConsole.Console;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using clodd;
+using clodd.UI;
 
 namespace clodd {
     class GameLoop {
 
-        public const int GameWidth = 80;
-        public const int GameHeight = 25;
+        public const int GameWidth = 160;
+        public const int GameHeight = 50;
 
         // Managers
         public static UIManager UIManager;

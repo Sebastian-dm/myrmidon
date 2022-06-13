@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using SadConsole;
 using SadConsole.Controls;
 
-namespace clodd {
+namespace clodd.UI {
 
     // Creates/Holds/Destroys all consoles used in the game
     // and makes consoles easily addressable from a central place.
@@ -11,6 +11,7 @@ namespace clodd {
         
         public ScrollingConsole MapConsole;
         public Window MapWindow;
+        public MessageLogWindow MessageLog;
 
         public UIManager() {
             // must be set to true or will not call each child's Draw method
@@ -28,7 +29,47 @@ namespace clodd {
         /// </summary>
         public void Init() {
             CreateConsoles();
+
+            // Add map windows
             CreateMapWindow(GameLoop.GameWidth / 2, GameLoop.GameHeight / 2, "Game Map");
+
+            //Add message log window
+            MessageLog = new MessageLogWindow(GameLoop.GameWidth / 2, GameLoop.GameHeight / 2, "Message Log");
+            Children.Add(MessageLog);
+            MessageLog.Show();
+            MessageLog.Position = new Point(0, GameLoop.GameHeight / 2);
+
+            // TEST CODE
+            MessageLog.Add("Testing 123");
+            MessageLog.Add("Testing 1224");
+            MessageLog.Add("Testing 123");
+            MessageLog.Add("Testing 12543");
+            MessageLog.Add("Testing 123");
+            MessageLog.Add("Testing 1253");
+            MessageLog.Add("Testing 1212");
+            MessageLog.Add("Testing 1");
+            MessageLog.Add("Testing");
+            MessageLog.Add("Testing 122");
+            MessageLog.Add("Testing 51");
+            MessageLog.Add("Testing");
+            MessageLog.Add("Testing 162");
+            MessageLog.Add("Testing 16");
+            MessageLog.Add("Testing Last");
+            MessageLog.Add("Testing 123");
+            MessageLog.Add("Testing 1224");
+            MessageLog.Add("Testing 123");
+            MessageLog.Add("Testing 12543");
+            MessageLog.Add("Testing 123");
+            MessageLog.Add("Testing 1253");
+            MessageLog.Add("Testing 1212");
+            MessageLog.Add("Testing 1");
+            MessageLog.Add("Testing");
+            MessageLog.Add("Testing 122");
+            MessageLog.Add("Testing 51");
+            MessageLog.Add("Testing");
+            MessageLog.Add("Testing 162");
+            MessageLog.Add("Testing 16");
+            MessageLog.Add("Testing Last");
         }
 
 
