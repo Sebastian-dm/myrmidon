@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace clodd {
+namespace clodd.Entities {
     public abstract class Actor : SadConsole.Entities.Entity {
-        
+
         private int _health; //current health
         private int _maxHealth; //maximum possible health
 

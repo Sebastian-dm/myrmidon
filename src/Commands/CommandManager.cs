@@ -1,4 +1,5 @@
 ﻿using System;
+using clodd.Entities;
 using Microsoft.Xna.Framework;
 
 namespace clodd.Commands {

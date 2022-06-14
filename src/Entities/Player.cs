@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace clodd {
+namespace clodd.Entities {
     // Creates a new player
     // Default glyph is @
     public class Player : Actor {

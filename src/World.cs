@@ -1,6 +1,7 @@
 ﻿using System;
 using SadConsole.Components;
 using Microsoft.Xna.Framework;
+using clodd.Entities;
 
 namespace clodd {
 
