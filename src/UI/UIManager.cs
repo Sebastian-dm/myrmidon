@@ -40,6 +40,9 @@ namespace clodd.UI {
             MessageLog.Show();
             MessageLog.Position = new Point(0, GameLoop.GameHeight / 2);
 
+            // Start the game with the camera focused on the player
+            CenterOnActor(GameLoop.World.Player);
+
             // TEST CODE
             MessageLog.Add(System.IO.Directory.GetCurrentDirectory());
         }

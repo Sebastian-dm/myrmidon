@@ -2,6 +2,7 @@
 using SadConsole;
 using Microsoft.Xna.Framework;
 using clodd;
+using clodd.UI;
 
 namespace clodd {
     internal static class InputHandler {
@@ -24,48 +25,43 @@ namespace clodd {
             }
 
             // Keyboard movement for Player character: Up arrow
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up)
-                || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad8)) {
-                GameLoop.World.Player.MoveBy(new Point(0, -1));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
-            }
-            // Keyboard movement for Player character: Down arrow
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down)
-                || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad2)) {
-                GameLoop.World.Player.MoveBy(new Point(0, 1));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
-            }
-            // Keyboard movement for Player character: Left arrow
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left)
-                || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad4)) {
-                GameLoop.World.Player.MoveBy(new Point(-1, 0));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
-            }
-            // Keyboard movement for Player character: Right arrow
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right)
-                || SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad6)) {
-                GameLoop.World.Player.MoveBy(new Point(1, 0));
+            // Decrement player's Y coordinate by 1
+            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up)) {
+                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(0, -1));
                 GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
             }
 
-            // Keyboard movement for Player character: Right+up
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad9)) {
-                GameLoop.World.Player.MoveBy(new Point(1, -1));
+            // Keyboard movement for Player character: Down arrow
+            // Increment player's Y coordinate by 1
+            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down)) {
+                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(0, 1));
                 GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
             }
-            // Keyboard movement for Player character: Left+Up
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad7)) {
-                GameLoop.World.Player.MoveBy(new Point(-1, -1));
+
+            // Keyboard movement for Player character: Left arrow
+            // Decrement player's X coordinate by 1
+            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left)) {
+                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(-1, 0));
                 GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
             }
-            // Keyboard movement for Player character: Right+down
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad3)) {
-                GameLoop.World.Player.MoveBy(new Point(1, 1));
+
+            // Keyboard movement for Player character: Right arrow
+            // Increment player's X coordinate by 1
+            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right)) {
+                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(1, 0));
                 GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
             }
-            // Keyboard movement for Player character: Left+down
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.NumPad1)) {
-                GameLoop.World.Player.MoveBy(new Point(-1, 1));
+
+
+            // Undo last command: Z
+            if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Z)) {
+                GameLoop.CommandManager.UndoMoveActorBy();
+                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
+            }
+
+            // Repeat last command: X
+            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.X)) {
+                GameLoop.CommandManager.RedoMoveActorBy();
                 GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
             }
         }

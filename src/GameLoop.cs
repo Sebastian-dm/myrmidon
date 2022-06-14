@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using clodd;
 using clodd.UI;
+using clodd.Commands;
 
 namespace clodd {
     class GameLoop {
@@ -14,6 +15,7 @@ namespace clodd {
 
         // Managers
         public static UIManager UIManager;
+        public static CommandManager CommandManager;
         public static World World;
 
         static void Main(string[] args) {
@@ -39,8 +41,9 @@ namespace clodd {
 
 
         private static void Init() {
-            //Instantiate the UIManager
+            //Instantiate the managers
             UIManager = new UIManager();
+            CommandManager = new CommandManager();
 
             // Build the world!
             World = new World();
