@@ -92,8 +92,7 @@ namespace clodd {
 
 
         /// <summary>
-        /// When the Entity's .Moved value changes,
-        /// it triggers this event handler which updates the Entity's
+        /// When the Entity's .Moved value changes, it triggers this event handler which updates the Entity's
         /// current position in the SpatialMap
         /// </summary>
         /// <param name="sender"></param>

@@ -32,20 +32,24 @@ namespace clodd.UI {
 
             CreateConsoles();
 
-            // Add map windows
-            CreateMapWindow(GameLoop.GameWidth / 2, GameLoop.GameHeight / 2, "Game Map");
-
-            //Add message log window
-            MessageLog = new MessageLogWindow(GameLoop.GameWidth / 2, GameLoop.GameHeight / 2, "Message Log");
+            //Message Log initialization
+            MessageLog = new MessageLogWindow(GameLoop.GameWidth, GameLoop.GameHeight / 2, "Message Log");
             Children.Add(MessageLog);
             MessageLog.Show();
             MessageLog.Position = new Point(0, GameLoop.GameHeight / 2);
 
-            // Start the game with the camera focused on the player
-            CenterOnActor(GameLoop.World.Player);
-
             // TEST CODE
             MessageLog.Add(System.IO.Directory.GetCurrentDirectory());
+
+            // Load the map into the MapConsole
+            LoadMap(GameLoop.World.CurrentMap);
+
+            // Now that the MapConsole is ready, build the Window
+            CreateMapWindow(GameLoop.GameWidth / 2, GameLoop.GameHeight / 2, "Game Map");
+            UseMouse = true;
+
+            // Start the game with the camera focused on the player
+            CenterOnActor(GameLoop.World.Player);
         }
 
 
@@ -55,7 +59,21 @@ namespace clodd.UI {
         /// Creates all child consoles to be managed
         /// </summary>
         public void CreateConsoles() {
-            MapConsole = new SadConsole.ScrollingConsole(GameLoop.World.CurrentMap.Width, GameLoop.World.CurrentMap.Height, Global.FontDefault, new Rectangle(0, 0, GameLoop.GameWidth, GameLoop.GameHeight), GameLoop.World.CurrentMap.Tiles);
+            // Temporarily create a console with *no* tile data that will later be replaced with map data
+            MapConsole = new ScrollingConsole(GameLoop.GameWidth, GameLoop.GameHeight);
+        }
+
+
+        /// <summary>
+        /// Loads a Map into the MapConsole
+        /// </summary>
+        /// <param name="map"></param>
+        private void LoadMap(Map map) {
+            // First load the map's tiles into the console
+            MapConsole = new SadConsole.ScrollingConsole(GameLoop.World.CurrentMap.Width, GameLoop.World.CurrentMap.Height, Global.FontDefault, new Rectangle(0, 0, GameLoop.GameWidth, GameLoop.GameHeight), map.Tiles);
+
+            // Now Sync all of the map's entities
+            SyncMapEntities(map);
         }
 
 
@@ -123,6 +141,37 @@ namespace clodd.UI {
 
             // Without this, the window will never be visible on screen
             MapWindow.Show();
+        }
+
+
+        // Adds the entire list of entities found in the
+        // World.CurrentMap's Entities SpatialMap to the
+        // MapConsole, so they can be seen onscreen
+        private void SyncMapEntities(Map map) {
+            // remove all Entities from the console first
+            MapConsole.Children.Clear();
+
+            // Now pull all of the entities into the MapConsole in bulk
+            foreach (Entity entity in map.Entities.Items) {
+                MapConsole.Children.Add(entity);
+            }
+
+            // Subscribe to the Entities ItemAdded listener, so we can keep our MapConsole entities in sync
+            map.Entities.ItemAdded += OnMapEntityAdded;
+
+            // Subscribe to the Entities ItemRemoved listener, so we can keep our MapConsole entities in sync
+            map.Entities.ItemRemoved += OnMapEntityRemoved;
+        }
+
+
+        // Remove an Entity from the MapConsole every time the Map's Entity collection changes
+        public void OnMapEntityRemoved(object sender, GoRogue.ItemEventArgs<Entity> args) {
+            MapConsole.Children.Remove(args.Item);
+        }
+
+        // Add an Entity to the MapConsole every time the Map's Entity collection changes
+        public void OnMapEntityAdded(object sender, GoRogue.ItemEventArgs<Entity> args) {
+            MapConsole.Children.Add(args.Item);
         }
 
 
