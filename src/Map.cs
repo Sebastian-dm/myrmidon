@@ -2,6 +2,8 @@
 using System.Linq;
 using Microsoft.Xna.Framework;
 using clodd.Entities;
+using clodd.Tiles;
+using SadConsole;
 
 namespace clodd {
     // Stores, manipulates and queries Tile data
@@ -59,6 +61,28 @@ namespace clodd {
         /// <returns></returns>
         public T GetEntityAt<T>(Point location) where T : Entity {
             return Entities.GetItems(location).OfType<T>().FirstOrDefault();
+        }
+
+
+        /// <summary>
+        /// Checking whether a certain type of tile is at a specified location.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        // in the map's Tiles
+        //and if it exists, return that Tile
+        //accepts an x/y coordinate
+        public T GetTileAt<T>(int x, int y) where T : TileBase {
+            int locationIndex = Helpers.GetIndexFromPoint(x, y, Width);
+            // make sure the index is within the boundaries of the map!
+            if (0 <= locationIndex && locationIndex <= Width * Height) {
+                if (Tiles[locationIndex] is T)
+                    return (T)Tiles[locationIndex];
+                else return null;
+            }
+            else return null;
         }
 
 

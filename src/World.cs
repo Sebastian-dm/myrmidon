@@ -2,6 +2,7 @@
 using SadConsole.Components;
 using Microsoft.Xna.Framework;
 using clodd.Entities;
+using clodd.Tiles;
 
 namespace clodd {
 
@@ -9,7 +10,9 @@ namespace clodd {
     /// Generates and stores all game state data.
     /// </summary>
     public class World {
-        
+
+        Random RandNumGenerator = new Random();
+
         // map creation and storage data
         private int _mapWidth = 100;
         private int _mapHeight = 100;
@@ -53,7 +56,6 @@ namespace clodd {
         /// </summary>
         private void CreatePlayer() {
             Player = new Player(Color.Yellow, Color.Transparent);
-            Player.Components.Add(new EntityViewSyncComponent());
 
             // Place the player on the first non-movement-blocking tile on the map
             for (int i = 0; i < CurrentMap.Tiles.Length; i++) {
@@ -76,9 +78,6 @@ namespace clodd {
             // number of monsters to create
             int numMonsters = 10;
 
-            // random position generator
-            Random rndNum = new Random();
-
             // Create several monsters and 
             // pick a random position on the map to place them.
             // check if the placement spot is blocking (e.g. a wall)
@@ -86,18 +85,17 @@ namespace clodd {
             for (int i = 0; i < numMonsters; i++) {
                 int monsterPosition = 0;
                 Monster newMonster = new Monster(Color.Blue, Color.Transparent);
-                newMonster.Components.Add(new EntityViewSyncComponent());
-                
+
+                // pick a random spot on the map
                 while (CurrentMap.Tiles[monsterPosition].IsBlockingMove) {
-                    // pick a random spot on the map
-                    monsterPosition = rndNum.Next(0, CurrentMap.Width * CurrentMap.Height);
+                    monsterPosition = RandNumGenerator.Next(0, CurrentMap.Width * CurrentMap.Height);
                 }
 
                 // plug in some magic numbers for attack and defense values
-                newMonster.DefenseStrength = rndNum.Next(0, 10);
-                newMonster.DefenseChance = rndNum.Next(0, 50);
-                newMonster.AttackStrength = rndNum.Next(0, 10);
-                newMonster.AttackChance = rndNum.Next(0, 50);
+                newMonster.DefenseStrength = RandNumGenerator.Next(0, 10);
+                newMonster.DefenseChance = RandNumGenerator.Next(0, 50);
+                newMonster.AttackStrength = RandNumGenerator.Next(0, 10);
+                newMonster.AttackChance = RandNumGenerator.Next(0, 50);
                 newMonster.Name = "a common troll";
 
                 // Set the monster's new position
@@ -115,21 +113,16 @@ namespace clodd {
             // number of treasure drops to create
             int numLoot = 20;
 
-            Random rndNum = new Random();
-
             // Produce lot up to a max of numLoot
             for (int i = 0; i < numLoot; i++) {
                 // Create an Item with some standard attributes
                 int lootPosition = 0;
                 Item newLoot = new Item(Color.Green, Color.Transparent, "fancy shirt", 'L', 2);
 
-                // Let SadConsole know that this Item's position be tracked on the map
-                newLoot.Components.Add(new EntityViewSyncComponent());
-
                 // Try placing the Item at lootPosition; if this fails, try random positions on the map's tile array
                 while (CurrentMap.Tiles[lootPosition].IsBlockingMove) {
                     // pick a random spot on the map
-                    lootPosition = rndNum.Next(0, CurrentMap.Width * CurrentMap.Height);
+                    lootPosition = RandNumGenerator.Next(0, CurrentMap.Width * CurrentMap.Height);
                 }
 
                 // set the loot's new position

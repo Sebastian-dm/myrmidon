@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using clodd.Tiles;
 
 namespace clodd {
     // based on tunnelling room generation algorithm from RogueSharp tutorial
     // https://roguesharp.wordpress.com/2016/03/26/roguesharp-v3-tutorial-simple-room-generation/
     public class MapGenerator {
+
+        Random RandNumGenerator = new Random();
+
+
+
         // empty constructor
         public MapGenerator() {
         }
@@ -15,21 +21,18 @@ namespace clodd {
 
         public Map GenerateMap(int mapWidth, int mapHeight, int maxRooms, int minRoomSize, int maxRoomSize) {
 
-            
-            Random randNum = new Random();
-
             _map = new Map(mapWidth, mapHeight);
             List<Rectangle> Rooms = new List<Rectangle>();
 
             // create up to maxRooms non-overlapping rooms
             for (int i = 0; i < maxRooms; i++) {
                 // set the room's (width, height) as a random size between (minRoomSize, maxRoomSize)
-                int newRoomWidth = randNum.Next(minRoomSize, maxRoomSize);
-                int newRoomHeight = randNum.Next(minRoomSize, maxRoomSize);
+                int newRoomWidth = RandNumGenerator.Next(minRoomSize, maxRoomSize);
+                int newRoomHeight = RandNumGenerator.Next(minRoomSize, maxRoomSize);
 
                 // sets the room's X/Y Position at a random point between the edges of the map
-                int newRoomX = randNum.Next(0, mapWidth - newRoomWidth - 1);
-                int newRoomY = randNum.Next(0, mapHeight - newRoomHeight - 1);
+                int newRoomX = RandNumGenerator.Next(0, mapWidth - newRoomWidth - 1);
+                int newRoomY = RandNumGenerator.Next(0, mapHeight - newRoomHeight - 1);
 
                 // create a Rectangle representing the room's perimeter
                 Rectangle newRoom = new Rectangle(newRoomX, newRoomY, newRoomWidth, newRoomHeight);
@@ -57,13 +60,18 @@ namespace clodd {
                 Point currentRoomCenter = Rooms[r].Center;
 
                 // give a 50/50 chance of which 'L' shaped connecting hallway to tunnel out
-                if (randNum.Next(1, 2) == 1) {
+                if (RandNumGenerator.Next(1, 2) == 1) {
                     CreateHorizontalTunnel(previousRoomCenter.X, currentRoomCenter.X, previousRoomCenter.Y);
                     CreateVerticalTunnel(previousRoomCenter.Y, currentRoomCenter.Y, currentRoomCenter.X);
                 }
                 else {
                     CreateVerticalTunnel(previousRoomCenter.Y, currentRoomCenter.Y, previousRoomCenter.X);
                     CreateHorizontalTunnel(previousRoomCenter.X, currentRoomCenter.X, currentRoomCenter.Y);
+                }
+
+                // Create doors now that the tunnels have been carved out
+                foreach (Rectangle room in Rooms) {
+                    CreateDoor(room);
                 }
             }
 
@@ -201,6 +209,75 @@ namespace clodd {
                 }
             }
         }
+
+
+        //Tries to create a TileDoor object in a specified Rectangle
+        //perimeter. Reads through the entire list of tiles comprising
+        //the perimeter, and determines if each position is a viable
+        //candidate for a door.
+        //When it finds a potential position, creates a closed and
+        //unlocked door.
+        private void CreateDoor(Rectangle room) {
+            List<Point> borderCells = GetBorderCellLocations(room);
+
+            //go through every border cell and look for potential door candidates
+            foreach (Point location in borderCells) {
+                int locationIndex = location.ToIndex(_map.Width);
+                if (IsPotentialDoor(location)) {
+                    // Create a new door that is closed and unlocked.
+                    TileDoor newDoor = new TileDoor(false, false);
+                    _map.Tiles[locationIndex] = newDoor;
+
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Determines if a Point on the map is a good candidate for a door.
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns>True if location is good for a door.</returns>
+        private bool IsPotentialDoor(Point location) {
+            
+            // Is tile walkable?
+            int locationIndex = location.ToIndex(_map.Width);
+            if (_map.Tiles[locationIndex] != null && _map.Tiles[locationIndex] is TileWall) {
+                return false;
+            }
+
+            // Is there no door here or adjacent already?
+            Point right = new Point(location.X + 1, location.Y);
+            Point left = new Point(location.X - 1, location.Y);
+            Point top = new Point(location.X, location.Y - 1);
+            Point bottom = new Point(location.X, location.Y + 1);
+            if (_map.GetTileAt<TileDoor>(location.X, location.Y) != null ||
+                _map.GetTileAt<TileDoor>(right.X, right.Y) != null ||
+                _map.GetTileAt<TileDoor>(left.X, left.Y) != null ||
+                _map.GetTileAt<TileDoor>(top.X, top.Y) != null ||
+                _map.GetTileAt<TileDoor>(bottom.X, bottom.Y) != null
+               ) {
+                return false;
+            }
+
+            // Is tile placed in a horizonral wall?
+            if (!_map.Tiles[right.ToIndex(_map.Width)].IsBlockingMove
+                && !_map.Tiles[left.ToIndex(_map.Width)].IsBlockingMove
+                && _map.Tiles[top.ToIndex(_map.Width)].IsBlockingMove
+                && _map.Tiles[bottom.ToIndex(_map.Width)].IsBlockingMove) {
+                return true;
+            }
+            // Is tile placed in a vertical wall?
+            if (_map.Tiles[right.ToIndex(_map.Width)].IsBlockingMove
+                && _map.Tiles[left.ToIndex(_map.Width)].IsBlockingMove
+                && !_map.Tiles[top.ToIndex(_map.Width)].IsBlockingMove
+                && !_map.Tiles[bottom.ToIndex(_map.Width)].IsBlockingMove) {
+                return true;
+            }
+            return false;
+        }
+
+
 
         /// <summary>
         /// Sets X coordinate between right and left edges of map to prevent any out-of-bounds errors

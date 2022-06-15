@@ -1,8 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using clodd;
 
-namespace clodd {
+namespace clodd.Tiles {
     // TileFloor is based on TileBase
     // Floor tiles to be used in maps.
     public class TileFloor : TileBase {

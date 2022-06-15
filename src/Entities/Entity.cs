@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using SadConsole.Components;
 
 namespace clodd.Entities {
     
@@ -17,6 +18,9 @@ namespace clodd.Entities {
 
             // Create a new unique identifier for this entity
             ID = Map.IDGenerator.UseID();
+
+            // Ensure that the entity position/offset is tracked by scrollingconsoles
+            Components.Add(new EntityViewSyncComponent());
         }
     }
 }

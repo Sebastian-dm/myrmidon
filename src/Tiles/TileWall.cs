@@ -1,8 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using clodd;
 
-namespace clodd {
+namespace clodd.Tiles {
     // TileWall is based on TileBase
     public class TileWall : TileBase {
         // Default constructor
