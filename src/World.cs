@@ -30,6 +30,7 @@ namespace clodd {
             CreateMap();
             CreatePlayer();
             CreateMonsters();
+            CreateLoot();
         }
 
 
@@ -103,6 +104,41 @@ namespace clodd {
                 newMonster.Position = new Point(monsterPosition % CurrentMap.Width, monsterPosition / CurrentMap.Width);
                 CurrentMap.Add(newMonster);
             }
+        }
+
+
+
+        /// <summary>
+        /// Create some sample treasure that can be picked up on the map
+        /// </summary>
+        private void CreateLoot() {
+            // number of treasure drops to create
+            int numLoot = 20;
+
+            Random rndNum = new Random();
+
+            // Produce lot up to a max of numLoot
+            for (int i = 0; i < numLoot; i++) {
+                // Create an Item with some standard attributes
+                int lootPosition = 0;
+                Item newLoot = new Item(Color.Green, Color.Transparent, "fancy shirt", 'L', 2);
+
+                // Let SadConsole know that this Item's position be tracked on the map
+                newLoot.Components.Add(new EntityViewSyncComponent());
+
+                // Try placing the Item at lootPosition; if this fails, try random positions on the map's tile array
+                while (CurrentMap.Tiles[lootPosition].IsBlockingMove) {
+                    // pick a random spot on the map
+                    lootPosition = rndNum.Next(0, CurrentMap.Width * CurrentMap.Height);
+                }
+
+                // set the loot's new position
+                newLoot.Position = new Point(lootPosition % CurrentMap.Width, lootPosition / CurrentMap.Width);
+
+                // add the Item to the MultiSpatialMap
+                CurrentMap.Add(newLoot);
+            }
+
         }
 
     }

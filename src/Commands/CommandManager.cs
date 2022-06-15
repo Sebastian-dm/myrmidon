@@ -58,6 +58,19 @@ namespace clodd.Commands {
             return false;
         }
 
+        /// <summary>
+        /// Tries to pick up an Item and add it to the Actor's inventory list
+        /// </summary>
+        /// <param name="actor"></param>
+        /// <param name="item"></param>
+        public void Pickup(Actor actor, Item item) {
+            // Add the item to the Actor's inventory list
+            // and then destroy it
+            actor.Inventory.Add(item);
+            GameLoop.UIManager.MessageLog.Add($"{actor.Name} picked up {item.Name}");
+            item.Destroy();
+        }
+
 
         // Executes an attack from an attacking actor
         // on a defending actor, and then describes
@@ -160,17 +173,43 @@ namespace clodd.Commands {
 
         // Removes an Actor that has died
         // and displays a message showing
-        // the number of Gold dropped.
+        // the actor that has died, and they loot they dropped
         private static void ResolveDeath(Actor defender) {
+            // Set up a customized death message
+            StringBuilder deathMessage = new StringBuilder($"{defender.Name} died");
+
+            // dump the dead actor's inventory (if any)
+            // at the map position where it died
+            if (defender.Inventory.Count > 0) {
+                deathMessage.Append(" and dropped");
+
+                foreach (Item item in defender.Inventory) {
+                    // move the Item to the place where the actor died
+                    item.Position = defender.Position;
+
+                    // Now let the MultiSpatialMap know that the Item is visible
+                    GameLoop.World.CurrentMap.Add(item);
+
+                    // Append the item to the deathMessage
+                    deathMessage.Append(", " + item.Name);
+                }
+
+                // Clear the actor's inventory. Not strictly
+                // necessary, but makes for good coding habits!
+                defender.Inventory.Clear();
+            }
+            else {
+                // The monster carries no loot, so don't show any loot dropped
+                deathMessage.Append(".");
+            }
+
+            // actor goes bye-bye
             GameLoop.World.CurrentMap.Remove(defender);
 
-            if (defender is Player) {
-                GameLoop.UIManager.MessageLog.Add($" {defender.Name} was killed.");
-            }
-            else if (defender is Monster) {
-                GameLoop.UIManager.MessageLog.Add($"{defender.Name} died and dropped {defender.Gold} gold coins.");
-            }
+            // Now show the deathMessage in the messagelog
+            GameLoop.UIManager.MessageLog.Add(deathMessage.ToString());
         }
+
 
     }
 }

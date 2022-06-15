@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace clodd.Entities {
@@ -16,6 +17,8 @@ namespace clodd.Entities {
         public int DefenseChance { get; set; } // percent chance of successfully blocking a hit
         public int Gold { get; set; } // amount of gold carried
 
+        public List<Item> Inventory = new List<Item>(); // the player's collection of items
+
         protected Actor(Color foreground, Color background, int glyph, int width = 1, int height = 1) : base(foreground, background, glyph, width, height) {
             
         }
@@ -31,8 +34,15 @@ namespace clodd.Entities {
                 // if there's a monster here,
                 // do a bump attack
                 Monster monster = GameLoop.World.CurrentMap.GetEntityAt<Monster>(Position + positionChange);
+                Item item = GameLoop.World.CurrentMap.GetEntityAt<Item>(Position + positionChange);
                 if (monster != null) {
                     GameLoop.CommandManager.Attack(this, monster);
+                    return true;
+                }
+                // if there's an item here,
+                // try to pick it up
+                else if (item != null) {
+                    GameLoop.CommandManager.Pickup(this, item);
                     return true;
                 }
 
