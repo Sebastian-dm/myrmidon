@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Text;
-using clodd.Entities;
 using Microsoft.Xna.Framework;
 using GoRogue.DiceNotation;
+using clodd.Entities;
+using clodd.Tiles;
 
 namespace clodd.Commands {
     // Contains all generic actions performed on entities and tiles
@@ -57,6 +58,25 @@ namespace clodd.Commands {
             }
             return false;
         }
+
+
+        /// <summary>
+        /// Triggered when an Actor attempts to move into a doorway. A closed door opens when used by an Actor.
+        /// </summary>
+        /// <param name="actor"></param>
+        /// <param name="door"></param>
+        public void UseDoor(Actor actor, TileDoor door) {
+            // Handle a locked door
+            if (door.Locked) {
+                // We have no way of opening a locked door for the time being.
+            }
+            // Handled an unlocked door that is closed
+            else if (!door.Locked && !door.IsOpen) {
+                door.Open();
+                GameLoop.UIManager.MessageLog.Add($"{actor.Name} opened a {door.Name}");
+            }
+        }
+
 
         /// <summary>
         /// Tries to pick up an Item and add it to the Actor's inventory list

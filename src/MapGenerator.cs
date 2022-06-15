@@ -71,7 +71,7 @@ namespace clodd {
 
                 // Create doors now that the tunnels have been carved out
                 foreach (Rectangle room in Rooms) {
-                    CreateDoor(room);
+                    CreateDoors(room);
                 }
             }
 
@@ -109,8 +109,8 @@ namespace clodd {
         // Floors are placed in the interior area of the room
         private void CreateRoom(Rectangle room) {
             // Place floors in interior area
-            for (int x = room.Left + 1; x < room.Right - 1; x++) {
-                for (int y = room.Top + 1; y < room.Bottom - 1; y++) {
+            for (int x = room.Left + 1; x < room.Right; x++) {
+                for (int y = room.Top + 1; y < room.Bottom; y++) {
                     CreateFloor(new Point(x, y));
                 }
             }
@@ -211,22 +211,20 @@ namespace clodd {
         }
 
 
-        //Tries to create a TileDoor object in a specified Rectangle
-        //perimeter. Reads through the entire list of tiles comprising
-        //the perimeter, and determines if each position is a viable
-        //candidate for a door.
-        //When it finds a potential position, creates a closed and
-        //unlocked door.
-        private void CreateDoor(Rectangle room) {
-            List<Point> borderCells = GetBorderCellLocations(room);
+
+        /// <summary>
+        /// Creates a tile door in every opening to a given room.
+        /// </summary>
+        /// <param name="room">Room to put doors around.</param>
+        private void CreateDoors(Rectangle room) {
+            List<Point> BorderCells = GetBorderCellLocations(room);
 
             //go through every border cell and look for potential door candidates
-            foreach (Point location in borderCells) {
-                int locationIndex = location.ToIndex(_map.Width);
+            foreach (Point location in BorderCells) {
                 if (IsPotentialDoor(location)) {
                     // Create a new door that is closed and unlocked.
-                    TileDoor newDoor = new TileDoor(false, false);
-                    _map.Tiles[locationIndex] = newDoor;
+                    int locationIndex = location.ToIndex(_map.Width);
+                    _map.Tiles[locationIndex] = new TileDoor(locked: false, open: false);
 
                 }
             }

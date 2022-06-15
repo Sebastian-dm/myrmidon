@@ -3,6 +3,8 @@ using System.Text;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
+using clodd.Tiles;
+
 namespace clodd.Entities {
     public abstract class Actor : Entity {
 
@@ -49,8 +51,18 @@ namespace clodd.Entities {
                 Position += positionChange;
                 return true;
             }
-            else
+            // Handle situations where there are non-walkable tiles that CAN be used
+            else {
+                // Check for the presence of a door
+                TileDoor door = GameLoop.World.CurrentMap.GetTileAt<TileDoor>(Position + positionChange);
+                // if there's a door here,
+                // try to use it
+                if (door != null) {
+                    GameLoop.CommandManager.UseDoor(this, door);
+                    return true;
+                }
                 return false;
+            }
         }
 
 

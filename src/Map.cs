@@ -86,6 +86,14 @@ namespace clodd {
         }
 
 
+        // Checks if a specific type of tile at a specified location
+        // is on the map. If it exists, returns that Tile
+        // This form of the method accepts a Point coordinate.
+        public T GetTileAt<T>(Point location) where T : TileBase {
+            return GetTileAt<T>(location.X, location.Y);
+        }
+
+
 
         /// <summary>
         /// Removes an Entity from the MultiSpatialMap
