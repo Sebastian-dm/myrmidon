@@ -36,7 +36,11 @@ namespace clodd.UI {
         /// <param name="title"></param>
         public MessageLogWindow(int width, int height, string title) : base(width, height) {
             // Ensure that the window background is the correct colour
-            Theme.FillStyle.Background = DefaultBackground;
+            ThemeColors = GameLoop.UIManager.CustomColors.Clone();
+            ThemeColors.ControlBack = Color.DarkRed;
+            ThemeColors.TitleText = Color.Red;
+            ThemeColors.RebuildAppearances();
+
             _lines = new Queue<string>();
             CanDrag = true;
             Title = title.Align(HorizontalAlignment.Center, Width);

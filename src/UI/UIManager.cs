@@ -13,6 +13,7 @@ namespace clodd.UI {
         public ScrollingConsole MapConsole;
         public Window MapWindow;
         public MessageLogWindow MessageLog;
+        public SadConsole.Themes.Colors CustomColors;
 
         public UIManager() {
             // must be set to true or will not call each child's Draw method
@@ -30,26 +31,46 @@ namespace clodd.UI {
         /// </summary>
         public void Init() {
 
+            SetupCustomColors();
+
             CreateConsoles();
 
             //Message Log initialization
-            MessageLog = new MessageLogWindow(GameLoop.GameWidth, GameLoop.GameHeight / 2, "Message Log");
+            MessageLog = new MessageLogWindow(GameLoop.GameWidth, GameLoop.GameHeight /4, "Message Log");
             Children.Add(MessageLog);
             MessageLog.Show();
-            MessageLog.Position = new Point(0, GameLoop.GameHeight / 2);
+            MessageLog.Position = new Point(0, GameLoop.GameHeight * 3 / 4);
 
             // TEST CODE
-            MessageLog.Add(System.IO.Directory.GetCurrentDirectory());
+            MessageLog.Add("Started game from path: "+System.IO.Directory.GetCurrentDirectory());
 
             // Load the map into the MapConsole
             LoadMap(GameLoop.World.CurrentMap);
 
             // Now that the MapConsole is ready, build the Window
-            CreateMapWindow(GameLoop.GameWidth / 2, GameLoop.GameHeight / 2, "Game Map");
+            CreateMapWindow(GameLoop.GameWidth, GameLoop.GameHeight *3/4, "Game Map");
             UseMouse = true;
 
             // Start the game with the camera focused on the player
             CenterOnActor(GameLoop.World.Player);
+        }
+
+
+        /// <summary>
+        /// Build a new coloured theme based on SC's default theme and then set it as the program's default theme.
+        /// </summary>
+        private void SetupCustomColors() {
+            CustomColors = SadConsole.Themes.Colors.CreateDefault();
+            
+            Color backgroundColor = Color.Black;
+            CustomColors.ControlHostBack = backgroundColor;
+            CustomColors.ControlBack = backgroundColor;
+            CustomColors.ControlBackLight = (backgroundColor * 1.3f).FillAlpha();
+            CustomColors.ControlBackDark = (backgroundColor * 0.7f).FillAlpha();
+            CustomColors.ControlBackSelected = CustomColors.GrayDark;
+            
+            CustomColors.RebuildAppearances();
+            SadConsole.Themes.Library.Default.Colors = CustomColors;
         }
 
 

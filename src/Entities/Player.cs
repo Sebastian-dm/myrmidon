@@ -10,7 +10,7 @@ namespace clodd.Entities {
             AttackChance = 40;
             DefenseStrength = 5;
             DefenseChance = 20;
-            Name = "Milhouse";
+            Name = "Claude";
         }
     }
 }

@@ -10,7 +10,7 @@ using clodd.Commands;
 namespace clodd {
     class GameLoop {
 
-        public const int GameWidth = 160;
+        public const int GameWidth = 120;
         public const int GameHeight = 80;
 
         // Managers

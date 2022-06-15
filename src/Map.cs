@@ -101,9 +101,10 @@ namespace clodd {
         /// <param name="entity"></param>
         public void Remove(Entity entity) {
             // remove from SpatialMap
-            Entities.Remove(entity);
+            if (!Entities.Remove(entity))
+                throw new Exception("Failed to remove entity from map");
 
-            // Link up the entity's Moved event to a new handler
+            // De-link the entity's Moved event from the handler
             entity.Moved -= OnEntityMoved;
         }
 
@@ -114,11 +115,10 @@ namespace clodd {
         /// </summary>
         /// <param name="entity"></param>
         public void Add(Entity entity) {
-            // add entity to the SpatialMap
-            Entities.Add(entity, entity.Position);
+            if (!Entities.Add(entity, entity.Position))
+                throw new Exception("Failed to add entity to map");
 
-            // Link up the entity's Moved event to a new handler
-            entity.Moved += OnEntityMoved;
+            entity.Moved += OnEntityMoved; // Link entity Moved event to new handler
         }
 
 
@@ -130,7 +130,8 @@ namespace clodd {
         /// <param name="sender"></param>
         /// <param name="args"></param>
         private void OnEntityMoved(object sender, Entity.EntityMovedEventArgs args) {
-            Entities.Move(args.Entity as Entity, args.Entity.Position);
+            if (!Entities.Move(args.Entity as Entity, args.Entity.Position))
+                throw new Exception("Failed to move entity on map.");
         }
     }
 }

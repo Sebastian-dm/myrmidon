@@ -7,6 +7,7 @@ namespace clodd.Tiles {
 
         public bool Locked; // Locked door = 1, Unlocked = 0
         public bool IsOpen; // Open door = 1, closed = 0
+        
 
         //Default constructor
         //A TileDoor can be set locked/unlocked/open/closed using the constructor.
@@ -14,6 +15,7 @@ namespace clodd.Tiles {
             //+ is the closed glyph
             //closed by default
             Glyph = '+';
+            Name = "standard door";
 
             //Update door fields
             Locked = locked;

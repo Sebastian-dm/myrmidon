@@ -14,8 +14,8 @@ namespace clodd {
         Random RandNumGenerator = new Random();
 
         // map creation and storage data
-        private int _mapWidth = 100;
-        private int _mapHeight = 100;
+        private int _mapWidth = 300;
+        private int _mapHeight = 200;
         private int _maxRooms = 100;
         private int _minRoomSize = 4;
         private int _maxRoomSize = 15;
