@@ -14,9 +14,9 @@ namespace clodd {
         Random RandNumGenerator = new Random();
 
         // map creation and storage data
-        private int _mapWidth = 300;
-        private int _mapHeight = 200;
-        private int _maxRooms = 100;
+        private int _mapWidth = 101;
+        private int _mapHeight = 81;
+        private int _maxRooms = 20;
         private int _minRoomSize = 4;
         private int _maxRoomSize = 15;
         private TileBase[] _mapTiles;
@@ -45,6 +45,8 @@ namespace clodd {
         private void CreateMap() {
             _mapTiles = new TileBase[_mapWidth * _mapHeight];
             CurrentMap = new Map(_mapWidth, _mapHeight);
+            //DungeonGenerator mapGen = new DungeonGenerator();
+            //CurrentMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms);
             MapGenerator mapGen = new MapGenerator();
             CurrentMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms, _minRoomSize, _maxRoomSize);
         }
@@ -58,13 +60,14 @@ namespace clodd {
             Player = new Player(Color.Yellow, Color.Transparent);
 
             // Place the player on the first non-movement-blocking tile on the map
-            for (int i = 0; i < CurrentMap.Tiles.Length; i++) {
-                if (!CurrentMap.Tiles[i].IsBlockingMove) {
-                    // Set the player's position to the index of the current map position
-                    Player.Position = SadConsole.Helpers.GetPointFromIndex(i, CurrentMap.Width);
-                    break;
-                }
+            if (CurrentMap.Rooms.Count > 0) {
+                int RoomIndex = RandNumGenerator.Next(0, CurrentMap.Rooms.Count);
+                Player.Position = CurrentMap.Rooms[RoomIndex].Center;
             }
+            else {
+                Player.Position = new Point(10, 10);
+            }
+            
 
             // add the player to the Map's collection of Entities
             CurrentMap.Add(Player);

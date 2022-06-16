@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using clodd.Tiles;
+using clodd.Geometry;
 
 namespace clodd {
     // based on tunnelling room generation algorithm from RogueSharp tutorial
@@ -10,19 +11,34 @@ namespace clodd {
     public class MapGenerator {
 
         Random RandNumGenerator = new Random();
+        Map _workingMap;
 
 
 
-        // empty constructor
+        /// <summary>
+        /// Empty constructor.
+        /// </summary>
         public MapGenerator() {
         }
 
-        Map _map; // Temporarily store the map currently worked on
 
+        /// <summary>
+        /// Generates a map.
+        /// </summary>
+        /// <param name="mapWidth"></param>
+        /// <param name="mapHeight"></param>
+        /// <param name="maxRooms"></param>
+        /// <param name="minRoomSize"></param>
+        /// <param name="maxRoomSize"></param>
+        /// <returns></returns>
         public Map GenerateMap(int mapWidth, int mapHeight, int maxRooms, int minRoomSize, int maxRoomSize) {
 
-            _map = new Map(mapWidth, mapHeight);
-            List<Rectangle> Rooms = new List<Rectangle>();
+            _workingMap = new Map(mapWidth, mapHeight);
+
+            // Fill map with empty
+            for (int i = 0; i < _workingMap.Tiles.Length; i++) {
+                _workingMap.Tiles[i] = new TileEmpty();
+            }
 
             // create up to maxRooms non-overlapping rooms
             for (int i = 0; i < maxRooms; i++) {
@@ -35,29 +51,22 @@ namespace clodd {
                 int newRoomY = RandNumGenerator.Next(0, mapHeight - newRoomHeight - 1);
 
                 // create a Rectangle representing the room's perimeter
-                Rectangle newRoom = new Rectangle(newRoomX, newRoomY, newRoomWidth, newRoomHeight);
+                Rect newRoom = new Rect(newRoomX, newRoomY, newRoomWidth, newRoomHeight);
 
                 // Does the new room intersect with other rooms already generated?
-                bool newRoomIntersects = Rooms.Any(room => newRoom.Intersects(room));
+                bool newRoomIntersects = _workingMap.Rooms.Any(room => newRoom.Intersects(room));
 
                 if (!newRoomIntersects) {
-                    Rooms.Add(newRoom);
+                    _workingMap.Rooms.Add(newRoom);
                 }
             }
-
-            // Fill the map with walls
-            FloodWalls();
-
-            // Carve out rooms for every room in the Rooms list
-            foreach (Rectangle room in Rooms) {
-                CreateRoom(room);
-            }
+            
 
             // carve out tunnels between all rooms based on the Positions of their centers
-            for (int r = 1; r < Rooms.Count; r++) {
+            for (int r = 1; r < _workingMap.Rooms.Count; r++) {
                 //for all remaining rooms get the center of the room and the previous room
-                Point previousRoomCenter = Rooms[r - 1].Center;
-                Point currentRoomCenter = Rooms[r].Center;
+                Point previousRoomCenter = _workingMap.Rooms[r - 1].Center;
+                Point currentRoomCenter = _workingMap.Rooms[r].Center;
 
                 // give a 50/50 chance of which 'L' shaped connecting hallway to tunnel out
                 if (RandNumGenerator.Next(1, 2) == 1) {
@@ -68,16 +77,25 @@ namespace clodd {
                     CreateVerticalTunnel(previousRoomCenter.Y, currentRoomCenter.Y, previousRoomCenter.X);
                     CreateHorizontalTunnel(previousRoomCenter.X, currentRoomCenter.X, currentRoomCenter.Y);
                 }
+            }
 
-                // Create doors now that the tunnels have been carved out
-                foreach (Rectangle room in Rooms) {
-                    CreateDoors(room);
-                }
+            // Carve out rooms for every room in the Rooms list
+            foreach (Rect room in _workingMap.Rooms) {
+                CreateRoom(room);
             }
 
             // spit out the final map
-            return _map;
+            return _workingMap;
         }
+
+
+
+
+
+
+
+
+
 
         /// <summary>
         /// carve a tunnel out of the map parallel to the x-axis
@@ -87,9 +105,10 @@ namespace clodd {
         /// <param name="yPosition"></param>
         private void CreateHorizontalTunnel(int xStart, int xEnd, int yPosition) {
             for (int x = Math.Min(xStart, xEnd); x <= Math.Max(xStart, xEnd); x++) {
-                CreateFloor(new Point(x, yPosition));
+                CreateTunnel(new Point(x, yPosition));
             }
         }
+
 
         /// <summary>
         /// carve a tunnel using the y-axis
@@ -99,60 +118,79 @@ namespace clodd {
         /// <param name="xPosition"></param>
         private void CreateVerticalTunnel(int yStart, int yEnd, int xPosition) {
             for (int y = Math.Min(yStart, yEnd); y <= Math.Max(yStart, yEnd); y++) {
-                CreateFloor(new Point(xPosition, y));
+                CreateTunnel(new Point(xPosition, y));
             }
         }
 
-        // Builds a room composed of walls and floors using the supplied Rectangle
-        // which determines its size and position on the map
-        // Walls are placed at the perimeter of the room
-        // Floors are placed in the interior area of the room
-        private void CreateRoom(Rectangle room) {
-            // Place floors in interior area
+
+        /// <summary>
+        /// Builds a room composed of walls and floors using the supplied Rectangle which determines its size and position on the map
+        /// Walls are placed at the perimeter of the room Floors are placed in the interior area of the room
+        /// </summary>
+        /// <param name="room"></param>
+        private void CreateRoom(Rect room) {
+            List<Point> RoomPerimeter = GetPerimeter(room);
+
+            // Fill with floor
             for (int x = room.Left + 1; x < room.Right; x++) {
                 for (int y = room.Top + 1; y < room.Bottom; y++) {
                     CreateFloor(new Point(x, y));
                 }
             }
 
-            // Place walls at perimeter
-            List<Point> perimeter = GetBorderCellLocations(room);
-            foreach (Point location in perimeter) {
-                CreateWall(location);
+            foreach (Point location in RoomPerimeter) {
+                if (_workingMap.GetTileAt<TileBase>(location) is not TileTunnel) {
+                    CreateWall(location);
+                }
+            }
+
+            foreach (Point location in RoomPerimeter) {
+                if (IsPotentialDoor(location)) CreateDoor(location);
             }
         }
+
 
         /// <summary>
         /// Creates a Floor tile at the specified X/Y location
         /// </summary>
         /// <param name="location"></param>
         private void CreateFloor(Point location) {
-            _map.Tiles[location.ToIndex(_map.Width)] = new TileFloor();
+            _workingMap.Tiles[location.ToIndex(_workingMap.Width)] = new TileFloor();
         }
+
+        /// <summary>
+        /// Creates a tunnel tile at the specified X/Y location
+        /// </summary>
+        /// <param name="location"></param>
+        private void CreateTunnel(Point location) {
+            _workingMap.Tiles[location.ToIndex(_workingMap.Width)] = new TileTunnel();
+        }
+
 
         /// <summary>
         /// Creates a Wall tile at the specified X/Y location
         /// </summary>
         /// <param name="location"></param>
         private void CreateWall(Point location) {
-            _map.Tiles[location.ToIndex(_map.Width)] = new TileWall();
+            _workingMap.Tiles[location.ToIndex(_workingMap.Width)] = new TileWall();
         }
 
+
         /// <summary>
-        /// Fills the map with walls
+        /// Creates a Door tile at the specified X/Y location
         /// </summary>
-        private void FloodWalls() {
-            for (int i = 0; i < _map.Tiles.Length; i++) {
-                _map.Tiles[i] = new TileWall();
-            }
+        /// <param name="location"></param>
+        private void CreateDoor(Point location) {
+            _workingMap.Tiles[location.ToIndex(_workingMap.Width)] = new TileDoor(false, false);
         }
+
 
         /// <summary>
         /// Returns a list of points expressing the perimeter of a rectangle
         /// </summary>
         /// <param name="room"></param>
         /// <returns></returns>
-        private List<Point> GetBorderCellLocations(Rectangle room) {
+        private List<Point> GetPerimeter(Rect room) {
             //establish room boundaries
             int xMin = room.Left;
             int xMax = room.Right;
@@ -161,13 +199,14 @@ namespace clodd {
 
             // build a list of room border cells using a series of
             // straight lines
-            List<Point> borderCells = GetTileLocationsAlongLine(xMin, yMin, xMax, yMin).ToList();
-            borderCells.AddRange(GetTileLocationsAlongLine(xMin, yMin, xMin, yMax));
-            borderCells.AddRange(GetTileLocationsAlongLine(xMin, yMax, xMax, yMax));
-            borderCells.AddRange(GetTileLocationsAlongLine(xMax, yMin, xMax, yMax));
+            List<Point> Perimeter = GetTileLocationsAlongLine(xMin, yMin, xMax, yMin).ToList();
+            Perimeter.AddRange(GetTileLocationsAlongLine(xMin, yMin, xMin, yMax));
+            Perimeter.AddRange(GetTileLocationsAlongLine(xMin, yMax, xMax, yMax));
+            Perimeter.AddRange(GetTileLocationsAlongLine(xMax, yMin, xMax, yMax));
 
-            return borderCells;
+            return Perimeter;
         }
+
 
         /// <summary>
         /// Returns a collection of Points which represent locations along a line
@@ -211,26 +250,6 @@ namespace clodd {
         }
 
 
-
-        /// <summary>
-        /// Creates a tile door in every opening to a given room.
-        /// </summary>
-        /// <param name="room">Room to put doors around.</param>
-        private void CreateDoors(Rectangle room) {
-            List<Point> BorderCells = GetBorderCellLocations(room);
-
-            //go through every border cell and look for potential door candidates
-            foreach (Point location in BorderCells) {
-                if (IsPotentialDoor(location)) {
-                    // Create a new door that is closed and unlocked.
-                    int locationIndex = location.ToIndex(_map.Width);
-                    _map.Tiles[locationIndex] = new TileDoor(locked: false, open: false);
-
-                }
-            }
-        }
-
-
         /// <summary>
         /// Determines if a Point on the map is a good candidate for a door.
         /// </summary>
@@ -239,8 +258,8 @@ namespace clodd {
         private bool IsPotentialDoor(Point location) {
             
             // Is tile walkable?
-            int locationIndex = location.ToIndex(_map.Width);
-            if (_map.Tiles[locationIndex] != null && _map.Tiles[locationIndex] is TileWall) {
+            int locationIndex = location.ToIndex(_workingMap.Width);
+            if (_workingMap.Tiles[locationIndex] != null && _workingMap.Tiles[locationIndex] is TileWall) {
                 return false;
             }
 
@@ -249,32 +268,31 @@ namespace clodd {
             Point left = new Point(location.X - 1, location.Y);
             Point top = new Point(location.X, location.Y - 1);
             Point bottom = new Point(location.X, location.Y + 1);
-            if (_map.GetTileAt<TileDoor>(location.X, location.Y) != null ||
-                _map.GetTileAt<TileDoor>(right.X, right.Y) != null ||
-                _map.GetTileAt<TileDoor>(left.X, left.Y) != null ||
-                _map.GetTileAt<TileDoor>(top.X, top.Y) != null ||
-                _map.GetTileAt<TileDoor>(bottom.X, bottom.Y) != null
+            if (_workingMap.GetTileAt<TileDoor>(location.X, location.Y) != null ||
+                _workingMap.GetTileAt<TileDoor>(right.X, right.Y) != null ||
+                _workingMap.GetTileAt<TileDoor>(left.X, left.Y) != null ||
+                _workingMap.GetTileAt<TileDoor>(top.X, top.Y) != null ||
+                _workingMap.GetTileAt<TileDoor>(bottom.X, bottom.Y) != null
                ) {
                 return false;
             }
 
             // Is tile placed in a horizonral wall?
-            if (!_map.Tiles[right.ToIndex(_map.Width)].IsBlockingMove
-                && !_map.Tiles[left.ToIndex(_map.Width)].IsBlockingMove
-                && _map.Tiles[top.ToIndex(_map.Width)].IsBlockingMove
-                && _map.Tiles[bottom.ToIndex(_map.Width)].IsBlockingMove) {
+            if (!_workingMap.Tiles[right.ToIndex(_workingMap.Width)].IsBlockingMove
+                && !_workingMap.Tiles[left.ToIndex(_workingMap.Width)].IsBlockingMove
+                && _workingMap.Tiles[top.ToIndex(_workingMap.Width)].IsBlockingMove
+                && _workingMap.Tiles[bottom.ToIndex(_workingMap.Width)].IsBlockingMove) {
                 return true;
             }
             // Is tile placed in a vertical wall?
-            if (_map.Tiles[right.ToIndex(_map.Width)].IsBlockingMove
-                && _map.Tiles[left.ToIndex(_map.Width)].IsBlockingMove
-                && !_map.Tiles[top.ToIndex(_map.Width)].IsBlockingMove
-                && !_map.Tiles[bottom.ToIndex(_map.Width)].IsBlockingMove) {
+            if (_workingMap.Tiles[right.ToIndex(_workingMap.Width)].IsBlockingMove
+                && _workingMap.Tiles[left.ToIndex(_workingMap.Width)].IsBlockingMove
+                && !_workingMap.Tiles[top.ToIndex(_workingMap.Width)].IsBlockingMove
+                && !_workingMap.Tiles[bottom.ToIndex(_workingMap.Width)].IsBlockingMove) {
                 return true;
             }
             return false;
         }
-
 
 
         /// <summary>
@@ -283,8 +301,9 @@ namespace clodd {
         /// <param name="x">X coordinate</param>
         /// <returns>Clamped X coordinate</returns>
         private int ClampX(int x) {
-            return (x < 0) ? 0 : (x > _map.Width - 1) ? _map.Width - 1 : x;
+            return (x < 0) ? 0 : (x > _workingMap.Width - 1) ? _workingMap.Width - 1 : x;
         }
+
 
         /// <summary>
         /// Sets Y coordinate between top and bottom edges of map to prevent any out-of-bounds errors
@@ -292,7 +311,7 @@ namespace clodd {
         /// <param name="y">Y coordinate</param>
         /// <returns>Clamped Y coordinate</returns>
         private int ClampY(int y) {
-            return (y < 0) ? 0 : (y > _map.Height - 1) ? _map.Height - 1 : y;
+            return (y < 0) ? 0 : (y > _workingMap.Height - 1) ? _workingMap.Height - 1 : y;
         }
     }
 }

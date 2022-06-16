@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using clodd.Entities;
 using clodd.Tiles;
+using clodd.Geometry;
 using SadConsole;
 
 namespace clodd {
@@ -14,12 +16,17 @@ namespace clodd {
         private int _height;
 
         public TileBase[] Tiles { get { return _tiles; } set { _tiles = value; } }
+        public List<Rect> Rooms { get; set; }
         public int Width { get { return _width; } set { _width = value; } }
         public int Height { get { return _height; } set { _height = value; } }
 
         public GoRogue.MultiSpatialMap<Entity> Entities; // Keeps track of all the Entities on the map
         public static GoRogue.IDGenerator IDGenerator = new GoRogue.IDGenerator(); // A static IDGenerator that all Entities can access
 
+        public Rect Bounds { get {
+                return new Rect(0, 0, Width, Height);
+            }
+        }  
 
 
         /// <summary>
@@ -31,6 +38,7 @@ namespace clodd {
             _width = width;
             _height = height;
             Tiles = new TileBase[width * height];
+            Rooms = new List<Rect>();
             Entities = new GoRogue.MultiSpatialMap<Entity>();
         }
         
@@ -59,10 +67,12 @@ namespace clodd {
         /// <typeparam name="T"></typeparam>
         /// <param name="location"></param>
         /// <returns></returns>
-        public T GetEntityAt<T>(Point location) where T : Entity {
-            return Entities.GetItems(location).OfType<T>().FirstOrDefault();
+        public T GetEntityAt<T>(Vector location) where T : Entity {
+            return Entities.GetItems(new Point(location.X, location.Y)).OfType<T>().FirstOrDefault();
         }
-
+        public T GetEntityAt<T>(Point location) where T : Entity {
+            return GetEntityAt<T>(new Vector(location.X, location.Y));
+        }
 
         /// <summary>
         /// Checking whether a certain type of tile is at a specified location.
@@ -85,12 +95,23 @@ namespace clodd {
             else return null;
         }
 
-
         // Checks if a specific type of tile at a specified location
         // is on the map. If it exists, returns that Tile
         // This form of the method accepts a Point coordinate.
         public T GetTileAt<T>(Point location) where T : TileBase {
             return GetTileAt<T>(location.X, location.Y);
+        }
+
+        // Checks if a specific type of tile at a specified location
+        // is on the map. If it exists, returns that Tile
+        // This form of the method accepts a Point coordinate.
+        public T GetTileAt<T>(Vector location) where T : TileBase {
+            return GetTileAt<T>(location.X, location.Y);
+        }
+
+
+        public void SetTileAt(Vector location, TileBase tile) {
+            Tiles[location.ToIndex(Width)] = tile;
         }
 
 

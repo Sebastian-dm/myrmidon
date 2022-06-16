@@ -8,8 +8,8 @@ using clodd.Tiles;
 namespace clodd.Entities {
     public abstract class Actor : Entity {
 
-        private int _health; //current health
-        private int _maxHealth; //maximum possible health
+        //private int _health; //current health
+        //private int _maxHealth; //maximum possible health
 
         public int Health { get; set; } // current health
         public int MaxHealth { get; set; } // maximum health
