@@ -17,19 +17,24 @@ namespace clodd.Geometry {
             Y = y;
         }
 
+        public override string ToString() {
+            return $"Point [{X}, {Y}]";
+        }
 
 
         public int ToIndex(int rowWidth) {
             return Y * rowWidth + X;
         }
 
+        public static Vector operator +(Vector vectorA, Vector vectorB) {
+            return new Vector(vectorA.X + vectorB.X, vectorA.Y + vectorB.Y);
+        }
+
         public static Vector operator *(Vector vector, int scale) {
             return new Vector(vector.X * scale, vector.Y * scale);
         }
 
-        public static Vector operator +(Vector vectorA, Vector vectorB) {
-            return new Vector(vectorA.X + vectorA.X, vectorB.Y + vectorB.Y);
-        }
+        
 
     }
 }

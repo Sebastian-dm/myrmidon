@@ -15,8 +15,8 @@ namespace clodd {
 
         // map creation and storage data
         private int _mapWidth = 101;
-        private int _mapHeight = 81;
-        private int _maxRooms = 20;
+        private int _mapHeight = 45;
+        private int _maxRooms = 30;
         private int _minRoomSize = 4;
         private int _maxRoomSize = 15;
         private TileBase[] _mapTiles;
@@ -32,8 +32,8 @@ namespace clodd {
         public World() {
             CreateMap();
             CreatePlayer();
-            CreateMonsters();
-            CreateLoot();
+            //CreateMonsters();
+            //CreateLoot();
         }
 
 
@@ -45,10 +45,10 @@ namespace clodd {
         private void CreateMap() {
             _mapTiles = new TileBase[_mapWidth * _mapHeight];
             CurrentMap = new Map(_mapWidth, _mapHeight);
-            //DungeonGenerator mapGen = new DungeonGenerator();
-            //CurrentMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms);
-            MapGenerator mapGen = new MapGenerator();
-            CurrentMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms, _minRoomSize, _maxRoomSize);
+            DungeonGenerator mapGen = new DungeonGenerator();
+            CurrentMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms);
+            //MapGenerator mapGen = new MapGenerator();
+            //CurrentMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms, _minRoomSize, _maxRoomSize);
         }
 
 

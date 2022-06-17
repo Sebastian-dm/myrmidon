@@ -82,8 +82,8 @@ namespace clodd {
         /// <param name="y"></param>
         /// <returns></returns>
         // in the map's Tiles
-        //and if it exists, return that Tile
-        //accepts an x/y coordinate
+        // and if it exists, return that Tile
+        // accepts an x/y coordinate
         public T GetTileAt<T>(int x, int y) where T : TileBase {
             int locationIndex = Helpers.GetIndexFromPoint(x, y, Width);
             // make sure the index is within the boundaries of the map!

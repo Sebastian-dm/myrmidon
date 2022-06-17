@@ -23,5 +23,6 @@ namespace clodd.Tiles {
             IsBlockingLineOfSigth = blockingLOS;
             Name = name;
         }
+
     }
 }

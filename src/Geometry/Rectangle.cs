@@ -51,7 +51,7 @@ namespace clodd.Geometry {
         }
 
         public override string ToString() {
-            return $"Rectangle {{X={X}, Y={Y}, Width={Width}, Height={Height}}}";
+            return $"Rect {{X={X}, Y={Y}, Width={Width}, Height={Height}}}";
         }
 
 
@@ -60,7 +60,7 @@ namespace clodd.Geometry {
                 Height + (distance * 2));
         }
 
-        public bool Contains(Microsoft.Xna.Framework.Point point) {
+        public bool DoesContain(Vector point) {
             if (X <= point.X && point.X <= X + Width &&
                 Y <= point.Y && point.Y <= Y + Height) {
                 return true;
