@@ -2,5 +2,5 @@
 A basic roguelike game developed with C# and SadConsole.
 
 <p align="center">
-  <img src="https://github.com/Sebastian-dm/pilferer/blob/master/assets/screenshot.png?raw=true">
+  <img src="https://raw.githubusercontent.com/Sebastian-dm/clodd/main/res/screenshots/map20220617.png">
 </p>
