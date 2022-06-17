@@ -60,15 +60,16 @@ namespace clodd {
         int[] _regions;
 
         /// The index of the current region being carved.
-        int _currentRegion = -1;
+        int _currentRegion = 0;
 
         public Map GenerateMap(int mapWidth, int mapHeight, int maxRooms) {
 
             MaxRooms = maxRooms;
 
             _map = new Map(mapWidth, mapHeight);
-            _regions = new int[mapWidth * mapHeight];
-            
+            _regions = Enumerable.Repeat(-1, mapWidth * mapHeight).ToArray();
+
+
 
             // Check if map is odd-sized
             if (_map.Width % 2 == 0 || _map.Height % 2 == 0) {
@@ -96,6 +97,53 @@ namespace clodd {
                 _map.Tiles[i] = fillTile;
             }
         }
+
+
+        /// <summary>
+        /// Places rooms ignoring the existing maze corridors.
+        /// </summary>
+        private void AddRooms() {
+            for (int i = 0; i < MaxRooms; i++) {
+                // Pick a random room size. The funny math here does two things:
+                // - It makes sure rooms are odd-sized to line up with maze.
+                // - It avoids creating rooms that are too rectangular: too tall and
+                //   narrow or too wide and flat.
+                // TODO: This isn't very flexible or tunable. Do something better here.
+                int size = rng.Range(1, 3 + roomExtraSize) * 2 + 1;
+                int rectangularity = rng.Range(0, 1 + size / 2) * 2;
+                int width = size;
+                int height = size;
+                if (rng.OneIn(2)) {
+                    width += rectangularity;
+                }
+                else {
+                    height += rectangularity;
+                }
+
+                int x = rng.Range((_map.Width - width) / 2) * 2 + 1;
+                int y = rng.Range((_map.Height - height) / 2) * 2 + 1;
+
+                Rect Room = new Rect(x, y, width, height);
+
+                bool overlaps = false;
+                foreach (var other in _map.Rooms) {
+                    if (Room.DistanceTo(other) <= 0) {
+                        overlaps = true;
+                        break;
+                    }
+                }
+
+                if (overlaps) continue;
+
+                _map.Rooms.Add(Room);
+
+                StartRegion();
+                foreach (Vector pos in new Rect(x, y, width, height)) {
+                    Carve(pos);
+                }
+            }
+        }
+
 
         private void FillSpacesWithMazes() {
             // Fill in all of the empty space with mazes.
@@ -157,49 +205,6 @@ namespace clodd {
 
 
 
-        /// Places rooms ignoring the existing maze corridors.
-        private void AddRooms() {
-            for (int i = 0; i < MaxRooms; i++) {
-                // Pick a random room size. The funny math here does two things:
-                // - It makes sure rooms are odd-sized to line up with maze.
-                // - It avoids creating rooms that are too rectangular: too tall and
-                //   narrow or too wide and flat.
-                // TODO: This isn't very flexible or tunable. Do something better here.
-                int size = rng.Range(1, 3 + roomExtraSize) * 2 + 1;
-                int rectangularity = rng.Range(0, 1 + size / 2) * 2;
-                int width = size;
-                int height = size;
-                if (rng.OneIn(2)) {
-                    width += rectangularity;
-                }
-                else {
-                    height += rectangularity;
-                }
-
-                int x = rng.Range((_map.Width - width) / 2) * 2 + 1;
-                int y = rng.Range((_map.Height - height) / 2) * 2 + 1;
-
-                Rect Room = new Rect(x, y, width, height);
-
-                bool overlaps = false;
-                foreach (var other in _map.Rooms) {
-                    if (Room.DistanceTo(other) <= 0) {
-                        overlaps = true;
-                        break;
-                    }
-                }
-
-                if (overlaps) continue;
-
-                _map.Rooms.Add(Room);
-
-                StartRegion();
-                foreach (Vector pos in new Rect(x, y, width, height)) {
-                    Carve(pos);
-                }
-            }
-        }
-
         private void ConnectRegions() {
             
             // Find all connectors (tiles that can connect two or more regions).
@@ -210,22 +215,22 @@ namespace clodd {
                 if (_map.GetTileAt<TileWall>(location) == null) continue;
 
                 // Can't already be part of a region.
-                HashSet<int> regions = new HashSet<int>();
+                HashSet<int> AdjacentRegions = new HashSet<int>();
                 foreach (Vector dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
                     Vector AdjacentTile = location + dir;
-                    int region = _regions[AdjacentTile.ToIndex(_map.Width)];
-                    if (region != null) regions.Add(region);
+                    int RegionInDirection = _regions[AdjacentTile.ToIndex(_map.Width)];
+                    if (RegionInDirection != -1) AdjacentRegions.Add(RegionInDirection);
                 }
 
-                if (regions.Count < 2) continue;
-                connectorRegions[location] = regions;
+                if (AdjacentRegions.Count < 2) continue;
+                connectorRegions[location] = AdjacentRegions;
             }
             List<Vector> connectors = connectorRegions.Keys.ToList();
 
 
             // Keep track of which regions have been merged. This maps an original
             // region index to the one it has been merged to.
-            var merged = { };
+            var merged = new Dictionary <int, int>();
             var openRegions = new HashSet<int>();
             for (var i = 0; i <= _currentRegion; i++) {
                 merged[i] = i;
@@ -242,40 +247,38 @@ namespace clodd {
                 // Merge the connected regions. We'll pick one region (arbitrarily) and
                 // map all of the other regions to its index.
                 var regions = connectorRegions[connector]
-                    .map((region) => merged[region]);
-                var dest = regions.first;
-                var sources = regions.skip(1).toList();
+                    .Select((region) => merged[region]);
+                var dest = regions.First();
+                var sources = regions.Skip(1).ToList();
 
                 // Merge all of the affected regions. We have to look at *all* of the
                 // regions because other regions may have previously been merged with
                 // some of the ones we're merging now.
                 for (var i = 0; i <= _currentRegion; i++) {
-                    if (sources.contains(merged[i])) {
+                    if (sources.Contains(merged[i])) {
                         merged[i] = dest;
                     }
                 }
 
                 // The sources are no longer in use.
-                openRegions.removeAll(sources);
+                openRegions.RemoveWhere(r => sources.Contains(r));
 
                 // Remove any connectors that aren't needed anymore.
-                connectors.removeWhere(
-                    (pos) {
+                connectors.RemoveAll( pos => {
                     // Don't allow connectors right next to each other.
                     if (connector - pos < 2) return true;
 
                     // If the connector no long spans different regions, we don't need it.
-                    var regions = connectorRegions[pos].map((region) => merged[region]).toSet();
+                    var regions = connectorRegions[pos].Select((region) => merged[region]).ToHashSet();
 
-                    if (regions.length > 1) return false;
+                    if (regions.Count > 1) return false;
 
                     // This connecter isn't needed, but connect it occasionally so that the
                     // dungeon isn't singly-connected.
-                    if (rng.OneIn(extraConnectorChance)) _addJunction(pos);
+                    if (rng.OneIn(extraConnectorChance)) AddJunction(pos);
 
                     return true;
-                }
-                );
+                });
             }
         }
 

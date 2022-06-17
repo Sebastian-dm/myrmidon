@@ -30,6 +30,10 @@ namespace clodd {
         /// <param name="list">List to pick from.</param>
         /// <returns>Random element from list.</returns>
         public T Item<T>(List<T> list) {
+            // Check there are any values
+            if (list.Count < 1 ) {
+                throw new ArgumentException("List must have at least one element.");
+            }
             int index = Next(0, list.Count);
             return list[index];
         }
