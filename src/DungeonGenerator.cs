@@ -49,10 +49,10 @@ namespace clodd {
         /// The inverse chance of adding a connector between two regions that have
         /// already been joined. Increasing this leads to more loosely connected
         /// dungeons.
-        int extraConnectorChance = 20;
+        int extraConnectorChance = 30;
 
         /// Increasing this allows rooms to be larger.
-        int roomExtraSize = 0;
+        int roomExtraSize = 5;
 
         int windingPercent = 0;
 
@@ -60,7 +60,7 @@ namespace clodd {
         int[] _regions;
 
         /// The index of the current region being carved.
-        int _currentRegion = 0;
+        int _currentRegion = -1;
 
         public Map GenerateMap(int mapWidth, int mapHeight, int maxRooms) {
 
@@ -81,7 +81,7 @@ namespace clodd {
             AddRooms();
             FillSpacesWithMazes();
             ConnectRegions();
-            //RemoveDeadEnds();
+            RemoveDeadEnds();
             //_map.Rooms.ForEach(onDecorateRoom);
 
             return _map;
@@ -208,7 +208,7 @@ namespace clodd {
         private void ConnectRegions() {
             
             // Find all connectors (tiles that can connect two or more regions).
-            Dictionary<Vector, HashSet<int>> connectorRegions = new Dictionary<Vector, HashSet<int>>();
+            Dictionary<Vector, HashSet<int>> ConnectorRegions = new Dictionary<Vector, HashSet<int>>();
             foreach (Vector location in _map.Bounds.Inflate(-1)) {
 
                 // Must be a wall tile to be a connector
@@ -223,66 +223,65 @@ namespace clodd {
                 }
 
                 if (AdjacentRegions.Count < 2) continue;
-                connectorRegions[location] = AdjacentRegions;
+                ConnectorRegions[location] = AdjacentRegions;
             }
-            List<Vector> connectors = connectorRegions.Keys.ToList();
+            List<Vector> PossibleConnectors = ConnectorRegions.Keys.ToList();
 
 
             // Keep track of which regions have been merged. This maps an original
             // region index to the one it has been merged to.
-            var merged = new Dictionary <int, int>();
-            var openRegions = new HashSet<int>();
+            var Merged = new Dictionary <int, int>();
+            var OpenRegions = new HashSet<int>();
             for (var i = 0; i <= _currentRegion; i++) {
-                merged[i] = i;
-                openRegions.Add(i);
+                Merged[i] = i;
+                OpenRegions.Add(i);
             }
 
             // Keep connecting regions until we're down to one.
-            while (openRegions.Count > 1) {
-                var connector = rng.Item(connectors);
+            while (OpenRegions.Count > 1) {
+                // Pick a connector
+                Vector PickedConnector = rng.Item(PossibleConnectors);
 
                 // Carve the connection.
-                AddJunction(connector);
+                LinkRegions(PickedConnector);
 
                 // Merge the connected regions. We'll pick one region (arbitrarily) and
                 // map all of the other regions to its index.
-                var regions = connectorRegions[connector]
-                    .Select((region) => merged[region]);
-                var dest = regions.First();
-                var sources = regions.Skip(1).ToList();
+                var RegionsToMerge = ConnectorRegions[PickedConnector].Select(r => Merged[r]);
+                int DestinationRegion = RegionsToMerge.First();
+                List<int> SourceRegions = RegionsToMerge.Skip(1).ToList();
 
                 // Merge all of the affected regions. We have to look at *all* of the
                 // regions because other regions may have previously been merged with
                 // some of the ones we're merging now.
                 for (var i = 0; i <= _currentRegion; i++) {
-                    if (sources.Contains(merged[i])) {
-                        merged[i] = dest;
+                    if (SourceRegions.Contains(Merged[i])) {
+                        Merged[i] = DestinationRegion;
                     }
                 }
 
-                // The sources are no longer in use.
-                openRegions.RemoveWhere(r => sources.Contains(r));
+                // Remove merged regions
+                OpenRegions.RemoveWhere(r => SourceRegions.Contains(r));
 
-                // Remove any connectors that aren't needed anymore.
-                connectors.RemoveAll( pos => {
-                    // Don't allow connectors right next to each other.
-                    if (connector - pos < 2) return true;
+                // Remove connectors from merged regions
+                PossibleConnectors.RemoveAll( c => {
+                    // Remove it right next to picked connector.
+                    double ConnectorDistance = (PickedConnector - c).Length;
+                    if (ConnectorDistance < 2) return true;
 
-                    // If the connector no long spans different regions, we don't need it.
-                    var regions = connectorRegions[pos].Select((region) => merged[region]).ToHashSet();
+                    // If the connector connects unmerged regions, keep it.
+                    List<int> Regions = ConnectorRegions[c].Select(r => Merged[r]).Distinct().ToList();
+                    if (Regions.Count > 1) return false;
 
-                    if (regions.Count > 1) return false;
-
-                    // This connecter isn't needed, but connect it occasionally so that the
-                    // dungeon isn't singly-connected.
-                    if (rng.OneIn(extraConnectorChance)) AddJunction(pos);
+                    // This connecter isn't needed, but connect it occasionally so that the dungeon isn't singly-connected.
+                    if (rng.OneIn(extraConnectorChance)) LinkRegions(c);
 
                     return true;
                 });
             }
         }
 
-        private void AddJunction(Vector pos) {
+        private void LinkRegions(Vector pos) {
             if (rng.OneIn(4)) {
                 _map.SetTileAt(pos, rng.OneIn(3) ? new TileDoor(locked: false, open: true) : new TileFloor());
             }

@@ -18,6 +18,12 @@ namespace clodd.Geometry {
             Y = y;
         }
 
+        public double Length { get {
+            var vec2 = new Vector2(X,Y);
+            return vec2.Length();
+            }
+        }
+
         public override string ToString() {
             return $"Point [{X}, {Y}]";
         }
@@ -28,8 +34,7 @@ namespace clodd.Geometry {
         }
 
         public static bool operator <(Vector vector, int number) {
-            var vec2 = new Vector2(vector.X, vector.Y);
-            return vec2.Length() < number;
+            return vector.Length < number;
         }
         public static bool operator >(Vector vector, int number) {
             return !(vector<number);

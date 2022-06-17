@@ -1,4 +1,9 @@
-Nethack glyphs
+######TO DO ######
+Square Glyphs
+New refined Mapgen of dungeons
+
+
+###### DONE ######
+Set up unit testing
 Component Entity System
 AI
-Mapgen
