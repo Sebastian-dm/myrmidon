@@ -32,13 +32,13 @@ using clodd.Geometry;
 /// The end result of this is a multiply-connected dungeon with rooms and lots
 /// of winding corridors.
 
-namespace clodd {
+namespace clodd.Map {
 
 
     public class DungeonGenerator {
 
         Random rng = new Random();
-        Map _map;
+        Stage _stage;
 
 
         private List<Vector> CardinalDirections = new List<Vector>() {
@@ -62,17 +62,17 @@ namespace clodd {
         /// The index of the current region being carved.
         int _currentRegion = -1;
 
-        public Map GenerateMap(int mapWidth, int mapHeight, int maxRooms) {
+        public Stage GenerateMap(int mapWidth, int mapHeight, int maxRooms) {
 
             MaxRooms = maxRooms;
 
-            _map = new Map(mapWidth, mapHeight);
+            _stage = new Stage(mapWidth, mapHeight);
             _regions = Enumerable.Repeat(-1, mapWidth * mapHeight).ToArray();
 
 
 
             // Check if map is odd-sized
-            if (_map.Width % 2 == 0 || _map.Height % 2 == 0) {
+            if (_stage.Width % 2 == 0 || _stage.Height % 2 == 0) {
                 throw new ArgumentException("The map must be odd-sized.");
             }
 
@@ -84,7 +84,7 @@ namespace clodd {
             RemoveDeadEnds();
             //_map.Rooms.ForEach(onDecorateRoom);
 
-            return _map;
+            return _stage;
         }
 
 
@@ -93,8 +93,8 @@ namespace clodd {
 
 
         private void FillAll(TileBase fillTile) {
-            for (int i = 0; i < _map.Tiles.Length; i++) {
-                _map.Tiles[i] = fillTile;
+            for (int i = 0; i < _stage.Tiles.Length; i++) {
+                _stage.Tiles[i] = fillTile;
             }
         }
 
@@ -120,13 +120,13 @@ namespace clodd {
                     height += rectangularity;
                 }
 
-                int x = rng.Range((_map.Width - width) / 2) * 2 + 1;
-                int y = rng.Range((_map.Height - height) / 2) * 2 + 1;
+                int x = rng.Range((_stage.Width - width) / 2) * 2 + 1;
+                int y = rng.Range((_stage.Height - height) / 2) * 2 + 1;
 
                 Rect Room = new Rect(x, y, width, height);
 
                 bool overlaps = false;
-                foreach (var other in _map.Rooms) {
+                foreach (var other in _stage.Rooms) {
                     if (Room.DistanceTo(other) <= 0) {
                         overlaps = true;
                         break;
@@ -135,7 +135,7 @@ namespace clodd {
 
                 if (overlaps) continue;
 
-                _map.Rooms.Add(Room);
+                _stage.Rooms.Add(Room);
 
                 StartRegion();
                 foreach (Vector pos in new Rect(x, y, width, height)) {
@@ -147,10 +147,10 @@ namespace clodd {
 
         private void FillSpacesWithMazes() {
             // Fill in all of the empty space with mazes.
-            for (int y = 1; y < _map.Height; y += 2) {
-                for (int x = 1; x < _map.Width; x += 2) {
+            for (int y = 1; y < _stage.Height; y += 2) {
+                for (int x = 1; x < _stage.Width; x += 2) {
                     Vector location = new Vector(x, y);
-                    if (_map.GetTileAt<TileWall>(location) != null) {
+                    if (_stage.GetTileAt<TileWall>(location) != null) {
                         GrowMaze(location);
                     }
                 }
@@ -195,7 +195,7 @@ namespace clodd {
                 }
                 else {
                     // No adjacent uncarved cells.
-                    cells.RemoveAt(cells.Count-1);
+                    cells.RemoveAt(cells.Count - 1);
 
                     // This path has ended.
                     lastDir = new Vector(-1, -1); ;
@@ -206,19 +206,19 @@ namespace clodd {
 
 
         private void ConnectRegions() {
-            
+
             // Find all connectors (tiles that can connect two or more regions).
             Dictionary<Vector, HashSet<int>> ConnectorRegions = new Dictionary<Vector, HashSet<int>>();
-            foreach (Vector location in _map.Bounds.Inflate(-1)) {
+            foreach (Vector location in _stage.Bounds.Inflate(-1)) {
 
                 // Must be a wall tile to be a connector
-                if (_map.GetTileAt<TileWall>(location) == null) continue;
+                if (_stage.GetTileAt<TileWall>(location) == null) continue;
 
                 // Can't already be part of a region.
                 HashSet<int> AdjacentRegions = new HashSet<int>();
                 foreach (Vector dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
                     Vector AdjacentTile = location + dir;
-                    int RegionInDirection = _regions[AdjacentTile.ToIndex(_map.Width)];
+                    int RegionInDirection = _regions[AdjacentTile.ToIndex(_stage.Width)];
                     if (RegionInDirection != -1) AdjacentRegions.Add(RegionInDirection);
                 }
 
@@ -230,7 +230,7 @@ namespace clodd {
 
             // Keep track of which regions have been merged. This maps an original
             // region index to the one it has been merged to.
-            var Merged = new Dictionary <int, int>();
+            var Merged = new Dictionary<int, int>();
             var OpenRegions = new HashSet<int>();
             for (var i = 0; i <= _currentRegion; i++) {
                 Merged[i] = i;
@@ -264,7 +264,7 @@ namespace clodd {
                 OpenRegions.RemoveWhere(r => SourceRegions.Contains(r));
 
                 // Remove connectors from merged regions
-                PossibleConnectors.RemoveAll( c => {
+                PossibleConnectors.RemoveAll(c => {
                     // Remove it right next to picked connector.
                     double ConnectorDistance = (PickedConnector - c).Length;
                     if (ConnectorDistance < 2) return true;
@@ -283,10 +283,10 @@ namespace clodd {
 
         private void LinkRegions(Vector pos) {
             if (rng.OneIn(4)) {
-                _map.SetTileAt(pos, rng.OneIn(3) ? new TileDoor(locked: false, open: true) : new TileFloor());
+                _stage.SetTileAt(pos, rng.OneIn(3) ? new TileDoor(locked: false, open: true) : new TileFloor());
             }
             else {
-                _map.SetTileAt(pos, new TileDoor(locked: false, open: false));
+                _stage.SetTileAt(pos, new TileDoor(locked: false, open: false));
             }
         }
 
@@ -296,19 +296,19 @@ namespace clodd {
             while (!done) {
                 done = true;
 
-                foreach (var pos in _map.Bounds.Inflate(-1)) {
-                    if (_map.GetTileAt<TileWall>(pos) != null) continue;
+                foreach (var pos in _stage.Bounds.Inflate(-1)) {
+                    if (_stage.GetTileAt<TileWall>(pos) != null) continue;
 
                     // If it only has one exit, it's a dead end.
                     var exits = 0;
                     foreach (var dir in CardinalDirections) {
-                        if (_map.GetTileAt<TileWall>(pos + dir) == null) exits++;
+                        if (_stage.GetTileAt<TileWall>(pos + dir) == null) exits++;
                     }
 
                     if (exits != 1) continue;
 
                     done = false;
-                    _map.SetTileAt(pos, new TileWall());
+                    _stage.SetTileAt(pos, new TileWall());
                 }
             }
         }
@@ -320,12 +320,12 @@ namespace clodd {
         private bool CanCarve(Vector pos, Vector direction) {
             // Must end in bounds.
             Vector NextCell = pos + direction * 3;
-            bool InsideMapBoundary = _map.Bounds.DoesContain(NextCell);
+            bool InsideMapBoundary = _stage.Bounds.DoesContain(NextCell);
             if (!InsideMapBoundary) return false;
 
             // Destination must not be open.
             Vector destination = pos + direction * 2;
-            return _map.GetTileAt<TileWall>(destination) != null;
+            return _stage.GetTileAt<TileWall>(destination) != null;
         }
 
         private void StartRegion() {
@@ -333,8 +333,8 @@ namespace clodd {
         }
 
         private void Carve(Vector location) {
-            _map.SetTileAt(location, new TileFloor());
-            _regions[location.ToIndex(_map.Width)] = _currentRegion;
+            _stage.SetTileAt(location, new TileFloor());
+            _regions[location.ToIndex(_stage.Width)] = _currentRegion;
         }
     }
 }

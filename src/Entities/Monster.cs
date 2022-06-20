@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using clodd;
+
 
 namespace clodd.Entities {
     //A generic monster capable of

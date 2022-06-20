@@ -4,18 +4,23 @@ using Microsoft.Xna.Framework;
 using SadConsole;
 using SadConsole.Controls;
 
+using clodd.Map;
+using clodd.Actions;
+using clodd.Geometry;
+
 namespace clodd.UI {
 
     // Creates/Holds/Destroys all consoles used in the game
     // and makes consoles easily addressable from a central place.
     public class UIManager : ContainerConsole {
-        
+
         public ScrollingConsole MapConsole;
         public Window MapWindow;
         public MessageLogWindow MessageLog;
         public SadConsole.Themes.Colors CustomColors;
 
         public UIManager() {
+
             // must be set to true or will not call each child's Draw method
             IsVisible = true;
             IsFocused = true;
@@ -45,7 +50,7 @@ namespace clodd.UI {
             MessageLog.Add("Started game from path: "+System.IO.Directory.GetCurrentDirectory());
 
             // Load the map into the MapConsole
-            LoadMap(GameLoop.World.CurrentMap);
+            LoadMap(GameLoop.World.CurrentStage);
 
             // Now that the MapConsole is ready, build the Window
             CreateMapWindow(GameLoop.GameWidth, GameLoop.GameHeight *3/4, "Game Map");
@@ -89,9 +94,17 @@ namespace clodd.UI {
         /// Loads a Map into the MapConsole
         /// </summary>
         /// <param name="map"></param>
-        private void LoadMap(Map map) {
+        private void LoadMap(Stage map) {
             // First load the map's tiles into the console
-            MapConsole = new SadConsole.ScrollingConsole(GameLoop.World.CurrentMap.Width, GameLoop.World.CurrentMap.Height, Global.FontDefault, new Rectangle(0, 0, GameLoop.GameWidth, GameLoop.GameHeight), map.Tiles);
+            MapConsole = new SadConsole.ScrollingConsole(
+                GameLoop.World.CurrentStage.Width,
+                GameLoop.World.CurrentStage.Height,
+                Global.FontDefault,
+                new Rectangle(0,0,
+                    GameLoop.GameWidth,
+                    GameLoop.GameHeight
+                    ),
+                map.Tiles);
 
             // Now Sync all of the map's entities
             SyncMapEntities(map);
@@ -114,7 +127,6 @@ namespace clodd.UI {
         /// </summary>
         /// <param name="timeElapsed"></param>
         public override void Update(TimeSpan timeElapsed) {
-            CheckKeyboard();
             base.Update(timeElapsed);
         }
 
@@ -168,12 +180,12 @@ namespace clodd.UI {
         // Adds the entire list of entities found in the
         // World.CurrentMap's Entities SpatialMap to the
         // MapConsole, so they can be seen onscreen
-        private void SyncMapEntities(Map map) {
+        private void SyncMapEntities(Stage map) {
             // remove all Entities from the console first
             MapConsole.Children.Clear();
 
             // Now pull all of the entities into the MapConsole in bulk
-            foreach (Entity entity in map.Entities.Items) {
+            foreach (Actor entity in map.Entities.Items) {
                 MapConsole.Children.Add(entity);
             }
 
@@ -186,65 +198,16 @@ namespace clodd.UI {
 
 
         // Remove an Entity from the MapConsole every time the Map's Entity collection changes
-        public void OnMapEntityRemoved(object sender, GoRogue.ItemEventArgs<Entity> args) {
+        public void OnMapEntityRemoved(object sender, GoRogue.ItemEventArgs<Actor> args) {
             MapConsole.Children.Remove(args.Item);
         }
 
         // Add an Entity to the MapConsole every time the Map's Entity collection changes
-        public void OnMapEntityAdded(object sender, GoRogue.ItemEventArgs<Entity> args) {
+        public void OnMapEntityAdded(object sender, GoRogue.ItemEventArgs<Actor> args) {
             MapConsole.Children.Add(args.Item);
         }
 
 
-        /// <summary>
-        /// Checks input from the player's keyboard and mouse.
-        /// </summary>
-        private static void CheckKeyboard() {
-            // F5 key to make the game full screen
-            if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.F5)) {
-                SadConsole.Settings.ToggleFullScreen();
-            }
-
-            // Keyboard movement for Player character: Up arrow
-            // Decrement player's Y coordinate by 1
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up)) {
-                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(0, -1));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
-            }
-
-            // Keyboard movement for Player character: Down arrow
-            // Increment player's Y coordinate by 1
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down)) {
-                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(0, 1));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
-            }
-
-            // Keyboard movement for Player character: Left arrow
-            // Decrement player's X coordinate by 1
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left)) {
-                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(-1, 0));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
-            }
-
-            // Keyboard movement for Player character: Right arrow
-            // Increment player's X coordinate by 1
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right)) {
-                GameLoop.CommandManager.MoveActorBy(GameLoop.World.Player, new Point(1, 0));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
-            }
-
-
-            // Undo last command: Z
-            if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.Z)) {
-                GameLoop.CommandManager.UndoMoveActorBy();
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
-            }
-
-            // Repeat last command: X
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.X)) {
-                GameLoop.CommandManager.RedoMoveActorBy();
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
-            }
-        }
+        
     }
 }

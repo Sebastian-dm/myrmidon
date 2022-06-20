@@ -5,13 +5,13 @@ using Microsoft.Xna.Framework;
 using clodd.Tiles;
 using clodd.Geometry;
 
-namespace clodd {
+namespace clodd.Map {
     // based on tunnelling room generation algorithm from RogueSharp tutorial
     // https://roguesharp.wordpress.com/2016/03/26/roguesharp-v3-tutorial-simple-room-generation/
     public class MapGenerator {
 
         Random RandNumGenerator = new Random();
-        Map _workingMap;
+        Stage _workingStage;
 
 
 
@@ -31,13 +31,13 @@ namespace clodd {
         /// <param name="minRoomSize"></param>
         /// <param name="maxRoomSize"></param>
         /// <returns></returns>
-        public Map GenerateMap(int mapWidth, int mapHeight, int maxRooms, int minRoomSize, int maxRoomSize) {
+        public Stage GenerateMap(int mapWidth, int mapHeight, int maxRooms, int minRoomSize, int maxRoomSize) {
 
-            _workingMap = new Map(mapWidth, mapHeight);
+            _workingStage = new Stage(mapWidth, mapHeight);
 
             // Fill map with empty
-            for (int i = 0; i < _workingMap.Tiles.Length; i++) {
-                _workingMap.Tiles[i] = new TileEmpty();
+            for (int i = 0; i < _workingStage.Tiles.Length; i++) {
+                _workingStage.Tiles[i] = new TileEmpty();
             }
 
             // create up to maxRooms non-overlapping rooms
@@ -54,19 +54,19 @@ namespace clodd {
                 Rect newRoom = new Rect(newRoomX, newRoomY, newRoomWidth, newRoomHeight);
 
                 // Does the new room intersect with other rooms already generated?
-                bool newRoomIntersects = _workingMap.Rooms.Any(room => newRoom.Intersects(room));
+                bool newRoomIntersects = _workingStage.Rooms.Any(room => newRoom.Intersects(room));
 
                 if (!newRoomIntersects) {
-                    _workingMap.Rooms.Add(newRoom);
+                    _workingStage.Rooms.Add(newRoom);
                 }
             }
-            
+
 
             // carve out tunnels between all rooms based on the Positions of their centers
-            for (int r = 1; r < _workingMap.Rooms.Count; r++) {
+            for (int r = 1; r < _workingStage.Rooms.Count; r++) {
                 //for all remaining rooms get the center of the room and the previous room
-                Point previousRoomCenter = _workingMap.Rooms[r - 1].Center;
-                Point currentRoomCenter = _workingMap.Rooms[r].Center;
+                Point previousRoomCenter = _workingStage.Rooms[r - 1].Center;
+                Point currentRoomCenter = _workingStage.Rooms[r].Center;
 
                 // give a 50/50 chance of which 'L' shaped connecting hallway to tunnel out
                 if (RandNumGenerator.Next(1, 2) == 1) {
@@ -80,12 +80,12 @@ namespace clodd {
             }
 
             // Carve out rooms for every room in the Rooms list
-            foreach (Rect room in _workingMap.Rooms) {
+            foreach (Rect room in _workingStage.Rooms) {
                 CreateRoom(room);
             }
 
             // spit out the final map
-            return _workingMap;
+            return _workingStage;
         }
 
 
@@ -139,7 +139,7 @@ namespace clodd {
             }
 
             foreach (Point location in RoomPerimeter) {
-                if (_workingMap.GetTileAt<TileBase>(location) is not TileTunnel) {
+                if (_workingStage.GetTileAt<TileBase>(location) is not TileTunnel) {
                     CreateWall(location);
                 }
             }
@@ -155,7 +155,7 @@ namespace clodd {
         /// </summary>
         /// <param name="location"></param>
         private void CreateFloor(Point location) {
-            _workingMap.Tiles[location.ToIndex(_workingMap.Width)] = new TileFloor();
+            _workingStage.Tiles[location.ToIndex(_workingStage.Width)] = new TileFloor();
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace clodd {
         /// </summary>
         /// <param name="location"></param>
         private void CreateTunnel(Point location) {
-            _workingMap.Tiles[location.ToIndex(_workingMap.Width)] = new TileTunnel();
+            _workingStage.Tiles[location.ToIndex(_workingStage.Width)] = new TileTunnel();
         }
 
 
@@ -172,7 +172,7 @@ namespace clodd {
         /// </summary>
         /// <param name="location"></param>
         private void CreateWall(Point location) {
-            _workingMap.Tiles[location.ToIndex(_workingMap.Width)] = new TileWall();
+            _workingStage.Tiles[location.ToIndex(_workingStage.Width)] = new TileWall();
         }
 
 
@@ -181,7 +181,7 @@ namespace clodd {
         /// </summary>
         /// <param name="location"></param>
         private void CreateDoor(Point location) {
-            _workingMap.Tiles[location.ToIndex(_workingMap.Width)] = new TileDoor(false, false);
+            _workingStage.Tiles[location.ToIndex(_workingStage.Width)] = new TileDoor(false, false);
         }
 
 
@@ -256,10 +256,10 @@ namespace clodd {
         /// <param name="location"></param>
         /// <returns>True if location is good for a door.</returns>
         private bool IsPotentialDoor(Point location) {
-            
+
             // Is tile walkable?
-            int locationIndex = location.ToIndex(_workingMap.Width);
-            if (_workingMap.Tiles[locationIndex] != null && _workingMap.Tiles[locationIndex] is TileWall) {
+            int locationIndex = location.ToIndex(_workingStage.Width);
+            if (_workingStage.Tiles[locationIndex] != null && _workingStage.Tiles[locationIndex] is TileWall) {
                 return false;
             }
 
@@ -268,27 +268,27 @@ namespace clodd {
             Point left = new Point(location.X - 1, location.Y);
             Point top = new Point(location.X, location.Y - 1);
             Point bottom = new Point(location.X, location.Y + 1);
-            if (_workingMap.GetTileAt<TileDoor>(location.X, location.Y) != null ||
-                _workingMap.GetTileAt<TileDoor>(right.X, right.Y) != null ||
-                _workingMap.GetTileAt<TileDoor>(left.X, left.Y) != null ||
-                _workingMap.GetTileAt<TileDoor>(top.X, top.Y) != null ||
-                _workingMap.GetTileAt<TileDoor>(bottom.X, bottom.Y) != null
+            if (_workingStage.GetTileAt<TileDoor>(location.X, location.Y) != null ||
+                _workingStage.GetTileAt<TileDoor>(right.X, right.Y) != null ||
+                _workingStage.GetTileAt<TileDoor>(left.X, left.Y) != null ||
+                _workingStage.GetTileAt<TileDoor>(top.X, top.Y) != null ||
+                _workingStage.GetTileAt<TileDoor>(bottom.X, bottom.Y) != null
                ) {
                 return false;
             }
 
             // Is tile placed in a horizonral wall?
-            if (!_workingMap.Tiles[right.ToIndex(_workingMap.Width)].IsBlockingMove
-                && !_workingMap.Tiles[left.ToIndex(_workingMap.Width)].IsBlockingMove
-                && _workingMap.Tiles[top.ToIndex(_workingMap.Width)].IsBlockingMove
-                && _workingMap.Tiles[bottom.ToIndex(_workingMap.Width)].IsBlockingMove) {
+            if (!_workingStage.Tiles[right.ToIndex(_workingStage.Width)].IsBlockingMove
+                && !_workingStage.Tiles[left.ToIndex(_workingStage.Width)].IsBlockingMove
+                && _workingStage.Tiles[top.ToIndex(_workingStage.Width)].IsBlockingMove
+                && _workingStage.Tiles[bottom.ToIndex(_workingStage.Width)].IsBlockingMove) {
                 return true;
             }
             // Is tile placed in a vertical wall?
-            if (_workingMap.Tiles[right.ToIndex(_workingMap.Width)].IsBlockingMove
-                && _workingMap.Tiles[left.ToIndex(_workingMap.Width)].IsBlockingMove
-                && !_workingMap.Tiles[top.ToIndex(_workingMap.Width)].IsBlockingMove
-                && !_workingMap.Tiles[bottom.ToIndex(_workingMap.Width)].IsBlockingMove) {
+            if (_workingStage.Tiles[right.ToIndex(_workingStage.Width)].IsBlockingMove
+                && _workingStage.Tiles[left.ToIndex(_workingStage.Width)].IsBlockingMove
+                && !_workingStage.Tiles[top.ToIndex(_workingStage.Width)].IsBlockingMove
+                && !_workingStage.Tiles[bottom.ToIndex(_workingStage.Width)].IsBlockingMove) {
                 return true;
             }
             return false;
@@ -301,7 +301,7 @@ namespace clodd {
         /// <param name="x">X coordinate</param>
         /// <returns>Clamped X coordinate</returns>
         private int ClampX(int x) {
-            return (x < 0) ? 0 : (x > _workingMap.Width - 1) ? _workingMap.Width - 1 : x;
+            return x < 0 ? 0 : x > _workingStage.Width - 1 ? _workingStage.Width - 1 : x;
         }
 
 
@@ -311,7 +311,7 @@ namespace clodd {
         /// <param name="y">Y coordinate</param>
         /// <returns>Clamped Y coordinate</returns>
         private int ClampY(int y) {
-            return (y < 0) ? 0 : (y > _workingMap.Height - 1) ? _workingMap.Height - 1 : y;
+            return y < 0 ? 0 : y > _workingStage.Height - 1 ? _workingStage.Height - 1 : y;
         }
     }
 }

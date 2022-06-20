@@ -5,20 +5,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using clodd;
 using clodd.UI;
-using clodd.Commands;
+using clodd.Actions;
 
 namespace clodd {
-    class GameLoop {
+    public static class GameLoop {
 
         public const int GameWidth = 119;
         public const int GameHeight = 80;
 
         // Managers
         public static UIManager UIManager;
-        public static CommandManager CommandManager;
+        public static ActionManager ActionManager;
         public static World World;
 
-        static void Main(string[] args) {
+        public static void Main(string[] args) {
             // Setup the engine and create the main window.
             SadConsole.Game.Create("res/fonts/Square_12x12.font", GameWidth, GameHeight);
 
@@ -43,7 +43,7 @@ namespace clodd {
         private static void Init() {
             //Instantiate the managers
             UIManager = new UIManager();
-            CommandManager = new CommandManager();
+            ActionManager = new ActionManager();
 
             // Build the world!
             World = new World();
@@ -54,7 +54,7 @@ namespace clodd {
 
 
         private static void Update(GameTime time) {
-
+            ActionManager.Update();
         }
 
 

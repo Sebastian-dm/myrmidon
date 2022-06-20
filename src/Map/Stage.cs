@@ -7,10 +7,10 @@ using clodd.Tiles;
 using clodd.Geometry;
 using SadConsole;
 
-namespace clodd {
+namespace clodd.Map {
     // Stores, manipulates and queries Tile data
-    public class Map {
-        
+    public class Stage {
+
         TileBase[] _tiles; // contain all tile objects
         private int _width;
         private int _height;
@@ -20,13 +20,14 @@ namespace clodd {
         public int Width { get { return _width; } set { _width = value; } }
         public int Height { get { return _height; } set { _height = value; } }
 
-        public GoRogue.MultiSpatialMap<Entity> Entities; // Keeps track of all the Entities on the map
+        public GoRogue.MultiSpatialMap<Actor> Entities; // Keeps track of all the Entities on the map
         public static GoRogue.IDGenerator IDGenerator = new GoRogue.IDGenerator(); // A static IDGenerator that all Entities can access
 
-        public Rect Bounds { get {
+        public Rect Bounds {
+            get {
                 return new Rect(0, 0, Width, Height);
             }
-        }  
+        }
 
 
         /// <summary>
@@ -34,14 +35,14 @@ namespace clodd {
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public Map(int width, int height) {
+        public Stage(int width, int height) {
             _width = width;
             _height = height;
             Tiles = new TileBase[width * height];
             Rooms = new List<Rect>();
-            Entities = new GoRogue.MultiSpatialMap<Entity>();
+            Entities = new GoRogue.MultiSpatialMap<Actor>();
         }
-        
+
 
 
         /// <summary>
@@ -49,13 +50,16 @@ namespace clodd {
         /// </summary>
         /// <param name="location">Point coordinates of tile to check.</param>
         /// <returns>true if tile is walkable, false if not.</returns>
-        public bool IsTileWalkable(Point location) {
-            // first make sure that actor isn't trying to move
-            // off the limits of the map
+        public bool IsTileWalkable(Vector location) {
+            // first make sure that actor isn't trying to move off the limits of the map
             if (location.X < 0 || location.Y < 0 || location.X >= Width || location.Y >= Height)
                 return false;
             // then return whether the tile is walkable
             return !_tiles[location.Y * Width + location.X].IsBlockingMove;
+        }
+
+        public bool IsTileWalkable(Point location) {
+            return IsTileWalkable(new Vector(location.X, location.Y));
         }
 
 
@@ -67,10 +71,10 @@ namespace clodd {
         /// <typeparam name="T"></typeparam>
         /// <param name="location"></param>
         /// <returns></returns>
-        public T GetEntityAt<T>(Vector location) where T : Entity {
+        public T GetEntityAt<T>(Vector location) where T : Actor {
             return Entities.GetItems(new Point(location.X, location.Y)).OfType<T>().FirstOrDefault();
         }
-        public T GetEntityAt<T>(Point location) where T : Entity {
+        public T GetEntityAt<T>(Point location) where T : Actor {
             return GetEntityAt<T>(new Vector(location.X, location.Y));
         }
 
@@ -120,7 +124,7 @@ namespace clodd {
         /// Removes an Entity from the MultiSpatialMap
         /// </summary>
         /// <param name="entity"></param>
-        public void Remove(Entity entity) {
+        public void Remove(Actor entity) {
             // remove from SpatialMap
             if (!Entities.Remove(entity))
                 throw new Exception("Failed to remove entity from map");
@@ -135,7 +139,7 @@ namespace clodd {
         /// Adds an Entity to the MultiSpatialMap
         /// </summary>
         /// <param name="entity"></param>
-        public void Add(Entity entity) {
+        public void Add(Actor entity) {
             if (!Entities.Add(entity, entity.Position))
                 throw new Exception("Failed to add entity to map");
 
@@ -150,8 +154,8 @@ namespace clodd {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        private void OnEntityMoved(object sender, Entity.EntityMovedEventArgs args) {
-            if (!Entities.Move(args.Entity as Entity, args.Entity.Position))
+        private void OnEntityMoved(object sender, SadConsole.Entities.Entity.EntityMovedEventArgs args) {
+            if (!Entities.Move(args.Entity as Actor, args.Entity.Position))
                 throw new Exception("Failed to move entity on map.");
         }
     }

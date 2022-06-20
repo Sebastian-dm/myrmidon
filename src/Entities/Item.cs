@@ -6,7 +6,7 @@ namespace clodd.Entities {
     /// <summary>
     /// Things that can be picked up or used by actors.
     /// </summary>
-    public class Item : Entity {
+    public class Item : Actor {
 
 
         private int _condition; 
@@ -42,7 +42,7 @@ namespace clodd.Entities {
         /// and lets the garbage collector take it out of memory automatically.
         /// </summary>
         public void Destroy() {
-            GameLoop.World.CurrentMap.Remove(this);
+            GameLoop.World.CurrentStage.Remove(this);
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using SadConsole.Components;
 using Microsoft.Xna.Framework;
 using clodd.Entities;
 using clodd.Tiles;
+using clodd.Map;
 
 namespace clodd {
 
@@ -11,7 +13,7 @@ namespace clodd {
     /// </summary>
     public class World {
 
-        Random RandNumGenerator = new Random();
+        private Random RandNumGenerator = new Random();
 
         // map creation and storage data
         private int _mapWidth = 117;
@@ -21,8 +23,14 @@ namespace clodd {
         private int _maxRoomSize = 20;
         private TileBase[] _mapTiles;
 
-        public Map CurrentMap { get; set; }
+        public Stage CurrentStage { get; set; }
         public Player Player { get; set; }
+
+        public GoRogue.MultiSpatialMap<Actor> Entities {
+            get {
+                return CurrentStage.Entities;
+            }
+        }
 
 
 
@@ -44,9 +52,9 @@ namespace clodd {
         /// </summary>
         private void CreateMap() {
             _mapTiles = new TileBase[_mapWidth * _mapHeight];
-            CurrentMap = new Map(_mapWidth, _mapHeight);
+            CurrentStage = new Stage(_mapWidth, _mapHeight);
             DungeonGenerator mapGen = new DungeonGenerator();
-            CurrentMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms);
+            CurrentStage = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms);
             //MapGenerator mapGen = new MapGenerator();
             //CurrentMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms, _minRoomSize, _maxRoomSize);
         }
@@ -60,9 +68,9 @@ namespace clodd {
             Player = new Player(Color.Yellow, Color.Transparent);
 
             // Place the player on the first non-movement-blocking tile on the map
-            if (CurrentMap.Rooms.Count > 0) {
-                int RoomIndex = RandNumGenerator.Next(0, CurrentMap.Rooms.Count);
-                Player.Position = CurrentMap.Rooms[RoomIndex].Center;
+            if (CurrentStage.Rooms.Count > 0) {
+                int RoomIndex = RandNumGenerator.Next(0, CurrentStage.Rooms.Count);
+                Player.Position = CurrentStage.Rooms[RoomIndex].Center;
             }
             else {
                 Player.Position = new Point(10, 10);
@@ -70,7 +78,7 @@ namespace clodd {
             
 
             // add the player to the Map's collection of Entities
-            CurrentMap.Add(Player);
+            CurrentStage.Add(Player);
         }
 
 
@@ -90,8 +98,8 @@ namespace clodd {
                 Monster newMonster = new Monster(Color.Blue, Color.Transparent);
 
                 // pick a random spot on the map
-                while (CurrentMap.Tiles[monsterPosition].IsBlockingMove) {
-                    monsterPosition = RandNumGenerator.Next(0, CurrentMap.Width * CurrentMap.Height);
+                while (CurrentStage.Tiles[monsterPosition].IsBlockingMove) {
+                    monsterPosition = RandNumGenerator.Next(0, CurrentStage.Width * CurrentStage.Height);
                 }
 
                 // plug in some magic numbers for attack and defense values
@@ -102,8 +110,8 @@ namespace clodd {
                 newMonster.Name = "a common troll";
 
                 // Set the monster's new position
-                newMonster.Position = new Point(monsterPosition % CurrentMap.Width, monsterPosition / CurrentMap.Width);
-                CurrentMap.Add(newMonster);
+                newMonster.Position = new Point(monsterPosition % CurrentStage.Width, monsterPosition / CurrentStage.Width);
+                CurrentStage.Add(newMonster);
             }
         }
 
@@ -123,16 +131,16 @@ namespace clodd {
                 Item newLoot = new Item(Color.Green, Color.Transparent, "fancy shirt", 'L', 2);
 
                 // Try placing the Item at lootPosition; if this fails, try random positions on the map's tile array
-                while (CurrentMap.Tiles[lootPosition].IsBlockingMove) {
+                while (CurrentStage.Tiles[lootPosition].IsBlockingMove) {
                     // pick a random spot on the map
-                    lootPosition = RandNumGenerator.Next(0, CurrentMap.Width * CurrentMap.Height);
+                    lootPosition = RandNumGenerator.Next(0, CurrentStage.Width * CurrentStage.Height);
                 }
 
                 // set the loot's new position
-                newLoot.Position = new Point(lootPosition % CurrentMap.Width, lootPosition / CurrentMap.Width);
+                newLoot.Position = new Point(lootPosition % CurrentStage.Width, lootPosition / CurrentStage.Width);
 
                 // add the Item to the MultiSpatialMap
-                CurrentMap.Add(newLoot);
+                CurrentStage.Add(newLoot);
             }
 
         }

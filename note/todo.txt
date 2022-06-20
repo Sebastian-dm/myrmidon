@@ -6,4 +6,7 @@ New refined Mapgen of dungeons
 ###### DONE ######
 Set up unit testing
 Component Entity System
-AI
+Simple Monster AI
+Status UI (HP/stats etc.)
+Lighting (+fog of war)
+Staircases

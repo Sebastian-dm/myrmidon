@@ -1,8 +1,8 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-
+using clodd.Actions;
+using clodd.Geometry;
 using clodd.Tiles;
 
 namespace clodd.Entities {
@@ -25,56 +25,19 @@ namespace clodd.Entities {
             
         }
 
-        /// <summary>
-        /// Moves the Actor BY positionChange tiles in any X/Y direction
-        /// </summary>
-        /// <param name="positionChange"></param>
-        /// <returns>true if actor was able to move, false if failed to move</returns>
-        public bool MoveBy(Point positionChange) {
-            // Check the current map if we can move to this new position
-            if (GameLoop.World.CurrentMap.IsTileWalkable(Position + positionChange)) {
-                // if there's a monster here,
-                // do a bump attack
-                Monster monster = GameLoop.World.CurrentMap.GetEntityAt<Monster>(Position + positionChange);
-                Item item = GameLoop.World.CurrentMap.GetEntityAt<Item>(Position + positionChange);
-                if (monster != null) {
-                    GameLoop.CommandManager.Attack(this, monster);
-                    return true;
-                }
-                // if there's an item here,
-                // try to pick it up
-                else if (item != null) {
-                    GameLoop.CommandManager.Pickup(this, item);
-                    return true;
-                }
-
-                Position += positionChange;
-                return true;
-            }
-            // Handle situations where there are non-walkable tiles that CAN be used
-            else {
-                // Check for the presence of a door
-                TileDoor door = GameLoop.World.CurrentMap.GetTileAt<TileDoor>(Position + positionChange);
-                // if there's a door here,
-                // try to use it
-                if (door != null) {
-                    GameLoop.CommandManager.UseDoor(this, door);
-                    return true;
-                }
-                return false;
-            }
-        }
-
-
 
         /// <summary>
         /// Moves the Actor TO newPosition location
         /// </summary>
         /// <param name="newPosition"></param>
         /// <returns>returns true if actor was able to move, false if failed to move</returns>
-        public bool MoveTo(Point newPosition) {
-            Position = newPosition;
+        public bool MoveTo(Vector newPosition) {
+            Position = new Point(newPosition.X, newPosition.Y);
             return true;
+        }
+
+        public Action GetAction() {
+            return new SkipAction(this);
         }
 
     }
