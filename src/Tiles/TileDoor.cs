@@ -11,10 +11,10 @@ namespace clodd.Tiles {
 
         //Default constructor
         //A TileDoor can be set locked/unlocked/open/closed using the constructor.
-        public TileDoor(bool locked, bool open) : base(Color.Gray, Color.Transparent, '+') {
+        public TileDoor(bool locked, bool open) : base(Color.BurlyWood, Color.Transparent, 259) {
             //+ is the closed glyph
             //closed by default
-            Glyph = '+';
+            Glyph = 259;
             Name = "standard door";
 
             //Update door fields
@@ -31,7 +31,7 @@ namespace clodd.Tiles {
         //closes a door
         public void Close() {
             IsOpen = false;
-            Glyph = '+';
+            Glyph = 259;
             IsBlockingLineOfSigth = true;
             IsBlockingMove = true;
         }
@@ -41,7 +41,7 @@ namespace clodd.Tiles {
             IsOpen = true;
             IsBlockingLineOfSigth = false;
             IsBlockingMove = false;
-            Glyph = '-';
+            Glyph = 258;
         }
     }
 }

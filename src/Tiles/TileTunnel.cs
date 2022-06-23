@@ -10,7 +10,7 @@ namespace clodd.Tiles {
         // and have a dark gray foreground and a transparent background
         // represented by the . symbol
         public TileTunnel(bool blocksMovement = false, bool blocksLOS = false) :
-            base(foreground: Color.DarkGray, background: Color.Transparent, glyph: 177, blocksMovement, blocksLOS) {
+            base(foreground: Color.DarkGray, background: Color.Transparent, glyph: 0, blocksMovement, blocksLOS) {
             Name = "Floor";
         }
     }

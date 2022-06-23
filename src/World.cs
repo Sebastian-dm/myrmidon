@@ -16,8 +16,8 @@ namespace clodd {
         private Random RandNumGenerator = new Random();
 
         // map creation and storage data
-        private int _mapWidth = 117;
-        private int _mapHeight = 57;
+        private int _mapWidth = 87;
+        private int _mapHeight = 47;
         private int _maxRooms = 1000;
         private int _minRoomSize = 4;
         private int _maxRoomSize = 20;
@@ -65,7 +65,7 @@ namespace clodd {
         /// Create a player using the Player class and set its starting position
         /// </summary>
         private void CreatePlayer() {
-            Player = new Player(Color.Yellow, Color.Transparent);
+            Player = new Player(Color.LightBlue, Color.Transparent);
 
             // Place the player on the first non-movement-blocking tile on the map
             if (CurrentStage.Rooms.Count > 0) {
@@ -95,7 +95,7 @@ namespace clodd {
             // and if it is, try a new position
             for (int i = 0; i < numMonsters; i++) {
                 int monsterPosition = 0;
-                Monster newMonster = new Monster(Color.Blue, Color.Transparent);
+                Monster newMonster = new Monster(Color.HotPink, Color.Transparent);
 
                 // pick a random spot on the map
                 while (CurrentStage.Tiles[monsterPosition].IsBlockingMove) {
@@ -128,7 +128,7 @@ namespace clodd {
             for (int i = 0; i < numLoot; i++) {
                 // Create an Item with some standard attributes
                 int lootPosition = 0;
-                Item newLoot = new Item(Color.Green, Color.Transparent, "fancy shirt", 'L', 2);
+                Item newLoot = new Item(Color.Beige, Color.Transparent, "Loot", glyph: 384, 2);
 
                 // Try placing the Item at lootPosition; if this fails, try random positions on the map's tile array
                 while (CurrentStage.Tiles[lootPosition].IsBlockingMove) {

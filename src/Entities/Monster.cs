@@ -11,7 +11,7 @@ namespace clodd.Entities {
 
         private Random Rng = new Random();
 
-        public Monster(Color foreground, Color background) : base(foreground, background, 'M') {
+        public Monster(Color foreground, Color background) : base(foreground, background, 368) {
             Rng = new Random();
 
             //number of loot to spawn for monster
@@ -19,7 +19,7 @@ namespace clodd.Entities {
 
             for (int i = 0; i < lootNum; i++) {
                 // monsters are made out of spork, obvs.
-                Item newLoot = new Item(Color.HotPink, Color.Transparent, "spork", 'L', 2);
+                Item newLoot = new Item(Color.Beige, Color.Transparent, "Loot", glyph: 384, 2);
                 Inventory.Add(newLoot);
             }
         }

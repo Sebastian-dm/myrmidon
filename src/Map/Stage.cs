@@ -113,6 +113,22 @@ namespace clodd.Map {
             return GetTileAt<T>(location.X, location.Y);
         }
 
+        // Checks if a specific type of tile at a specified location
+        // is on the map. If it exists, returns that Tile
+        // This form of the method accepts a Point coordinate.
+        public T[] GetAdjacentTiles<T>(Vector loc) where T : TileBase {
+            T[] result = new T[8];
+            result[0] = GetTileAt<T>(loc.X-1, loc.Y-1);
+            result[1] = GetTileAt<T>(loc.X  , loc.Y-1);
+            result[2] = GetTileAt<T>(loc.X+1, loc.Y-1);
+            result[3] = GetTileAt<T>(loc.X+1, loc.Y);
+            result[4] = GetTileAt<T>(loc.X+1, loc.Y+1);
+            result[5] = GetTileAt<T>(loc.X  , loc.Y+1);
+            result[6] = GetTileAt<T>(loc.X-1, loc.Y+1);
+            result[7] = GetTileAt<T>(loc.X-1, loc.Y);
+            return result;
+        }
+
 
         public void SetTileAt(Vector location, TileBase tile) {
             Tiles[location.ToIndex(Width)] = tile;

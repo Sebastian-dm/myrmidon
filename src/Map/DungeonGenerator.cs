@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using clodd.Tiles;
@@ -77,11 +78,12 @@ namespace clodd.Map {
             }
 
 
-            FillAll(new TileWall());
+            FillWithWalls();
             AddRooms();
             FillSpacesWithMazes();
             ConnectRegions();
             RemoveDeadEnds();
+            RefineWallGlyphs();
             //_map.Rooms.ForEach(onDecorateRoom);
 
             return _stage;
@@ -92,9 +94,21 @@ namespace clodd.Map {
         private void onDecorateRoom(Rect room) { }
 
 
-        private void FillAll(TileBase fillTile) {
+        private void RefineWallGlyphs() {
+            foreach (Vector location in _stage.Bounds.Inflate(-1)) {
+                TileBase tileAtLocation = _stage.GetTileAt<TileBase>(location);
+                if (tileAtLocation is TileWall) {
+                    TileBase[] neighborTiles = _stage.GetAdjacentTiles<TileBase>(location);
+                    ((TileWall)tileAtLocation).RefineTileGlyph(neighborTiles);
+                }
+                
+            }
+        }
+
+
+        private void FillWithWalls() {
             for (int i = 0; i < _stage.Tiles.Length; i++) {
-                _stage.Tiles[i] = fillTile;
+                _stage.Tiles[i] = new TileWall();
             }
         }
 
