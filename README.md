@@ -1,4 +1,4 @@
-# CLODD
+# Myrmidon
 A basic roguelike game developed with C# and SadConsole.
 
 <p align="center">
