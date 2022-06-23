@@ -97,7 +97,7 @@ namespace clodd.UI {
         /// Loads a Map into the MapConsole
         /// </summary>
         /// <param name="map"></param>
-        private void LoadMap(Stage map) {
+        private void LoadMap(Map.Map map) {
             // First load the map's tiles into the console
             MapConsole = new SadConsole.ScrollingConsole(
                 GameLoop.World.CurrentStage.Width,
@@ -183,7 +183,7 @@ namespace clodd.UI {
         // Adds the entire list of entities found in the
         // World.CurrentMap's Entities SpatialMap to the
         // MapConsole, so they can be seen onscreen
-        private void SyncMapEntities(Stage map) {
+        private void SyncMapEntities(Map.Map map) {
             // remove all Entities from the console first
             MapConsole.Children.Clear();
 

@@ -23,7 +23,7 @@ namespace clodd {
         private int _maxRoomSize = 20;
         private TileBase[] _mapTiles;
 
-        public Stage CurrentStage { get; set; }
+        public Map.Map CurrentStage { get; set; }
         public Player Player { get; set; }
 
         public GoRogue.MultiSpatialMap<Actor> Entities {
@@ -52,7 +52,7 @@ namespace clodd {
         /// </summary>
         private void CreateMap() {
             _mapTiles = new TileBase[_mapWidth * _mapHeight];
-            CurrentStage = new Stage(_mapWidth, _mapHeight);
+            CurrentStage = new Map.Map(_mapWidth, _mapHeight);
             DungeonGenerator mapGen = new DungeonGenerator();
             CurrentStage = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms);
             //MapGenerator mapGen = new MapGenerator();

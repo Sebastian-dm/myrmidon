@@ -21,7 +21,7 @@ namespace clodd.Entities {
             Animation.CurrentFrame[0].Glyph = glyph;
 
             // Create a new unique identifier for this entity
-            ID = Stage.IDGenerator.UseID();
+            ID = Map.Map.IDGenerator.UseID();
 
             // Ensure that the entity position/offset is tracked by scrollingconsoles
             Components.Add(new EntityViewSyncComponent());
