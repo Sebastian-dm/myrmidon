@@ -1,12 +1,17 @@
-######TO DO ######
+###### DONE ######
 Square Glyphs
 New refined Mapgen of dungeons
+Wall tile orientation
 
 
-###### DONE ######
+###### To DO ######
+Dungeon Generation: Fix double doors between regions
+Wall tiles: Create sdge cases
+Wall tile: Fix graphics
+Colors: Refactor and create color scheme
+Staircases
+Status UI (HP/stats etc.)
 Set up unit testing
 Component Entity System
 Simple Monster AI
-Status UI (HP/stats etc.)
 Lighting (+fog of war)
-Staircases

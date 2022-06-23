@@ -49,7 +49,7 @@ namespace clodd.Tiles {
         // Walls are set to block movement and line of sight by default
         // and have a light gray foreground and a transparent background
         // represented by the # symbol
-        public TileWall(bool blocksMovement = true, bool blocksLOS = true) : base(Color.LightGray, Color.Transparent, glyph:272, blocksMovement, blocksLOS) {
+        public TileWall(bool blocksMovement = true, bool blocksLOS = true) : base(new Color(68, 65, 59), new Color(38, 36, 34), glyph:272, blocksMovement, blocksLOS) {
             Name = "Wall";
         }
 

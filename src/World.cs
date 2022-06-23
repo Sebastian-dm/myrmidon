@@ -65,7 +65,7 @@ namespace clodd {
         /// Create a player using the Player class and set its starting position
         /// </summary>
         private void CreatePlayer() {
-            Player = new Player(Color.LightBlue, Color.Transparent);
+            Player = new Player(new Color(20, 255, 255), Color.Transparent);
 
             // Place the player on the first non-movement-blocking tile on the map
             if (CurrentStage.Rooms.Count > 0) {
