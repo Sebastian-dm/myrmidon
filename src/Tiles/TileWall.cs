@@ -134,9 +134,8 @@ namespace clodd.Tiles {
                     Glyph = (int)TileIndices.Unknown;
                     break;
             }
-            int gg = Glyph;
         }
-
+        
 
     }
 }

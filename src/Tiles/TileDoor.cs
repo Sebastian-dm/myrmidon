@@ -11,7 +11,7 @@ namespace clodd.Tiles {
 
         //Default constructor
         //A TileDoor can be set locked/unlocked/open/closed using the constructor.
-        public TileDoor(bool locked, bool open) : base(Color.BurlyWood, Color.Transparent, 259) {
+        public TileDoor(bool locked, bool open) : base(new Color(100, 60, 20), new Color(20, 10, 0), 259) {
             //+ is the closed glyph
             //closed by default
             Glyph = 259;
