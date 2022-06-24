@@ -47,7 +47,7 @@ namespace myrmidon.Map {
         private int[] _regions; // For each open position in the dungeon, the index of the connected region that that position is a part of.
         private Random rng = new Random();
 
-        private readonly int _tileStepWaitMs = 5;
+        private readonly int _tileStepWaitMs = 0;
 
 
         private readonly List<Vector> CardinalDirections = new List<Vector>() {
@@ -55,7 +55,7 @@ namespace myrmidon.Map {
         };
 
 
-        public Map Populate(Map map) {
+        public Map Generate(Map map) {
             _map = map;
 
             _regions = Enumerable.Repeat(-1, _map.Width * _map.Height).ToArray();
@@ -69,11 +69,17 @@ namespace myrmidon.Map {
 
 
             FillWithWalls();
+            Thread.Sleep(_tileStepWaitMs * 100);
             AddRooms();
+            Thread.Sleep(_tileStepWaitMs * 10);
             FillSpacesWithMazes();
+            Thread.Sleep(_tileStepWaitMs * 10);
             ConnectRegions();
+            Thread.Sleep(_tileStepWaitMs * 10);
             RemoveDeadEnds();
+            Thread.Sleep(_tileStepWaitMs * 10);
             RefineWallGlyphs();
+            Thread.Sleep(_tileStepWaitMs * 10);
             //_map.Rooms.ForEach(onDecorateRoom);
 
             return _map;
@@ -100,7 +106,6 @@ namespace myrmidon.Map {
         public void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
                 _map.Tiles[i] = new TileWall();
-                Thread.Sleep(1);
             }
         }
 
@@ -210,6 +215,8 @@ namespace myrmidon.Map {
                     // This path has ended.
                     lastDir = new Vector(-1, -1); ;
                 }
+
+                Thread.Sleep(_tileStepWaitMs/5);
             }
         }
 
@@ -219,22 +226,27 @@ namespace myrmidon.Map {
 
             // Find all connectors (tiles that can connect two or more regions).
             Dictionary<Vector, HashSet<int>> ConnectorRegions = new Dictionary<Vector, HashSet<int>>();
-            foreach (Vector location in _map.Bounds.Inflate(-1)) {
 
-                // Must be a wall tile to be a connector
-                if (_map.GetTileAt<TileWall>(location) == null) continue;
+            for (int x = 1; x < _map.Width - 1; x++) {
+                for (int y = 1; y < _map.Height - 1; y++) {
+                    Vector pos = new Vector(x, y);
 
-                // Can't already be part of a region.
-                HashSet<int> AdjacentRegions = new HashSet<int>();
-                foreach (Vector dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
-                    Vector AdjacentTile = location + dir;
-                    int RegionInDirection = _regions[AdjacentTile.ToIndex(_map.Width)];
-                    if (RegionInDirection != -1) AdjacentRegions.Add(RegionInDirection);
+                    // Must be a wall tile to be a connector
+                    if (_map.GetTileAt<TileWall>(pos) == null) continue;
+
+                    // Can't already be part of a region.
+                    HashSet<int> AdjacentRegions = new HashSet<int>();
+                    foreach (Vector dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
+                        Vector AdjacentTile = pos + dir;
+                        int RegionInDirection = _regions[AdjacentTile.ToIndex(_map.Width)];
+                        if (RegionInDirection != -1) AdjacentRegions.Add(RegionInDirection);
+                    }
+
+                    if (AdjacentRegions.Count < 2) continue;
+                    ConnectorRegions[pos] = AdjacentRegions;
                 }
-
-                if (AdjacentRegions.Count < 2) continue;
-                ConnectorRegions[location] = AdjacentRegions;
             }
+
             List<Vector> PossibleConnectors = ConnectorRegions.Keys.ToList();
 
 
@@ -288,6 +300,8 @@ namespace myrmidon.Map {
 
                     return true;
                 });
+
+                Thread.Sleep(_tileStepWaitMs);
             }
         }
 
@@ -305,20 +319,25 @@ namespace myrmidon.Map {
 
             while (!done) {
                 done = true;
+                
+                for (int x = 1; x < _map.Width-1; x++) {
+                    for (int y = 1; y < _map.Height - 1; y++) {
+                        Vector pos = new Vector(x, y);
+                        if (_map.GetTileAt<TileWall>(pos) != null) continue;
 
-                foreach (var pos in _map.Bounds.Inflate(-1)) {
-                    if (_map.GetTileAt<TileWall>(pos) != null) continue;
+                        // If it only has one exit, it's a dead end.
+                        var exits = 0;
+                        foreach (var dir in CardinalDirections) {
+                            if (_map.GetTileAt<TileWall>(pos + dir) == null) exits++;
+                        }
 
-                    // If it only has one exit, it's a dead end.
-                    var exits = 0;
-                    foreach (var dir in CardinalDirections) {
-                        if (_map.GetTileAt<TileWall>(pos + dir) == null) exits++;
+                        if (exits != 1) continue;
+
+                        done = false;
+                        _map.SetTileAt(pos, new TileWall());
+
+                        Thread.Sleep(_tileStepWaitMs / 5);
                     }
-
-                    if (exits != 1) continue;
-
-                    done = false;
-                    _map.SetTileAt(pos, new TileWall());
                 }
             }
         }

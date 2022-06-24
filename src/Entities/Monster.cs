@@ -4,9 +4,8 @@ using myrmidon;
 
 
 namespace myrmidon.Entities {
-    //A generic monster capable of
-    //combat and interaction
-    //yields treasure upon death
+
+    // A generic monster capable of combat and interaction yields treasure upon death
     public class Monster : Actor {
 
         private Random Rng = new Random();

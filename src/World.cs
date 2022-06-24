@@ -38,23 +38,26 @@ namespace myrmidon {
         }
 
 
-        public void PopulateMap() {
-            IsMapGenStarted = true;
+        public void Init() {
             GenerateMap();
             CreatePlayer();
             CreateMonsters();
             CreateLoot();
-            IsMapGenDone = true;
         }
 
-        public async Task PopulateMapAsync() {
-            await Task.Run(() => PopulateMap());
+        public async Task InitAsync() {
+            await Task.Run(() => GenerateMap());
+            CreatePlayer();
+            CreateMonsters();
+            CreateLoot();
         }
 
 
         private void GenerateMap() {
+            IsMapGenStarted = true;
             DungeonGenerator mapGen = new DungeonGenerator();
-            mapGen.Populate(CurrentMap);
+            mapGen.Generate(CurrentMap);
+            IsMapGenDone = true;
         }
 
 
@@ -85,19 +88,18 @@ namespace myrmidon {
         // random places.
         private void CreateMonsters() {
             // number of monsters to create
-            int numMonsters = 10;
+            int numMonsters = 100;
 
-            // Create several monsters and 
-            // pick a random position on the map to place them.
-            // check if the placement spot is blocking (e.g. a wall)
-            // and if it is, try a new position
             for (int i = 0; i < numMonsters; i++) {
-                int monsterPosition = 0;
                 Monster newMonster = new Monster(Color.HotPink, Color.Transparent);
 
+                int monsterPosition = 0;
+                bool isPositionInvalid = true;
+
                 // pick a random spot on the map
-                while (CurrentMap.Tiles[monsterPosition].IsBlockingMove) {
+                while (isPositionInvalid) {
                     monsterPosition = rng.Next(0, CurrentMap.Width * CurrentMap.Height);
+                    isPositionInvalid = CurrentMap.Tiles[monsterPosition].IsBlockingMove;
                 }
 
                 // plug in some magic numbers for attack and defense values

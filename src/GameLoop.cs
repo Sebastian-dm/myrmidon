@@ -2,7 +2,6 @@
 
 using SadConsole;
 using Console = SadConsole.Console;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using myrmidon;
 using myrmidon.UI;
@@ -19,26 +18,28 @@ namespace myrmidon {
         public static ActionManager ActionManager;
         public static World World;
 
+
+
         public static void Main(string[] args) {
             // Setup the engine and create the main window.
-            SadConsole.Game.Create("res/fonts/Square_16x16.font", GameWidth, GameHeight);
+            Game.Create("res/fonts/Square_16x16.font", GameWidth, GameHeight);
             //SadConsole.Game.Create("res/fonts/Graphic_16x16.font", GameWidth, GameHeight);
 
 
             // Hook the start event so we can add consoles to the system.
-            SadConsole.Game.OnInitialize = Init;
+            Game.OnInitialize = Init;
 
             // Hook the update event that happens each frame so we can trap keys and respond.
-            SadConsole.Game.OnUpdate = Update;
+            Game.OnUpdate = Update;
 
             // Start the game.
-            SadConsole.Game.Instance.Run();
+            Game.Instance.Run();
 
             //
             // Code here will not run until the game window closes.
             //
 
-            SadConsole.Game.Instance.Dispose();
+            Game.Instance.Dispose();
         }
 
 
@@ -56,10 +57,19 @@ namespace myrmidon {
         }
 
 
-        private static void Update(GameTime time) {
-            if (!World.IsMapGenDone && !World.IsMapGenStarted) World.PopulateMapAsync();
-            UIManager.RefreshConsole();
+        private static void Update(Microsoft.Xna.Framework.GameTime time) {
+
+            if (!World.IsMapGenDone) {
+                if (!World.IsMapGenStarted)
+                    World.InitAsync();
+                UIManager.RefreshConsole();
+            }
+            else {
+
+            }
+            
             ActionManager.Update();
+
         }
 
 
