@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using clodd.Tiles;
-using clodd.Geometry;
+using myrmidon.Tiles;
+using myrmidon.Geometry;
 
-namespace clodd.Map {
+namespace myrmidon.Map {
     // based on tunnelling room generation algorithm from RogueSharp tutorial
     // https://roguesharp.wordpress.com/2016/03/26/roguesharp-v3-tutorial-simple-room-generation/
     public class MapGenerator {

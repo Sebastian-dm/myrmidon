@@ -1,13 +1,14 @@
 ﻿using System;
+
 using SadConsole;
 using Console = SadConsole.Console;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using clodd;
-using clodd.UI;
-using clodd.Actions;
+using myrmidon;
+using myrmidon.UI;
+using myrmidon.Actions;
 
-namespace clodd {
+namespace myrmidon {
     public static class GameLoop {
 
         public const int GameWidth = 109;
@@ -51,10 +52,13 @@ namespace clodd {
 
             // Now let the UIManager create its consoles so they can use the World data
             UIManager.Init();
+
         }
 
 
         private static void Update(GameTime time) {
+            if (!World.IsMapGenDone && !World.IsMapGenStarted) World.PopulateMapAsync();
+            UIManager.RefreshConsole();
             ActionManager.Update();
         }
 

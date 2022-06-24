@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-using clodd.Actions;
-using clodd.Geometry;
-using clodd.Tiles;
+using myrmidon.Actions;
+using myrmidon.Geometry;
+using myrmidon.Tiles;
 
-namespace clodd.Entities {
+namespace myrmidon.Entities {
     public abstract class Actor : Entity {
 
         //private int _health; //current health

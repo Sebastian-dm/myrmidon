@@ -2,20 +2,27 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using clodd.Entities;
-using clodd.Tiles;
-using clodd.Geometry;
+using myrmidon.Entities;
+using myrmidon.Tiles;
+using myrmidon.Geometry;
 using SadConsole;
 
-namespace clodd.Map {
+namespace myrmidon.Map {
     // Stores, manipulates and queries Tile data
     public class Map {
 
-        TileBase[] _tiles; // contain all tile objects
+        private TileBase[] _tiles; // contain all tile objects
         private int _width;
         private int _height;
 
+
+        
         public TileBase[] Tiles { get { return _tiles; } set { _tiles = value; } }
+        public TileBase this[int x, int y] {
+            get => Tiles[x + y * Width];
+            set => Tiles[x + y * Width] = value;
+        } 
+
         public List<Rect> Rooms { get; set; }
         public int Width { get { return _width; } set { _width = value; } }
         public int Height { get { return _height; } set { _height = value; } }
@@ -36,6 +43,7 @@ namespace clodd.Map {
             _width = width;
             _height = height;
             Tiles = new TileBase[width * height];
+            for (int i = 0; i < width * height; i++) Tiles[i] = new TileEmpty();
             Rooms = new List<Rect>();
             Entities = new GoRogue.MultiSpatialMap<Actor>();
         }
@@ -79,15 +87,18 @@ namespace clodd.Map {
             int h = Height;
 
             T[] result = new T[8];
-            result[0] = (loc.X < 0 | loc.Y < 0) ? null : GetTileAt<T>(loc.X-1, loc.Y-1);
-            result[1] = (            loc.Y < 0) ? null : GetTileAt<T>(loc.X  , loc.Y-1);
-            result[2] = (loc.X > w | loc.Y < 0) ? null : GetTileAt<T>(loc.X+1, loc.Y-1);
-            result[3] = (loc.X > w            ) ? null : GetTileAt<T>(loc.X+1, loc.Y  );
-            result[4] = (loc.X > w | loc.Y > h) ? null : GetTileAt<T>(loc.X+1, loc.Y+1);
-            result[5] = (            loc.Y > h) ? null : GetTileAt<T>(loc.X  , loc.Y+1);
-            result[6] = (loc.X < 0 | loc.Y > h) ? null : GetTileAt<T>(loc.X-1, loc.Y+1);
-            result[7] = (loc.X < 0            ) ? null : GetTileAt<T>(loc.X-1, loc.Y  );
+            result[0] = (loc.X <= 0   | loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X-1, loc.Y-1);
+            result[1] = (               loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X  , loc.Y-1);
+            result[2] = (loc.X >= w-1 | loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X+1, loc.Y-1);
+            result[3] = (loc.X >= w-1               ) ? null : GetTileAt<T>(loc.X+1, loc.Y  );
+            result[4] = (loc.X >= w-1 | loc.Y >= h-1) ? null : GetTileAt<T>(loc.X+1, loc.Y+1);
+            result[5] = (               loc.Y >= h-1) ? null : GetTileAt<T>(loc.X  , loc.Y+1);
+            result[6] = (loc.X <= 0   | loc.Y >= h-1) ? null : GetTileAt<T>(loc.X-1, loc.Y+1);
+            result[7] = (loc.X <= 0                 ) ? null : GetTileAt<T>(loc.X-1, loc.Y  );
             return result;
+        }
+        public T[] GetAdjacentTiles<T>(int x, int y) where T : TileBase {
+            return GetAdjacentTiles<T>(new Vector(x, y));
         }
 
 

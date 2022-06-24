@@ -1,14 +1,14 @@
 ﻿using System;
-using clodd.Entities;
+using myrmidon.Entities;
 using Microsoft.Xna.Framework;
 using SadConsole;
 using SadConsole.Controls;
 
-using clodd.Map;
-using clodd.Actions;
-using clodd.Geometry;
+using myrmidon.Map;
+using myrmidon.Actions;
+using myrmidon.Geometry;
 
-namespace clodd.UI {
+namespace myrmidon.UI {
 
     // Creates/Holds/Destroys all consoles used in the game
     // and makes consoles easily addressable from a central place.
@@ -18,6 +18,7 @@ namespace clodd.UI {
         public Window MapWindow;
         public MessageLogWindow MessageLog;
         public SadConsole.Themes.Colors CustomColors;
+        public bool WaitingForInput = true;
 
         public UIManager() {
 
@@ -50,14 +51,14 @@ namespace clodd.UI {
             MessageLog.Add("Started game from path: "+System.IO.Directory.GetCurrentDirectory());
 
             // Load the map into the MapConsole
-            LoadMap(GameLoop.World.CurrentStage);
+            LoadMap(GameLoop.World.CurrentMap);
 
             // Now that the MapConsole is ready, build the Window
             CreateMapWindow(GameLoop.GameWidth, GameLoop.GameHeight *3/4, "Game Map");
             UseMouse = true;
 
             // Start the game with the camera focused on the player
-            CenterOnActor(GameLoop.World.Player);
+            //CenterOnActor(GameLoop.World.Player);
         }
 
 
@@ -100,8 +101,8 @@ namespace clodd.UI {
         private void LoadMap(Map.Map map) {
             // First load the map's tiles into the console
             MapConsole = new SadConsole.ScrollingConsole(
-                GameLoop.World.CurrentStage.Width,
-                GameLoop.World.CurrentStage.Height,
+                GameLoop.World.CurrentMap.Width,
+                GameLoop.World.CurrentMap.Height,
                 Global.FontDefault,
                 new Rectangle(0,0,
                     GameLoop.GameWidth,
@@ -111,6 +112,12 @@ namespace clodd.UI {
 
             // Now Sync all of the map's entities
             SyncMapEntities(map);
+        }
+
+
+        public void RefreshConsole() {
+            MapConsole.SetRenderCells();
+            MapConsole.IsDirty = true;
         }
 
 
@@ -173,7 +180,7 @@ namespace clodd.UI {
             Children.Add(MapWindow);
 
             // Add the player to the MapConsole's render list
-            MapConsole.Children.Add(GameLoop.World.Player);
+            //MapConsole.Children.Add(GameLoop.World.Player);
 
             // Without this, the window will never be visible on screen
             MapWindow.Show();

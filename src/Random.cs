@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace clodd {
+namespace myrmidon {
     internal class Random : System.Random {
 
         /// <summary>

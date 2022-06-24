@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using clodd.Entities;
-using clodd.Tiles;
+using myrmidon.Entities;
+using myrmidon.Tiles;
 
-namespace clodd.Actions {
+namespace myrmidon.Actions {
     internal class OpenDoorAction : Action {
 
         public readonly TileDoor Door;

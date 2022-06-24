@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-using clodd.Entities;
-using clodd.Geometry;
+using myrmidon.Entities;
+using myrmidon.Geometry;
 
-namespace clodd.Actions {
+namespace myrmidon.Actions {
     internal class AttackAction : Action {
 
         public readonly Actor Subject;
@@ -147,7 +147,7 @@ namespace clodd.Actions {
                     item.Position = defender.Position;
 
                     // Now let the MultiSpatialMap know that the Item is visible
-                    GameLoop.World.CurrentStage.Add(item);
+                    GameLoop.World.CurrentMap.Add(item);
 
                     // Append the item to the deathMessage
                     deathMessage.Append(", " + item.Name);
@@ -163,7 +163,7 @@ namespace clodd.Actions {
             }
 
             // actor goes bye-bye
-            GameLoop.World.CurrentStage.Remove(defender);
+            GameLoop.World.CurrentMap.Remove(defender);
 
             // Now show the deathMessage in the messagelog
             GameLoop.UIManager.MessageLog.Add(deathMessage.ToString());

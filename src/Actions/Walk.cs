@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using clodd.Actions;
-using clodd.Entities;
-using clodd.Geometry;
-using clodd.Tiles;
+using myrmidon.Actions;
+using myrmidon.Entities;
+using myrmidon.Geometry;
+using myrmidon.Tiles;
 
-namespace clodd.Actions {
+namespace myrmidon.Actions {
     public class WalkAction : Action {
 
         // store the actor's last move state
@@ -33,7 +33,7 @@ namespace clodd.Actions {
             Vector newPosition = _originalPosition + Direction;
 
             // Check if there is an actor on new position
-            Monster monster = GameLoop.World.CurrentStage.GetEntityAt<Monster>(newPosition);
+            Monster monster = GameLoop.World.CurrentMap.GetEntityAt<Monster>(newPosition);
             if (monster != null) {
                 return new ActionResult( succeeded: false,
                 alternative: new AttackAction(Performer, monster)
@@ -41,7 +41,7 @@ namespace clodd.Actions {
             }
 
             // Check if there is an item on the new position
-            Item item = GameLoop.World.CurrentStage.GetEntityAt<Item>(newPosition);
+            Item item = GameLoop.World.CurrentMap.GetEntityAt<Item>(newPosition);
             if (item != null) {
                 return new ActionResult( succeeded: false,
                 alternative: new PickupAction(Performer, item)
@@ -49,7 +49,7 @@ namespace clodd.Actions {
             }
 
             // Check for the presence of a door
-            TileDoor door = GameLoop.World.CurrentStage.GetTileAt<TileDoor>(newPosition);
+            TileDoor door = GameLoop.World.CurrentMap.GetTileAt<TileDoor>(newPosition);
             if (door != null && !door.IsOpen) {
                 return new ActionResult(succeeded: false,
                 alternative: new OpenDoorAction(Performer, door)
@@ -57,7 +57,7 @@ namespace clodd.Actions {
             }
 
             // Check if it is possible to go there
-            if (GameLoop.World.CurrentStage.IsTileWalkable(newPosition)) {
+            if (GameLoop.World.CurrentMap.IsTileWalkable(newPosition)) {
                 Performer.MoveTo(newPosition);
                 return new ActionResult(succeeded: true);
             }

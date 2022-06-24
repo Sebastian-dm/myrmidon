@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace clodd.Tiles {
+namespace myrmidon.Tiles {
     // TileWall is based on TileBase
     public class TileWall : TileBase {
 
@@ -134,6 +134,7 @@ namespace clodd.Tiles {
                     Glyph = (int)TileIndices.Unknown;
                     break;
             }
+            string gl = ((TileIndices)Glyph).ToString();
         }
         
 

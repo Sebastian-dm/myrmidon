@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using clodd;
+using myrmidon;
 
 
-namespace clodd.Entities {
+namespace myrmidon.Entities {
     //A generic monster capable of
     //combat and interaction
     //yields treasure upon death
