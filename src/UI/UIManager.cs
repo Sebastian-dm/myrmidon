@@ -87,10 +87,10 @@ namespace myrmidon.UI {
         /// </summary>
         public void CreateConsoles() {
             // Temporarily create a console with *no* tile data that will later be replaced with map data
-            FontMaster fontMaster = SadConsole.Global.LoadFont("res/fonts/Square_16x16.font");
-            Font GraphicFont = fontMaster.GetFont(Font.FontSizes.One);
+            //FontMaster fontMaster = SadConsole.Global.LoadFont("fonts/Square_16x16.font");
+            //Font GraphicFont = fontMaster.GetFont(Font.FontSizes.One);
             MapConsole = new ScrollingConsole(GameLoop.GameWidth,GameLoop.GameHeight);
-            MapConsole.Font = GraphicFont;
+            //MapConsole.Font = GraphicFont;
         }
 
 

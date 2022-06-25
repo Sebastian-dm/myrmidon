@@ -22,7 +22,7 @@ namespace myrmidon {
 
         public static void Main(string[] args) {
             // Setup the engine and create the main window.
-            Game.Create("res/fonts/Square_16x16.font", GameWidth, GameHeight);
+            Game.Create("fonts/Square_16x16.font", GameWidth, GameHeight);
             //SadConsole.Game.Create("res/fonts/Graphic_16x16.font", GameWidth, GameHeight);
 
 
