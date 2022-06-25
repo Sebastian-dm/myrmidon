@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using clodd;
+using myrmidon;
 
 
-namespace clodd.Entities {
-    //A generic monster capable of
-    //combat and interaction
-    //yields treasure upon death
+namespace myrmidon.Entities {
+
+    // A generic monster capable of combat and interaction yields treasure upon death
     public class Monster : Actor {
 
         private Random Rng = new Random();

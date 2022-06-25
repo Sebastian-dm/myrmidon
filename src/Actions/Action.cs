@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using clodd.Entities;
+using myrmidon.Entities;
 
-namespace clodd.Actions {
+namespace myrmidon.Actions {
     public abstract class Action {
         public readonly Actor Performer;
 

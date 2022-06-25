@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using SadConsole;
 
-namespace clodd.UI {
+namespace myrmidon.UI {
     
     //A scrollable window that displays messages
     //using a FIFO (first-in-first-out) Queue data structure

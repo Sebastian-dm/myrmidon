@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 
 
-namespace clodd.Tiles {
+namespace myrmidon.Tiles {
     public class TileDoor : TileBase {
 
         public bool Locked; // Locked door = 1, Unlocked = 0

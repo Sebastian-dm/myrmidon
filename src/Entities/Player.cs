@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using clodd;
+using myrmidon;
 
-namespace clodd.Entities {
+namespace myrmidon.Entities {
     // Creates a new player
     // Default glyph is @
     public class Player : Actor {

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Reflection;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using clodd.Tiles;
-using clodd.Geometry;
+using myrmidon.Tiles;
+using myrmidon.Geometry;
 
 /// The random dungeon generator.
 /// This dungeon generator is an implementation of the Hauberk dungeon Generator made by Robert Nystrom
@@ -33,42 +34,31 @@ using clodd.Geometry;
 /// The end result of this is a multiply-connected dungeon with rooms and lots
 /// of winding corridors.
 
-namespace clodd.Map {
-
+namespace myrmidon.Map {
 
     public class DungeonGenerator {
 
-        Random rng = new Random();
-        Map _map;
+        private Map _map;
+        private int _maxRooms = 1000; // Number of attempts to create rooms
+        private int _extraConnectorChance = 30; // Inverse chance of adding connector between two already joined regions.
+        private int _roomExtraSize = 5; // Increasing this allows rooms to be larger.
+        private int _windingPercent = 0;
+        private int _currentRegion = -1; // Index of current region being carved.
+        private int[] _regions; // For each open position in the dungeon, the index of the connected region that that position is a part of.
+        private Random rng = new Random();
+
+        private readonly int _tileStepWaitMs = 5;
 
 
-        private List<Vector> CardinalDirections = new List<Vector>() {
-            new Vector(0,1), new Vector(0, -1), new Vector(1, 0), new Vector(-1, 0) };
+        private readonly List<Vector> CardinalDirections = new List<Vector>() {
+            new Vector(0,1), new Vector(0, -1), new Vector(1, 0), new Vector(-1, 0)
+        };
 
-        int MaxRooms;
 
-        /// The inverse chance of adding a connector between two regions that have
-        /// already been joined. Increasing this leads to more loosely connected
-        /// dungeons.
-        int extraConnectorChance = 30;
+        public Map Generate(Map map) {
+            _map = map;
 
-        /// Increasing this allows rooms to be larger.
-        int roomExtraSize = 5;
-
-        int windingPercent = 0;
-
-        /// For each open position in the dungeon, the index of the connected region that that position is a part of.
-        int[] _regions;
-
-        /// The index of the current region being carved.
-        int _currentRegion = -1;
-
-        public Map GenerateMap(int mapWidth, int mapHeight, int maxRooms) {
-
-            MaxRooms = maxRooms;
-
-            _map = new Map(mapWidth, mapHeight);
-            _regions = Enumerable.Repeat(-1, mapWidth * mapHeight).ToArray();
+            _regions = Enumerable.Repeat(-1, _map.Width * _map.Height).ToArray();
 
 
 
@@ -79,11 +69,17 @@ namespace clodd.Map {
 
 
             FillWithWalls();
+            Thread.Sleep(_tileStepWaitMs);
             AddRooms();
+            Thread.Sleep(_tileStepWaitMs);
             FillSpacesWithMazes();
+            Thread.Sleep(_tileStepWaitMs);
             ConnectRegions();
+            Thread.Sleep(_tileStepWaitMs);
             RemoveDeadEnds();
+            Thread.Sleep(_tileStepWaitMs);
             RefineWallGlyphs();
+            Thread.Sleep(_tileStepWaitMs);
             //_map.Rooms.ForEach(onDecorateRoom);
 
             return _map;
@@ -94,19 +90,20 @@ namespace clodd.Map {
         private void onDecorateRoom(Rect room) { }
 
 
-        private void RefineWallGlyphs() {
-            foreach (Vector location in _map.Bounds) {
-                TileBase tileAtLocation = _map.GetTileAt<TileBase>(location);
-                if (tileAtLocation is TileWall) {
-                    TileBase[] neighborTiles = _map.GetAdjacentTiles<TileBase>(location);
-                    ((TileWall)tileAtLocation).RefineTileGlyph(neighborTiles);
+        public void RefineWallGlyphs() {
+            for (int y = 0; y < _map.Height; y++) {
+                for (int x = 0; x < _map.Width; x++) {
+                    TileBase tileAtLocation = _map.GetTileAt<TileBase>(x,y);
+                    if (tileAtLocation is TileWall) {
+                        TileBase[] neighborTiles = _map.GetAdjacentTiles<TileBase>(x,y);
+                        ((TileWall)tileAtLocation).RefineTileGlyph(neighborTiles);
+                    }
                 }
-                
             }
         }
 
 
-        private void FillWithWalls() {
+        public void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
                 _map.Tiles[i] = new TileWall();
             }
@@ -117,13 +114,13 @@ namespace clodd.Map {
         /// Places rooms ignoring the existing maze corridors.
         /// </summary>
         private void AddRooms() {
-            for (int i = 0; i < MaxRooms; i++) {
+            for (int i = 0; i < _maxRooms; i++) {
                 // Pick a random room size. The funny math here does two things:
                 // - It makes sure rooms are odd-sized to line up with maze.
                 // - It avoids creating rooms that are too rectangular: too tall and
                 //   narrow or too wide and flat.
                 // TODO: This isn't very flexible or tunable. Do something better here.
-                int size = rng.Range(1, 3 + roomExtraSize) * 2 + 1;
+                int size = rng.Range(1, 3 + _roomExtraSize) * 2 + 1;
                 int rectangularity = rng.Range(0, 1 + size / 2) * 2;
                 int width = size;
                 int height = size;
@@ -140,8 +137,10 @@ namespace clodd.Map {
                 Rect Room = new Rect(x, y, width, height);
 
                 bool overlaps = false;
-                foreach (var other in _map.Rooms) {
-                    if (Room.DistanceTo(other) <= 0) {
+                for (int r = 0; r < _map.Rooms.Count; r++) {
+                    Rect other = _map.Rooms[r];
+                    int dist = Room.DistanceTo(other);
+                    if (dist <= 0) {
                         overlaps = true;
                         break;
                     }
@@ -155,6 +154,8 @@ namespace clodd.Map {
                 foreach (Vector pos in new Rect(x, y, width, height)) {
                     Carve(pos);
                 }
+
+                Thread.Sleep(_tileStepWaitMs);
             }
         }
 
@@ -194,7 +195,7 @@ namespace clodd.Map {
                 if (unmadeCells.Count > 0) {
                     // Based on how "windy" passages are, try to prefer carving in the same direction.
                     Vector dir;
-                    if (unmadeCells.Contains(lastDir) && rng.Next(100) > windingPercent) {
+                    if (unmadeCells.Contains(lastDir) && rng.Next(100) > _windingPercent) {
                         dir = lastDir;
                     }
                     else {
@@ -214,6 +215,8 @@ namespace clodd.Map {
                     // This path has ended.
                     lastDir = new Vector(-1, -1); ;
                 }
+
+                Thread.Sleep(_tileStepWaitMs/5);
             }
         }
 
@@ -223,22 +226,27 @@ namespace clodd.Map {
 
             // Find all connectors (tiles that can connect two or more regions).
             Dictionary<Vector, HashSet<int>> ConnectorRegions = new Dictionary<Vector, HashSet<int>>();
-            foreach (Vector location in _map.Bounds.Inflate(-1)) {
 
-                // Must be a wall tile to be a connector
-                if (_map.GetTileAt<TileWall>(location) == null) continue;
+            for (int x = 1; x < _map.Width - 1; x++) {
+                for (int y = 1; y < _map.Height - 1; y++) {
+                    Vector pos = new Vector(x, y);
 
-                // Can't already be part of a region.
-                HashSet<int> AdjacentRegions = new HashSet<int>();
-                foreach (Vector dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
-                    Vector AdjacentTile = location + dir;
-                    int RegionInDirection = _regions[AdjacentTile.ToIndex(_map.Width)];
-                    if (RegionInDirection != -1) AdjacentRegions.Add(RegionInDirection);
+                    // Must be a wall tile to be a connector
+                    if (_map.GetTileAt<TileWall>(pos) == null) continue;
+
+                    // Can't already be part of a region.
+                    HashSet<int> AdjacentRegions = new HashSet<int>();
+                    foreach (Vector dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
+                        Vector AdjacentTile = pos + dir;
+                        int RegionInDirection = _regions[AdjacentTile.ToIndex(_map.Width)];
+                        if (RegionInDirection != -1) AdjacentRegions.Add(RegionInDirection);
+                    }
+
+                    if (AdjacentRegions.Count < 2) continue;
+                    ConnectorRegions[pos] = AdjacentRegions;
                 }
-
-                if (AdjacentRegions.Count < 2) continue;
-                ConnectorRegions[location] = AdjacentRegions;
             }
+
             List<Vector> PossibleConnectors = ConnectorRegions.Keys.ToList();
 
 
@@ -288,10 +296,12 @@ namespace clodd.Map {
                     if (Regions.Count > 1) return false;
 
                     // This connecter isn't needed, but connect it occasionally so that the dungeon isn't singly-connected.
-                    if (rng.OneIn(extraConnectorChance)) LinkRegions(c);
+                    if (rng.OneIn(_extraConnectorChance)) LinkRegions(c);
 
                     return true;
                 });
+
+                Thread.Sleep(_tileStepWaitMs);
             }
         }
 
@@ -309,20 +319,25 @@ namespace clodd.Map {
 
             while (!done) {
                 done = true;
+                
+                for (int x = 1; x < _map.Width-1; x++) {
+                    for (int y = 1; y < _map.Height - 1; y++) {
+                        Vector pos = new Vector(x, y);
+                        if (_map.GetTileAt<TileWall>(pos) != null) continue;
 
-                foreach (var pos in _map.Bounds.Inflate(-1)) {
-                    if (_map.GetTileAt<TileWall>(pos) != null) continue;
+                        // If it only has one exit, it's a dead end.
+                        var exits = 0;
+                        foreach (var dir in CardinalDirections) {
+                            if (_map.GetTileAt<TileWall>(pos + dir) == null) exits++;
+                        }
 
-                    // If it only has one exit, it's a dead end.
-                    var exits = 0;
-                    foreach (var dir in CardinalDirections) {
-                        if (_map.GetTileAt<TileWall>(pos + dir) == null) exits++;
+                        if (exits != 1) continue;
+
+                        done = false;
+                        _map.SetTileAt(pos, new TileWall());
+
+                        Thread.Sleep(_tileStepWaitMs / 5);
                     }
-
-                    if (exits != 1) continue;
-
-                    done = false;
-                    _map.SetTileAt(pos, new TileWall());
                 }
             }
         }

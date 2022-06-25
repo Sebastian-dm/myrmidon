@@ -1,10 +1,10 @@
 ﻿
 using Microsoft.Xna.Framework;
 using SadConsole.Components;
-using clodd.Map;
-using clodd.Actions;
+using myrmidon.Map;
+using myrmidon.Actions;
 
-namespace clodd.Entities {
+namespace myrmidon.Entities {
 
     /// <summary>
     /// Extends the SadConsole.Entities.Entity class

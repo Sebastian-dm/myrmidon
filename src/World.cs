@@ -1,62 +1,73 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using SadConsole.Components;
 using Microsoft.Xna.Framework;
-using clodd.Entities;
-using clodd.Tiles;
-using clodd.Map;
+using myrmidon.Entities;
+using myrmidon.Tiles;
+using myrmidon.Map;
 
-namespace clodd {
+namespace myrmidon {
 
     /// <summary>
     /// Generates and stores all game state data.
     /// </summary>
     public class World {
 
-        private Random RandNumGenerator = new Random();
-
-        // map creation and storage data
+        private Random rng = new Random();
         private int _mapWidth = 87;
         private int _mapHeight = 47;
-        private int _maxRooms = 1000;
-        private int _minRoomSize = 4;
-        private int _maxRoomSize = 20;
-        private TileBase[] _mapTiles;
 
-        public Map.Map CurrentStage { get; set; }
+
+        public bool IsMapGenRequested = true;
+        public bool IsMapGenInProgress = false;
+        public bool IsEntityGenRequested = false;
+
+
+        public Map.Map CurrentMap { get; set; }
         public Player Player { get; set; }
 
         public GoRogue.MultiSpatialMap<Actor> Entities {
             get {
-                return CurrentStage.Entities;
+                return CurrentMap.Entities;
             }
         }
 
 
-
-        /// <summary>
-        /// Creates a new game world and stores it in publicly accessible
-        /// </summary>
         public World() {
-            CreateMap();
-            CreatePlayer();
-            CreateMonsters();
-            CreateLoot();
+            CurrentMap = new Map.Map(_mapWidth, _mapHeight);
+        }
+
+        public void Update() {
+            int i = 0;
+            if (IsMapGenRequested) {
+                IsMapGenRequested = false;
+                IsMapGenInProgress = true;
+                GenerateMapAsync();
+            }
+            if (IsEntityGenRequested) {
+                CreatePlayer();
+                CreateMonsters();
+                CreateLoot();
+                IsEntityGenRequested = false;
+                GameLoop.UIManager.RefreshConsole();
+            }
+
         }
 
 
-
-        /// <summary>
-        /// Create a new map using the Map class and a map generator.
-        /// Uses several parameters to determine .
-        /// </summary>
-        private void CreateMap() {
-            _mapTiles = new TileBase[_mapWidth * _mapHeight];
-            CurrentStage = new Map.Map(_mapWidth, _mapHeight);
+        private void GenerateMap() {
             DungeonGenerator mapGen = new DungeonGenerator();
-            CurrentStage = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms);
-            //MapGenerator mapGen = new MapGenerator();
-            //CurrentMap = mapGen.GenerateMap(_mapWidth, _mapHeight, _maxRooms, _minRoomSize, _maxRoomSize);
+            mapGen.Generate(CurrentMap);
+            IsMapGenInProgress = false;
+            IsEntityGenRequested = true;
+        }
+
+        private async Task GenerateMapAsync() {
+            DungeonGenerator mapGen = new DungeonGenerator();
+            await Task.Run(() => mapGen.Generate(CurrentMap));
+            IsMapGenInProgress = false;
+            IsEntityGenRequested = true;
         }
 
 
@@ -68,9 +79,9 @@ namespace clodd {
             Player = new Player(new Color(20, 255, 255), Color.Transparent);
 
             // Place the player on the first non-movement-blocking tile on the map
-            if (CurrentStage.Rooms.Count > 0) {
-                int RoomIndex = RandNumGenerator.Next(0, CurrentStage.Rooms.Count);
-                Player.Position = CurrentStage.Rooms[RoomIndex].Center;
+            if (CurrentMap.Rooms.Count > 0) {
+                int RoomIndex = rng.Next(0, CurrentMap.Rooms.Count);
+                Player.Position = CurrentMap.Rooms[RoomIndex].Center;
             }
             else {
                 Player.Position = new Point(10, 10);
@@ -78,7 +89,7 @@ namespace clodd {
             
 
             // add the player to the Map's collection of Entities
-            CurrentStage.Add(Player);
+            CurrentMap.Add(Player);
         }
 
 
@@ -87,31 +98,30 @@ namespace clodd {
         // random places.
         private void CreateMonsters() {
             // number of monsters to create
-            int numMonsters = 10;
+            int numMonsters = 100;
 
-            // Create several monsters and 
-            // pick a random position on the map to place them.
-            // check if the placement spot is blocking (e.g. a wall)
-            // and if it is, try a new position
             for (int i = 0; i < numMonsters; i++) {
-                int monsterPosition = 0;
                 Monster newMonster = new Monster(Color.HotPink, Color.Transparent);
 
+                int monsterPosition = 0;
+                bool isPositionInvalid = true;
+
                 // pick a random spot on the map
-                while (CurrentStage.Tiles[monsterPosition].IsBlockingMove) {
-                    monsterPosition = RandNumGenerator.Next(0, CurrentStage.Width * CurrentStage.Height);
+                while (isPositionInvalid) {
+                    monsterPosition = rng.Next(0, CurrentMap.Width * CurrentMap.Height);
+                    isPositionInvalid = CurrentMap.Tiles[monsterPosition].IsBlockingMove;
                 }
 
                 // plug in some magic numbers for attack and defense values
-                newMonster.DefenseStrength = RandNumGenerator.Next(0, 10);
-                newMonster.DefenseChance = RandNumGenerator.Next(0, 50);
-                newMonster.AttackStrength = RandNumGenerator.Next(0, 10);
-                newMonster.AttackChance = RandNumGenerator.Next(0, 50);
+                newMonster.DefenseStrength = rng.Next(0, 10);
+                newMonster.DefenseChance = rng.Next(0, 50);
+                newMonster.AttackStrength = rng.Next(0, 10);
+                newMonster.AttackChance = rng.Next(0, 50);
                 newMonster.Name = "a common troll";
 
                 // Set the monster's new position
-                newMonster.Position = new Point(monsterPosition % CurrentStage.Width, monsterPosition / CurrentStage.Width);
-                CurrentStage.Add(newMonster);
+                newMonster.Position = new Point(monsterPosition % CurrentMap.Width, monsterPosition / CurrentMap.Width);
+                CurrentMap.Add(newMonster);
             }
         }
 
@@ -131,16 +141,16 @@ namespace clodd {
                 Item newLoot = new Item(Color.Beige, Color.Transparent, "Loot", glyph: 384, 2);
 
                 // Try placing the Item at lootPosition; if this fails, try random positions on the map's tile array
-                while (CurrentStage.Tiles[lootPosition].IsBlockingMove) {
+                while (CurrentMap.Tiles[lootPosition].IsBlockingMove) {
                     // pick a random spot on the map
-                    lootPosition = RandNumGenerator.Next(0, CurrentStage.Width * CurrentStage.Height);
+                    lootPosition = rng.Next(0, CurrentMap.Width * CurrentMap.Height);
                 }
 
                 // set the loot's new position
-                newLoot.Position = new Point(lootPosition % CurrentStage.Width, lootPosition / CurrentStage.Width);
+                newLoot.Position = new Point(lootPosition % CurrentMap.Width, lootPosition / CurrentMap.Width);
 
                 // add the Item to the MultiSpatialMap
-                CurrentStage.Add(newLoot);
+                CurrentMap.Add(newLoot);
             }
 
         }

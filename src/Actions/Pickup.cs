@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using clodd.Entities;
+using myrmidon.Entities;
 
-namespace clodd.Actions {
+namespace myrmidon.Actions {
     internal class PickupAction : Action {
 
         public readonly Item Item;

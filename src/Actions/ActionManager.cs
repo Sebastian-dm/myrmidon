@@ -2,13 +2,13 @@
 using System.Text;
 using Microsoft.Xna.Framework;
 using GoRogue.DiceNotation;
-using clodd.Entities;
-using clodd.Tiles;
+using myrmidon.Entities;
+using myrmidon.Tiles;
 using System.Collections.Generic;
 
-using clodd.Geometry;
+using myrmidon.Geometry;
 
-namespace clodd.Actions {
+namespace myrmidon.Actions {
     // Contains all generic actions performed on entities and tiles
     // including combat, movement, and so on.
     public class ActionManager {
@@ -22,11 +22,13 @@ namespace clodd.Actions {
             _actionsDone = new Queue<Action>(100);
         }
 
-        public void Update() {
-            CheckKeyboard(); 
+        public bool Update() {
+            bool keyPressed = CheckKeyboard(); 
             PerformActions();
             
             //CollectEntityActions();
+
+            return keyPressed;
         }
 
 
@@ -42,7 +44,7 @@ namespace clodd.Actions {
                 }
 
                 _actionsDone.Enqueue(action);
-
+                
             }
         }
 
@@ -66,17 +68,19 @@ namespace clodd.Actions {
         /// <summary>
         /// Checks input from the player's keyboard and mouse.
         /// </summary>
-        private void CheckKeyboard() {
+        private bool CheckKeyboard() {
             // F5 key to make the game full screen
             if (SadConsole.Global.KeyboardState.IsKeyReleased(Microsoft.Xna.Framework.Input.Keys.F5)) {
                 SadConsole.Settings.ToggleFullScreen();
+                return true;
             }
 
             // Keyboard movement for Player character: Up arrow
             // Decrement player's Y coordinate by 1
-            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up)) {
+            else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up)) {
                 AddAction(new WalkAction(GameLoop.World.Player, new Vector(0, -1)));
                 GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
+                return true;
             }
 
             // Keyboard movement for Player character: Down arrow
@@ -84,6 +88,7 @@ namespace clodd.Actions {
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down)) {
                 AddAction(new WalkAction(GameLoop.World.Player, new Vector(0, 1)));
                 GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
+                return true;
             }
 
             // Keyboard movement for Player character: Left arrow
@@ -91,6 +96,7 @@ namespace clodd.Actions {
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left)) {
                 AddAction(new WalkAction(GameLoop.World.Player, new Vector(-1, 0)));
                 GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
+                return true;
             }
 
             // Keyboard movement for Player character: Right arrow
@@ -98,7 +104,14 @@ namespace clodd.Actions {
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right)) {
                 AddAction(new WalkAction(GameLoop.World.Player, new Vector(1, 0)));
                 GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
+                return true;
             }
+
+            if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Space)) {
+                return true;
+            }
+
+            return false;
         }
 
 

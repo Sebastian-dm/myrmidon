@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace clodd.Entities {
+namespace myrmidon.Entities {
     
     /// <summary>
     /// Things that can be picked up or used by actors.
@@ -42,7 +42,7 @@ namespace clodd.Entities {
         /// and lets the garbage collector take it out of memory automatically.
         /// </summary>
         public void Destroy() {
-            GameLoop.World.CurrentStage.Remove(this);
+            GameLoop.World.CurrentMap.Remove(this);
         }
     }
 }

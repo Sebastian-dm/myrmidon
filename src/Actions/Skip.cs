@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using clodd.Entities;
+using myrmidon.Entities;
 
-namespace clodd.Actions {
+namespace myrmidon.Actions {
     internal class SkipAction : Action {
 
         public SkipAction(Actor performer) : base(performer) { }

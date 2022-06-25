@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>clodd</RootNamespace>
+    <RootNamespace>myrmidon</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,10 +11,6 @@
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
     <PackageReference Include="SadConsole" Version="8.99.3" />
     <PackageReference Include="TheSadRogue.Primitives" Version="1.3.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Commands\" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using SadConsole;
 
-namespace clodd.Tiles {
+namespace myrmidon.Tiles {
     /// <summary>
     /// Abstract and basic. TileBase is the simple form. Of all the tiles
     /// </summary>
