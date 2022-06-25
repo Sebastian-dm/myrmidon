@@ -47,7 +47,7 @@ namespace myrmidon.Map {
         private int[] _regions; // For each open position in the dungeon, the index of the connected region that that position is a part of.
         private Random rng = new Random();
 
-        private readonly int _tileStepWaitMs = 0;
+        private readonly int _tileStepWaitMs = 5;
 
 
         private readonly List<Vector> CardinalDirections = new List<Vector>() {
@@ -69,17 +69,17 @@ namespace myrmidon.Map {
 
 
             FillWithWalls();
-            Thread.Sleep(_tileStepWaitMs * 100);
+            Thread.Sleep(_tileStepWaitMs);
             AddRooms();
-            Thread.Sleep(_tileStepWaitMs * 10);
+            Thread.Sleep(_tileStepWaitMs);
             FillSpacesWithMazes();
-            Thread.Sleep(_tileStepWaitMs * 10);
+            Thread.Sleep(_tileStepWaitMs);
             ConnectRegions();
-            Thread.Sleep(_tileStepWaitMs * 10);
+            Thread.Sleep(_tileStepWaitMs);
             RemoveDeadEnds();
-            Thread.Sleep(_tileStepWaitMs * 10);
+            Thread.Sleep(_tileStepWaitMs);
             RefineWallGlyphs();
-            Thread.Sleep(_tileStepWaitMs * 10);
+            Thread.Sleep(_tileStepWaitMs);
             //_map.Rooms.ForEach(onDecorateRoom);
 
             return _map;

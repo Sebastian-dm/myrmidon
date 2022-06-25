@@ -19,8 +19,9 @@ namespace myrmidon {
         private int _mapHeight = 47;
 
 
-        public bool IsMapGenDone = false;
-        public bool IsMapGenStarted = false;
+        public bool IsMapGenRequested = true;
+        public bool IsMapGenInProgress = false;
+        public bool IsEntityGenRequested = false;
 
 
         public Map.Map CurrentMap { get; set; }
@@ -37,27 +38,36 @@ namespace myrmidon {
             CurrentMap = new Map.Map(_mapWidth, _mapHeight);
         }
 
+        public void Update() {
+            int i = 0;
+            if (IsMapGenRequested) {
+                IsMapGenRequested = false;
+                IsMapGenInProgress = true;
+                GenerateMapAsync();
+            }
+            if (IsEntityGenRequested) {
+                CreatePlayer();
+                CreateMonsters();
+                CreateLoot();
+                IsEntityGenRequested = false;
+                GameLoop.UIManager.RefreshConsole();
+            }
 
-        public void Init() {
-            GenerateMap();
-            CreatePlayer();
-            CreateMonsters();
-            CreateLoot();
-        }
-
-        public async Task InitAsync() {
-            await Task.Run(() => GenerateMap());
-            CreatePlayer();
-            CreateMonsters();
-            CreateLoot();
         }
 
 
         private void GenerateMap() {
-            IsMapGenStarted = true;
             DungeonGenerator mapGen = new DungeonGenerator();
             mapGen.Generate(CurrentMap);
-            IsMapGenDone = true;
+            IsMapGenInProgress = false;
+            IsEntityGenRequested = true;
+        }
+
+        private async Task GenerateMapAsync() {
+            DungeonGenerator mapGen = new DungeonGenerator();
+            await Task.Run(() => mapGen.Generate(CurrentMap));
+            IsMapGenInProgress = false;
+            IsEntityGenRequested = true;
         }
 
 

@@ -10,7 +10,7 @@ using myrmidon.Actions;
 namespace myrmidon {
     public static class GameLoop {
 
-        public const int GameWidth = 109;
+        public const int GameWidth = 89;
         public const int GameHeight = 66;
 
         // Managers
@@ -58,16 +58,8 @@ namespace myrmidon {
 
 
         private static void Update(Microsoft.Xna.Framework.GameTime time) {
-
-            if (!World.IsMapGenDone) {
-                if (!World.IsMapGenStarted)
-                    World.InitAsync();
-                UIManager.RefreshConsole();
-            }
-            else {
-
-            }
-            
+            World.Update();
+            if (World.IsMapGenInProgress) UIManager.RefreshConsole();
             ActionManager.Update();
 
         }
