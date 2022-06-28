@@ -26,11 +26,8 @@ namespace myrmidon.Entities {
         }
 
         // By default, a new Item is sized 1x1, with a weight of 1, and at 100% condition
-        public Item(Color foreground, Color background, string name, int glyph, int weight = 1, int condition = 100, int width = 1, int height = 1) : base(foreground, background, glyph) {
+        public Item(Color foreground, Color background, int glyph, string name, int weight = 1, int condition = 100, int width = 1, int height = 1) : base(foreground, background, glyph) {
             // assign the object's fields to the parameters set in the constructor
-            Animation.CurrentFrame[0].Foreground = foreground;
-            Animation.CurrentFrame[0].Background = background;
-            Animation.CurrentFrame[0].Glyph = glyph;
             Weight = weight;
             Condition = condition;
             Name = name;

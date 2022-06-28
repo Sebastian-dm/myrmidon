@@ -10,7 +10,7 @@ namespace myrmidon.Entities {
 
         private Random Rng = new Random();
 
-        public Monster(Color foreground, Color background) : base(foreground, background, 368) {
+        public Monster(Color foreground, Color background, int glyph) : base(foreground, background, glyph) {
             Rng = new Random();
 
             //number of loot to spawn for monster
@@ -18,7 +18,7 @@ namespace myrmidon.Entities {
 
             for (int i = 0; i < lootNum; i++) {
                 // monsters are made out of spork, obvs.
-                Item newLoot = new Item(Color.Beige, Color.Transparent, "Loot", glyph: 384, 2);
+                Item newLoot = new Item(Color.Beige, Color.Transparent, glyph: 384, name: "Loot", 2);
                 Inventory.Add(newLoot);
             }
         }

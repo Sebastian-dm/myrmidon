@@ -47,7 +47,7 @@ namespace myrmidon.Map {
         private int[] _regions; // For each open position in the dungeon, the index of the connected region that that position is a part of.
         private Random rng = new Random();
 
-        private readonly int _tileStepWaitMs = 5;
+        private readonly int _tileStepWaitMs = 0;
 
 
         private readonly List<Vector> CardinalDirections = new List<Vector>() {
@@ -93,9 +93,9 @@ namespace myrmidon.Map {
         public void RefineWallGlyphs() {
             for (int y = 0; y < _map.Height; y++) {
                 for (int x = 0; x < _map.Width; x++) {
-                    TileBase tileAtLocation = _map.GetTileAt<TileBase>(x,y);
+                    Tile tileAtLocation = _map.GetTileAt<Tile>(x,y);
                     if (tileAtLocation is TileWall) {
-                        TileBase[] neighborTiles = _map.GetAdjacentTiles<TileBase>(x,y);
+                        Tile[] neighborTiles = _map.GetAdjacentTiles<Tile>(x,y);
                         ((TileWall)tileAtLocation).RefineTileGlyph(neighborTiles);
                     }
                 }

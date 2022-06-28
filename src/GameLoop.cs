@@ -18,6 +18,8 @@ namespace myrmidon {
         public static ActionManager ActionManager;
         public static World World;
 
+        public static Map.FieldOfView FOV;
+
 
 
         public static void Main(string[] args) {
@@ -47,6 +49,7 @@ namespace myrmidon {
             //Instantiate the managers
             UIManager = new UIManager();
             ActionManager = new ActionManager();
+            FOV = new Map.FieldOfView(viewDistance: 10);
 
             // Build the world!
             World = new World();
@@ -61,6 +64,7 @@ namespace myrmidon {
             World.Update();
             if (World.IsMapGenInProgress) UIManager.RefreshConsole();
             ActionManager.Update();
+            
 
         }
 

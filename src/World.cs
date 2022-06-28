@@ -50,8 +50,9 @@ namespace myrmidon {
                 CreateMonsters();
                 CreateLoot();
                 IsEntityGenRequested = false;
-                GameLoop.UIManager.RefreshConsole();
+                GameLoop.FOV.Update();
             }
+            GameLoop.UIManager.RefreshConsole();
 
         }
 
@@ -94,32 +95,26 @@ namespace myrmidon {
 
 
         // Create some random monsters with random attack and defense values
-        // and drop them all over the map in
-        // random places.
+        // and drop them all over the map in random places.
         private void CreateMonsters() {
-            // number of monsters to create
-            int numMonsters = 100;
+            int numMonsters = 30;
 
             for (int i = 0; i < numMonsters; i++) {
-                Monster newMonster = new Monster(Color.HotPink, Color.Transparent);
+                Monster newMonster = new Monster(Color.HotPink, Color.Transparent, glyph: 368);
 
                 int monsterPosition = 0;
-                bool isPositionInvalid = true;
-
-                // pick a random spot on the map
-                while (isPositionInvalid) {
+                bool isPositionValid = false;
+                while (isPositionValid == false) {
                     monsterPosition = rng.Next(0, CurrentMap.Width * CurrentMap.Height);
-                    isPositionInvalid = CurrentMap.Tiles[monsterPosition].IsBlockingMove;
+                    isPositionValid = CurrentMap.Tiles[monsterPosition].IsWalkable;
                 }
 
-                // plug in some magic numbers for attack and defense values
                 newMonster.DefenseStrength = rng.Next(0, 10);
                 newMonster.DefenseChance = rng.Next(0, 50);
                 newMonster.AttackStrength = rng.Next(0, 10);
                 newMonster.AttackChance = rng.Next(0, 50);
                 newMonster.Name = "a common troll";
 
-                // Set the monster's new position
                 newMonster.Position = new Point(monsterPosition % CurrentMap.Width, monsterPosition / CurrentMap.Width);
                 CurrentMap.Add(newMonster);
             }
@@ -131,25 +126,19 @@ namespace myrmidon {
         /// Create some sample treasure that can be picked up on the map
         /// </summary>
         private void CreateLoot() {
-            // number of treasure drops to create
             int numLoot = 20;
 
-            // Produce lot up to a max of numLoot
             for (int i = 0; i < numLoot; i++) {
-                // Create an Item with some standard attributes
-                int lootPosition = 0;
-                Item newLoot = new Item(Color.Beige, Color.Transparent, "Loot", glyph: 384, 2);
+                Item newLoot = new Item(Color.Beige, Color.Transparent, glyph: 384, name: "Loot", 2);
 
-                // Try placing the Item at lootPosition; if this fails, try random positions on the map's tile array
-                while (CurrentMap.Tiles[lootPosition].IsBlockingMove) {
-                    // pick a random spot on the map
+                int lootPosition = 0;
+                bool isPositionValid = false;
+                while (isPositionValid == false) {
                     lootPosition = rng.Next(0, CurrentMap.Width * CurrentMap.Height);
+                    isPositionValid = CurrentMap.Tiles[lootPosition].IsWalkable;
                 }
 
-                // set the loot's new position
                 newLoot.Position = new Point(lootPosition % CurrentMap.Width, lootPosition / CurrentMap.Width);
-
-                // add the Item to the MultiSpatialMap
                 CurrentMap.Add(newLoot);
             }
 

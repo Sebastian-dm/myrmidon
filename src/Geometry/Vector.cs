@@ -52,6 +52,10 @@ namespace myrmidon.Geometry {
             return new Vector(vector.X * scale, vector.Y * scale);
         }
 
+        public double DistanceTo(Vector vectorB) {
+            return (vectorB - this).Length;
+        }
+
         
 
     }

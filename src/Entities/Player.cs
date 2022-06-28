@@ -12,6 +12,7 @@ namespace myrmidon.Entities {
             DefenseStrength = 5;
             DefenseChance = 20;
             Name = "Player";
+            isVisible = true;
         }
     }
 }

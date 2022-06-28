@@ -11,17 +11,22 @@ namespace myrmidon.Map {
     // Stores, manipulates and queries Tile data
     public class Map {
 
-        private TileBase[] _tiles; // contain all tile objects
+        private Tile[] _tiles; // contain all tile objects
         private int _width;
         private int _height;
 
 
         
-        public TileBase[] Tiles { get { return _tiles; } set { _tiles = value; } }
-        public TileBase this[int x, int y] {
+        public Tile[] Tiles { get { return _tiles; } set { _tiles = value; } }
+        public Tile this[int x, int y] {
             get => Tiles[x + y * Width];
             set => Tiles[x + y * Width] = value;
-        } 
+        }
+        public Tile this[int i] {
+            get => Tiles[i];
+            set => Tiles[i] = value;
+        }
+
 
         public List<Rect> Rooms { get; set; }
         public int Width { get { return _width; } set { _width = value; } }
@@ -42,7 +47,7 @@ namespace myrmidon.Map {
         public Map(int width, int height) {
             _width = width;
             _height = height;
-            Tiles = new TileBase[width * height];
+            Tiles = new Tile[width * height];
             for (int i = 0; i < width * height; i++) Tiles[i] = new TileEmpty();
             Rooms = new List<Rect>();
             Entities = new GoRogue.MultiSpatialMap<Actor>();
@@ -55,7 +60,7 @@ namespace myrmidon.Map {
             if (location.X < 0 || location.Y < 0 || location.X >= Width || location.Y >= Height)
                 return false;
             // then return whether the tile is walkable
-            return !_tiles[location.Y * Width + location.X].IsBlockingMove;
+            return _tiles[location.Y * Width + location.X].IsWalkable;
         }
 
 
@@ -66,7 +71,7 @@ namespace myrmidon.Map {
 
 
         // Returns a tile if it exists at location. Return null otherwise.
-        public T GetTileAt<T>(int x, int y) where T : TileBase {
+        public T GetTileAt<T>(int x, int y) where T : Tile {
             int locationIndex = Helpers.GetIndexFromPoint(x, y, Width);
             // make sure the index is within the boundaries of the map!
             if (0 <= locationIndex && locationIndex < Width * Height) {
@@ -76,13 +81,13 @@ namespace myrmidon.Map {
             }
             else return null;
         }
-        public T GetTileAt<T>(Vector location) where T : TileBase {
+        public T GetTileAt<T>(Vector location) where T : Tile {
             return GetTileAt<T>(location.X, location.Y);
         }
 
 
         // Checks if a specific type of tile at a specified location is on the map. If it exists, returns that Tile.
-        public T[] GetAdjacentTiles<T>(Vector loc) where T : TileBase {
+        public T[] GetAdjacentTiles<T>(Vector loc) where T : Tile {
             int w = Width;
             int h = Height;
 
@@ -97,12 +102,12 @@ namespace myrmidon.Map {
             result[7] = (loc.X <= 0                 ) ? null : GetTileAt<T>(loc.X-1, loc.Y  );
             return result;
         }
-        public T[] GetAdjacentTiles<T>(int x, int y) where T : TileBase {
+        public T[] GetAdjacentTiles<T>(int x, int y) where T : Tile {
             return GetAdjacentTiles<T>(new Vector(x, y));
         }
 
 
-        public void SetTileAt(Vector location, TileBase tile) {
+        public void SetTileAt(Vector location, Tile tile) {
             Tiles[location.ToIndex(Width)] = tile;
         }
 

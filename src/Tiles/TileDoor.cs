@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 
 namespace myrmidon.Tiles {
-    public class TileDoor : TileBase {
+    public class TileDoor : Tile {
 
         public bool Locked; // Locked door = 1, Unlocked = 0
         public bool IsOpen; // Open door = 1, closed = 0
@@ -31,16 +31,16 @@ namespace myrmidon.Tiles {
         //closes a door
         public void Close() {
             IsOpen = false;
-            Glyph = 259;
             IsBlockingLineOfSigth = true;
-            IsBlockingMove = true;
+            IsWalkable = false;
+            Glyph = 259;
         }
 
         //opens a door
         public void Open() {
             IsOpen = true;
             IsBlockingLineOfSigth = false;
-            IsBlockingMove = false;
+            IsWalkable = true;
             Glyph = 258;
         }
     }

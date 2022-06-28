@@ -34,6 +34,14 @@ namespace myrmidon.Entities {
         /// <returns>returns true if actor was able to move, false if failed to move</returns>
         public bool MoveTo(Vector newPosition) {
             Position = new Point(newPosition.X, newPosition.Y);
+
+            GameLoop.FOV.Update();
+
+            if (this is Player) {
+                GameLoop.UIManager.CenterOnActor(this);
+                GameLoop.UIManager.RefreshConsole();
+            }
+
             return true;
         }
 

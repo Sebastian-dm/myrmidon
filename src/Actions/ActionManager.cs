@@ -79,7 +79,6 @@ namespace myrmidon.Actions {
             // Decrement player's Y coordinate by 1
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up)) {
                 AddAction(new WalkAction(GameLoop.World.Player, new Vector(0, -1)));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
                 return true;
             }
 
@@ -87,7 +86,6 @@ namespace myrmidon.Actions {
             // Increment player's Y coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down)) {
                 AddAction(new WalkAction(GameLoop.World.Player, new Vector(0, 1)));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
                 return true;
             }
 
@@ -95,7 +93,6 @@ namespace myrmidon.Actions {
             // Decrement player's X coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left)) {
                 AddAction(new WalkAction(GameLoop.World.Player, new Vector(-1, 0)));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
                 return true;
             }
 
@@ -103,7 +100,6 @@ namespace myrmidon.Actions {
             // Increment player's X coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right)) {
                 AddAction(new WalkAction(GameLoop.World.Player, new Vector(1, 0)));
-                GameLoop.UIManager.CenterOnActor(GameLoop.World.Player);
                 return true;
             }
 

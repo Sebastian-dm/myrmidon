@@ -4,14 +4,15 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using myrmidon.Tiles;
 using myrmidon.Geometry;
+using myrmidon.Map;
 
-namespace myrmidon.Map {
+namespace myrmidon.Old {
     // based on tunnelling room generation algorithm from RogueSharp tutorial
     // https://roguesharp.wordpress.com/2016/03/26/roguesharp-v3-tutorial-simple-room-generation/
     public class MapGenerator {
 
         Random RandNumGenerator = new Random();
-        Map _workingStage;
+        Map.Map _workingStage;
 
 
 
@@ -31,9 +32,9 @@ namespace myrmidon.Map {
         /// <param name="minRoomSize"></param>
         /// <param name="maxRoomSize"></param>
         /// <returns></returns>
-        public Map GenerateMap(int mapWidth, int mapHeight, int maxRooms, int minRoomSize, int maxRoomSize) {
+        public Map.Map GenerateMap(int mapWidth, int mapHeight, int maxRooms, int minRoomSize, int maxRoomSize) {
 
-            _workingStage = new Map(mapWidth, mapHeight);
+            _workingStage = new Map.Map(mapWidth, mapHeight);
 
             // Fill map with empty
             for (int i = 0; i < _workingStage.Tiles.Length; i++) {
@@ -118,7 +119,7 @@ namespace myrmidon.Map {
             }
 
             foreach (Vector location in RoomPerimeter) {
-                if (_workingStage.GetTileAt<TileBase>(location) is not TileTunnel) {
+                if (_workingStage.GetTileAt<Tile>(location) is not TileTunnel) {
                     CreateWall(location);
                 }
             }
@@ -219,17 +220,17 @@ namespace myrmidon.Map {
             }
 
             // Is tile placed in a horizonral wall?
-            if (!_workingStage.Tiles[right.ToIndex(_workingStage.Width)].IsBlockingMove
-                && !_workingStage.Tiles[left.ToIndex(_workingStage.Width)].IsBlockingMove
-                && _workingStage.Tiles[top.ToIndex(_workingStage.Width)].IsBlockingMove
-                && _workingStage.Tiles[bottom.ToIndex(_workingStage.Width)].IsBlockingMove) {
+            if (_workingStage.Tiles[right.ToIndex(_workingStage.Width)].IsWalkable
+                && _workingStage.Tiles[left.ToIndex(_workingStage.Width)].IsWalkable
+                && !_workingStage.Tiles[top.ToIndex(_workingStage.Width)].IsWalkable
+                && !_workingStage.Tiles[bottom.ToIndex(_workingStage.Width)].IsWalkable) {
                 return true;
             }
             // Is tile placed in a vertical wall?
-            if (_workingStage.Tiles[right.ToIndex(_workingStage.Width)].IsBlockingMove
-                && _workingStage.Tiles[left.ToIndex(_workingStage.Width)].IsBlockingMove
-                && !_workingStage.Tiles[top.ToIndex(_workingStage.Width)].IsBlockingMove
-                && !_workingStage.Tiles[bottom.ToIndex(_workingStage.Width)].IsBlockingMove) {
+            if (!_workingStage.Tiles[right.ToIndex(_workingStage.Width)].IsWalkable
+                && !_workingStage.Tiles[left.ToIndex(_workingStage.Width)].IsWalkable
+                && _workingStage.Tiles[top.ToIndex(_workingStage.Width)].IsWalkable
+                && _workingStage.Tiles[bottom.ToIndex(_workingStage.Width)].IsWalkable) {
                 return true;
             }
             return false;
