@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using SadConsole;
 using SadConsole.Controls;
 
-using myrmidon.Map;
+using myrmidon.Maps;
 using myrmidon.Actions;
 using myrmidon.Geometry;
 
@@ -98,7 +98,7 @@ namespace myrmidon.UI {
         /// Loads a Map into the MapConsole
         /// </summary>
         /// <param name="map"></param>
-        private void LoadMap(Map.Map map) {
+        private void LoadMap(Maps.Map map) {
             // First load the map's tiles into the console
             MapConsole = new SadConsole.ScrollingConsole(
                 GameLoop.World.CurrentMap.Width,
@@ -190,7 +190,7 @@ namespace myrmidon.UI {
         // Adds the entire list of entities found in the
         // World.CurrentMap's Entities SpatialMap to the
         // MapConsole, so they can be seen onscreen
-        private void SyncMapEntities(Map.Map map) {
+        private void SyncMapEntities(Maps.Map map) {
             // remove all Entities from the console first
             MapConsole.Children.Clear();
 

@@ -3,7 +3,6 @@
 using SadConsole;
 using Console = SadConsole.Console;
 using Microsoft.Xna.Framework.Graphics;
-using myrmidon;
 using myrmidon.UI;
 using myrmidon.Actions;
 
@@ -18,7 +17,7 @@ namespace myrmidon {
         public static ActionManager ActionManager;
         public static World World;
 
-        public static Map.FieldOfView FOV;
+        public static FieldOfView FOV;
 
 
 
@@ -49,7 +48,7 @@ namespace myrmidon {
             //Instantiate the managers
             UIManager = new UIManager();
             ActionManager = new ActionManager();
-            FOV = new Map.FieldOfView(viewDistance: 10);
+            FOV = new FieldOfView(viewDistance: 10);
 
             // Build the world!
             World = new World();

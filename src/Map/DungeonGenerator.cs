@@ -34,7 +34,7 @@ using myrmidon.Geometry;
 /// The end result of this is a multiply-connected dungeon with rooms and lots
 /// of winding corridors.
 
-namespace myrmidon.Map {
+namespace myrmidon.Maps {
 
     public class DungeonGenerator {
 
@@ -237,8 +237,9 @@ namespace myrmidon.Map {
                     // Can't already be part of a region.
                     HashSet<int> AdjacentRegions = new HashSet<int>();
                     foreach (Vector dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
-                        Vector AdjacentTile = pos + dir;
-                        int RegionInDirection = _regions[AdjacentTile.ToIndex(_map.Width)];
+                        Vector PosAdjacent = pos + dir;
+                        int PosAdjacentIndex = PosAdjacent.Y * _map.Width + PosAdjacent.X;
+                        int RegionInDirection = _regions[PosAdjacentIndex];
                         if (RegionInDirection != -1) AdjacentRegions.Add(RegionInDirection);
                     }
 
@@ -307,10 +308,10 @@ namespace myrmidon.Map {
 
         private void LinkRegions(Vector pos) {
             if (rng.OneIn(4)) {
-                _map.SetTileAt(pos, rng.OneIn(3) ? new TileDoor(locked: false, open: true) : new TileFloor());
+                _map[pos] = rng.OneIn(3) ? new TileDoor(locked: false, open: true) : new TileFloor();
             }
             else {
-                _map.SetTileAt(pos, new TileDoor(locked: false, open: false));
+                _map[pos] = new TileDoor(locked: false, open: false);
             }
         }
 
@@ -334,7 +335,7 @@ namespace myrmidon.Map {
                         if (exits != 1) continue;
 
                         done = false;
-                        _map.SetTileAt(pos, new TileWall());
+                        _map[pos] = new TileWall();
 
                         Thread.Sleep(_tileStepWaitMs / 5);
                     }
@@ -362,8 +363,9 @@ namespace myrmidon.Map {
         }
 
         private void Carve(Vector location) {
-            _map.SetTileAt(location, new TileFloor());
-            _regions[location.ToIndex(_map.Width)] = _currentRegion;
+            _map[location] = new TileFloor();
+            int locationIndex = location.Y * _map.Width + location.X;
+            _regions[locationIndex] = _currentRegion;
         }
     }
 }

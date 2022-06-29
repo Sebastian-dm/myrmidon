@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using myrmidon.Tiles;
 using myrmidon.Geometry;
-using myrmidon.Map;
+using myrmidon.Maps;
 
 namespace myrmidon.Old {
     // based on tunnelling room generation algorithm from RogueSharp tutorial
@@ -12,7 +12,7 @@ namespace myrmidon.Old {
     public class MapGenerator {
 
         Random RandNumGenerator = new Random();
-        Map.Map _workingStage;
+        Maps.Map _workingMap;
 
 
 
@@ -32,13 +32,13 @@ namespace myrmidon.Old {
         /// <param name="minRoomSize"></param>
         /// <param name="maxRoomSize"></param>
         /// <returns></returns>
-        public Map.Map GenerateMap(int mapWidth, int mapHeight, int maxRooms, int minRoomSize, int maxRoomSize) {
+        public Maps.Map GenerateMap(int mapWidth, int mapHeight, int maxRooms, int minRoomSize, int maxRoomSize) {
 
-            _workingStage = new Map.Map(mapWidth, mapHeight);
+            _workingMap = new Maps.Map(mapWidth, mapHeight);
 
             // Fill map with empty
-            for (int i = 0; i < _workingStage.Tiles.Length; i++) {
-                _workingStage.Tiles[i] = new TileEmpty();
+            for (int i = 0; i < _workingMap.Tiles.Length; i++) {
+                _workingMap.Tiles[i] = new TileEmpty();
             }
 
             // create up to maxRooms non-overlapping rooms
@@ -55,19 +55,19 @@ namespace myrmidon.Old {
                 Rect newRoom = new Rect(newRoomX, newRoomY, newRoomWidth, newRoomHeight);
 
                 // Does the new room intersect with other rooms already generated?
-                bool newRoomIntersects = _workingStage.Rooms.Any(room => newRoom.Intersects(room));
+                bool newRoomIntersects = _workingMap.Rooms.Any(room => newRoom.Intersects(room));
 
                 if (!newRoomIntersects) {
-                    _workingStage.Rooms.Add(newRoom);
+                    _workingMap.Rooms.Add(newRoom);
                 }
             }
 
 
             // carve out tunnels between all rooms based on the Positions of their centers
-            for (int r = 1; r < _workingStage.Rooms.Count; r++) {
+            for (int r = 1; r < _workingMap.Rooms.Count; r++) {
                 //for all remaining rooms get the center of the room and the previous room
-                Point previousRoomCenter = _workingStage.Rooms[r - 1].Center;
-                Point currentRoomCenter = _workingStage.Rooms[r].Center;
+                Point previousRoomCenter = _workingMap.Rooms[r - 1].Center;
+                Point currentRoomCenter = _workingMap.Rooms[r].Center;
 
                 // give a 50/50 chance of which 'L' shaped connecting hallway to tunnel out
                 if (RandNumGenerator.Next(1, 2) == 1) {
@@ -81,12 +81,12 @@ namespace myrmidon.Old {
             }
 
             // Carve out rooms for every room in the Rooms list
-            foreach (Rect room in _workingStage.Rooms) {
+            foreach (Rect room in _workingMap.Rooms) {
                 CreateRoom(room);
             }
 
             // spit out the final map
-            return _workingStage;
+            return _workingMap;
         }
 
 
@@ -119,7 +119,7 @@ namespace myrmidon.Old {
             }
 
             foreach (Vector location in RoomPerimeter) {
-                if (_workingStage.GetTileAt<Tile>(location) is not TileTunnel) {
+                if (_workingMap.GetTileAt<Tile>(location) is not TileTunnel) {
                     CreateWall(location);
                 }
             }
@@ -132,16 +132,16 @@ namespace myrmidon.Old {
 
         // Creates a specific tile at a specified location.
         private void CreateFloor(Vector location) {
-            _workingStage.Tiles[location.ToIndex(_workingStage.Width)] = new TileFloor();
+            _workingMap[location] = new TileFloor();
         }
         private void CreateTunnel(Vector location) {
-            _workingStage.Tiles[location.ToIndex(_workingStage.Width)] = new TileTunnel();
+            _workingMap[location] = new TileTunnel();
         }
         private void CreateWall(Vector location) {
-            _workingStage.Tiles[location.ToIndex(_workingStage.Width)] = new TileWall();
+            _workingMap[location] = new TileWall();
         }
         private void CreateDoor(Vector location) {
-            _workingStage.Tiles[location.ToIndex(_workingStage.Width)] = new TileDoor(false, false);
+            _workingMap[location] = new TileDoor(false, false);
         }
 
 
@@ -200,8 +200,8 @@ namespace myrmidon.Old {
         private bool IsDoorCandidate(Vector location) {
 
             // Is tile walkable?
-            int locationIndex = location.ToIndex(_workingStage.Width);
-            if (_workingStage.Tiles[locationIndex] != null && _workingStage.Tiles[locationIndex] is TileWall) {
+            if (_workingMap[location] != null &&
+                _workingMap[location] is TileWall) {
                 return false;
             }
 
@@ -210,27 +210,27 @@ namespace myrmidon.Old {
             Vector left = new Vector(location.X - 1, location.Y);
             Vector top = new Vector(location.X, location.Y - 1);
             Vector bottom = new Vector(location.X, location.Y + 1);
-            if (_workingStage.GetTileAt<TileDoor>(location.X, location.Y) != null ||
-                _workingStage.GetTileAt<TileDoor>(right.X, right.Y) != null ||
-                _workingStage.GetTileAt<TileDoor>(left.X, left.Y) != null ||
-                _workingStage.GetTileAt<TileDoor>(top.X, top.Y) != null ||
-                _workingStage.GetTileAt<TileDoor>(bottom.X, bottom.Y) != null
+            if (_workingMap[location] is TileDoor ||
+                _workingMap[right] is TileDoor ||
+                _workingMap[left] is TileDoor ||
+                _workingMap[top] is TileDoor ||
+                _workingMap[bottom] is TileDoor
                ) {
                 return false;
             }
 
             // Is tile placed in a horizonral wall?
-            if (_workingStage.Tiles[right.ToIndex(_workingStage.Width)].IsWalkable
-                && _workingStage.Tiles[left.ToIndex(_workingStage.Width)].IsWalkable
-                && !_workingStage.Tiles[top.ToIndex(_workingStage.Width)].IsWalkable
-                && !_workingStage.Tiles[bottom.ToIndex(_workingStage.Width)].IsWalkable) {
+            if (_workingMap[right].IsWalkable
+                && _workingMap[left].IsWalkable
+                && !_workingMap[top].IsWalkable
+                && !_workingMap[bottom].IsWalkable) {
                 return true;
             }
             // Is tile placed in a vertical wall?
-            if (!_workingStage.Tiles[right.ToIndex(_workingStage.Width)].IsWalkable
-                && !_workingStage.Tiles[left.ToIndex(_workingStage.Width)].IsWalkable
-                && _workingStage.Tiles[top.ToIndex(_workingStage.Width)].IsWalkable
-                && _workingStage.Tiles[bottom.ToIndex(_workingStage.Width)].IsWalkable) {
+            if (!_workingMap[right].IsWalkable
+                && !_workingMap[left].IsWalkable
+                && _workingMap[top].IsWalkable
+                && _workingMap[bottom].IsWalkable) {
                 return true;
             }
             return false;
@@ -239,13 +239,13 @@ namespace myrmidon.Old {
 
         // Sets X coordinate between right and left edges of map to prevent any out-of-bounds errors
         private int ClampX(int x) {
-            return x < 0 ? 0 : x > _workingStage.Width - 1 ? _workingStage.Width - 1 : x;
+            return x < 0 ? 0 : x > _workingMap.Width - 1 ? _workingMap.Width - 1 : x;
         }
 
 
         // Sets Y coordinate between top and bottom edges of map to prevent any out-of-bounds errors
         private int ClampY(int y) {
-            return y < 0 ? 0 : y > _workingStage.Height - 1 ? _workingStage.Height - 1 : y;
+            return y < 0 ? 0 : y > _workingMap.Height - 1 ? _workingMap.Height - 1 : y;
         }
     }
 }

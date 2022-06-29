@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.Xna.Framework;
 using SadConsole.Components;
-using myrmidon.Map;
+using myrmidon.Maps;
 using myrmidon.Actions;
 using myrmidon.Geometry;
 
@@ -60,7 +60,7 @@ namespace myrmidon.Entities {
             Animation.IsDirty = true;
 
             // Create a new unique identifier for this entity
-            ID = Map.Map.IDGenerator.UseID();
+            ID = Maps.Map.IDGenerator.UseID();
 
             // Ensure that the entity position/offset is tracked by scrollingconsoles
             Components.Add(new EntityViewSyncComponent());

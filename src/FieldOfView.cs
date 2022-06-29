@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using myrmidon.Geometry;
 using myrmidon.Tiles;
 using myrmidon.Entities;
+using myrmidon.Maps;
 
-namespace myrmidon.Map {
+namespace myrmidon {
     public class FieldOfView {
 
         private int _viewDistance;

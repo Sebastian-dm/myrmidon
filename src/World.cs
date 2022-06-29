@@ -5,7 +5,7 @@ using SadConsole.Components;
 using Microsoft.Xna.Framework;
 using myrmidon.Entities;
 using myrmidon.Tiles;
-using myrmidon.Map;
+using myrmidon.Maps;
 
 namespace myrmidon {
 
@@ -24,7 +24,7 @@ namespace myrmidon {
         public bool IsEntityGenRequested = false;
 
 
-        public Map.Map CurrentMap { get; set; }
+        public Maps.Map CurrentMap { get; set; }
         public Player Player { get; set; }
 
         public GoRogue.MultiSpatialMap<Actor> Entities {
@@ -35,7 +35,7 @@ namespace myrmidon {
 
 
         public World() {
-            CurrentMap = new Map.Map(_mapWidth, _mapHeight);
+            CurrentMap = new Maps.Map(_mapWidth, _mapHeight);
         }
 
         public void Update() {

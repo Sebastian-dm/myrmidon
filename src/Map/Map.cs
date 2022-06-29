@@ -7,7 +7,7 @@ using myrmidon.Tiles;
 using myrmidon.Geometry;
 using SadConsole;
 
-namespace myrmidon.Map {
+namespace myrmidon.Maps {
     // Stores, manipulates and queries Tile data
     public class Map {
 
@@ -26,6 +26,11 @@ namespace myrmidon.Map {
             get => Tiles[i];
             set => Tiles[i] = value;
         }
+        public Tile this[VectorBase v] {
+            get => Tiles[v.X + v.Y * Width];
+            set => Tiles[v.X + v.Y * Width] = value;
+        }
+
 
 
         public List<Rect> Rooms { get; set; }
@@ -104,11 +109,6 @@ namespace myrmidon.Map {
         }
         public T[] GetAdjacentTiles<T>(int x, int y) where T : Tile {
             return GetAdjacentTiles<T>(new Vector(x, y));
-        }
-
-
-        public void SetTileAt(Vector location, Tile tile) {
-            Tiles[location.ToIndex(Width)] = tile;
         }
 
 
