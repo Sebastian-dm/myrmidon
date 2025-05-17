@@ -49,7 +49,7 @@ namespace myrmidon.Actions {
         }
 
         private void CollectEntityActions() {
-            foreach (Actor actor in GameLoop.World.Entities.Items) {
+            foreach (Actor actor in Program.World.Entities.Items) {
                 _actions.Enqueue(actor.GetAction());
             }
         }
@@ -78,28 +78,28 @@ namespace myrmidon.Actions {
             // Keyboard movement for Player character: Up arrow
             // Decrement player's Y coordinate by 1
             else if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Up)) {
-                AddAction(new WalkAction(GameLoop.World.Player, new Vector(0, -1)));
+                AddAction(new WalkAction(Program.World.Player, new Vector(0, -1)));
                 return true;
             }
 
             // Keyboard movement for Player character: Down arrow
             // Increment player's Y coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Down)) {
-                AddAction(new WalkAction(GameLoop.World.Player, new Vector(0, 1)));
+                AddAction(new WalkAction(Program.World.Player, new Vector(0, 1)));
                 return true;
             }
 
             // Keyboard movement for Player character: Left arrow
             // Decrement player's X coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Left)) {
-                AddAction(new WalkAction(GameLoop.World.Player, new Vector(-1, 0)));
+                AddAction(new WalkAction(Program.World.Player, new Vector(-1, 0)));
                 return true;
             }
 
             // Keyboard movement for Player character: Right arrow
             // Increment player's X coordinate by 1
             if (SadConsole.Global.KeyboardState.IsKeyPressed(Microsoft.Xna.Framework.Input.Keys.Right)) {
-                AddAction(new WalkAction(GameLoop.World.Player, new Vector(1, 0)));
+                AddAction(new WalkAction(Program.World.Player, new Vector(1, 0)));
                 return true;
             }
 

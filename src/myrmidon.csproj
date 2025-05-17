@@ -2,9 +2,23 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>myrmidon</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="res\fonts\Square_16x16.font" />
+    <None Remove="res\fonts\Square_16x16.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="res\fonts\Square_16x16.font">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\fonts\Square_16x16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GoRogue" Version="2.6.4" />

@@ -7,7 +7,7 @@ using myrmidon.UI;
 using myrmidon.Actions;
 
 namespace myrmidon {
-    public static class GameLoop {
+    public static class Program {
 
         public const int GameWidth = 89;
         public const int GameHeight = 66;
@@ -23,7 +23,7 @@ namespace myrmidon {
 
         public static void Main(string[] args) {
             // Setup the engine and create the main window.
-            Game.Create("fonts/Square_16x16.font", GameWidth, GameHeight);
+            Game.Create("res/fonts/Square_16x16.font", GameWidth, GameHeight);
             //SadConsole.Game.Create("res/fonts/Graphic_16x16.font", GameWidth, GameHeight);
 
 

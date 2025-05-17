@@ -37,7 +37,7 @@ namespace myrmidon.Actions {
             // Handled an unlocked door that is closed
             else if (!door.Locked && !door.IsOpen) {
                 door.Open();
-                GameLoop.UIManager.MessageLog.Add($"{Performer.Name} opened {door.Name}");
+                Program.UIManager.MessageLog.Add($"{Performer.Name} opened {door.Name}");
             }
         }
     }

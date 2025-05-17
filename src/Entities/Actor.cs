@@ -35,11 +35,11 @@ namespace myrmidon.Entities {
         public bool MoveTo(Vector newPosition) {
             Position = new Point(newPosition.X, newPosition.Y);
 
-            GameLoop.FOV.Update();
+            Program.FOV.Update();
 
             if (this is Player) {
-                GameLoop.UIManager.CenterOnActor(this);
-                GameLoop.UIManager.RefreshConsole();
+                Program.UIManager.CenterOnActor(this);
+                Program.UIManager.RefreshConsole();
             }
 
             return true;
