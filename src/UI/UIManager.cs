@@ -42,19 +42,19 @@ namespace myrmidon.UI {
             CreateConsoles();
 
             //Message Log initialization
-            MessageLog = new MessageLogWindow(GameLoop.GameWidth, GameLoop.GameHeight /4, "Message Log");
+            MessageLog = new MessageLogWindow(Program.GameWidth, Program.GameHeight /4, "Message Log");
             Children.Add(MessageLog);
             MessageLog.Show();
-            MessageLog.Position = new Point(0, GameLoop.GameHeight * 3 / 4);
+            MessageLog.Position = new Point(0, Program.GameHeight * 3 / 4);
 
             // TEST CODE
             MessageLog.Add("Started game from path: "+System.IO.Directory.GetCurrentDirectory());
 
             // Load the map into the MapConsole
-            LoadMap(GameLoop.World.CurrentMap);
+            LoadMap(Program.World.CurrentMap);
 
             // Now that the MapConsole is ready, build the Window
-            CreateMapWindow(GameLoop.GameWidth, GameLoop.GameHeight *3/4, "Game Map");
+            CreateMapWindow(Program.GameWidth, Program.GameHeight *3/4, "Game Map");
             UseMouse = true;
 
             // Start the game with the camera focused on the player
@@ -89,7 +89,7 @@ namespace myrmidon.UI {
             // Temporarily create a console with *no* tile data that will later be replaced with map data
             //FontMaster fontMaster = SadConsole.Global.LoadFont("fonts/Square_16x16.font");
             //Font GraphicFont = fontMaster.GetFont(Font.FontSizes.One);
-            MapConsole = new ScrollingConsole(GameLoop.GameWidth,GameLoop.GameHeight);
+            MapConsole = new ScrollingConsole(Program.GameWidth,Program.GameHeight);
             //MapConsole.Font = GraphicFont;
         }
 
@@ -101,12 +101,12 @@ namespace myrmidon.UI {
         private void LoadMap(Maps.Map map) {
             // First load the map's tiles into the console
             MapConsole = new SadConsole.ScrollingConsole(
-                GameLoop.World.CurrentMap.Width,
-                GameLoop.World.CurrentMap.Height,
+                Program.World.CurrentMap.Width,
+                Program.World.CurrentMap.Height,
                 Global.FontDefault,
                 new Rectangle(0,0,
-                    GameLoop.GameWidth,
-                    GameLoop.GameHeight
+                    Program.GameWidth,
+                    Program.GameHeight
                     ),
                 map.Tiles);
 

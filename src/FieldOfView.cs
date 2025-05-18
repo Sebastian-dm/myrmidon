@@ -20,7 +20,7 @@ namespace myrmidon {
 
         // Recompute the visible area based on a given location.
         public void Update(Vector origin) {
-            Map map = GameLoop.World.CurrentMap;
+            Map map = Program.World.CurrentMap;
 
             // Update tiles visiblity
             for (int x = 0; x < map.Width; x++) {
@@ -49,8 +49,8 @@ namespace myrmidon {
 
         public void Update() {
             Vector PlayerPos = new Vector(
-                GameLoop.World.Player.Position.X,
-                GameLoop.World.Player.Position.Y
+                Program.World.Player.Position.X,
+                Program.World.Player.Position.Y
                 );
             Update(PlayerPos);
 

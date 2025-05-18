@@ -50,9 +50,9 @@ namespace myrmidon {
                 CreateMonsters();
                 CreateLoot();
                 IsEntityGenRequested = false;
-                GameLoop.FOV.Update();
+                Program.FOV.Update();
             }
-            GameLoop.UIManager.RefreshConsole();
+            Program.UIManager.RefreshConsole();
 
         }
 
