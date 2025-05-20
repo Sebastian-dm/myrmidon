@@ -5,21 +5,27 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Myrmidon.Core.Actors;
+using Myrmidon.Core.GameState;
 using Myrmidon.Core.Utilities.Geometry;
 
 namespace Myrmidon.Core.Actions {
-    internal class AttackAction : Action {
+    internal class AttackAction : IAction {
 
+        public readonly Actor Performer;
         public readonly Actor Subject;
 
-        public AttackAction(Actor performer, Actor subject) : base(performer) {
+        private IGameContext? _context;
+
+        public AttackAction(Actor performer, Actor subject) {
+            Performer = performer;
             Subject = subject;
         }
 
-        public override ActionResult Perform() {
+        public ActionResult Perform(IGameContext context) {
             
-            double Distance = (Performer.Position - Subject.Position).ToVector2().LengthSquared(); // TODO: Default point class does not implement these methods
+            double Distance = (Performer.Position - Subject.Position).ToVector2().LengthSquared();
             if (Distance < 2) {
+                _context = context;
                 Attack(Performer, Subject);
                 return new ActionResult(succeeded: true);
             }
@@ -45,9 +51,9 @@ namespace Myrmidon.Core.Actions {
             int blocks = ResolveDefense(defender, hits, attackMessage, defenseMessage);
 
             // Display the outcome of the attack & defense
-            Program.UIManager.MessageLog.Add(attackMessage.ToString());
+            //Program.UIManager.MessageLog.Add(attackMessage.ToString());
             if (!string.IsNullOrWhiteSpace(defenseMessage.ToString())) {
-                Program.UIManager.MessageLog.Add(defenseMessage.ToString());
+                //Program.UIManager.MessageLog.Add(defenseMessage.ToString());
             }
 
             int damage = hits - blocks;
@@ -118,13 +124,13 @@ namespace Myrmidon.Core.Actions {
         private void ResolveDamage(Actor defender, int damage) {
             if (damage > 0) {
                 defender.Health = defender.Health - damage;
-                Program.UIManager.MessageLog.Add($" {defender.Name} was hit for {damage} damage");
+                //Program.UIManager.MessageLog.Add($" {defender.Name} was hit for {damage} damage");
                 if (defender.Health <= 0) {
                     ResolveDeath(defender);
                 }
             }
             else {
-                Program.UIManager.MessageLog.Add($"{defender.Name} blocked all damage!");
+                //Program.UIManager.MessageLog.Add($"{defender.Name} blocked all damage!");
             }
         }
 
@@ -146,7 +152,7 @@ namespace Myrmidon.Core.Actions {
                     item.Position = defender.Position;
 
                     // Now let the MultiSpatialMap know that the Item is visible
-                    Program.World.CurrentMap.Add(item);
+                    _context?.World.CurrentMap.Add(item);
 
                     // Append the item to the deathMessage
                     deathMessage.Append(", " + item.Name);
@@ -162,10 +168,10 @@ namespace Myrmidon.Core.Actions {
             }
 
             // actor goes bye-bye
-            Program.World.CurrentMap.Remove(defender);
+            _context?.World.CurrentMap.Remove(defender);
 
             // Now show the deathMessage in the messagelog
-            Program.UIManager.MessageLog.Add(deathMessage.ToString());
+            //Program.UIManager.MessageLog.Add(deathMessage.ToString());
         }
 
 

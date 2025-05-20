@@ -35,9 +35,9 @@ namespace Myrmidon.Core.Utilities.Geometry {
             }
         }
         public int Area { get { return Width * Height; } }
-        public Microsoft.Xna.Framework.Point Center {
-            get { return new Microsoft.Xna.Framework.Point(X+Width/2,Y+Height/2); }
-            }
+        public Point Center {
+            get { return new Point(X+Width/2, Y+Height/2); }
+        }
 
 
         public bool Equals(Rect otherRect) {

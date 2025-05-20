@@ -1,27 +1,20 @@
-﻿using System;
+﻿using Myrmidon.Core.Actors;
+using Myrmidon.Core.GameState;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Myrmidon.Core.Actors;
-
 namespace Myrmidon.Core.Actions {
-    public abstract class Action {
-        public readonly Actor Performer;
+    public interface IAction {
 
-        public bool IsImmediate;
-
-        public Action(Actor performer) {
-            Performer = performer;
-        }
-
-        public abstract ActionResult Perform();
+        ActionResult Perform(IGameContext context);
     }
 
     public class ActionResult {
         public bool Succeeded;
-        public Action Alternative;
+        public IAction? Alternative;
 
         public ActionResult() { 
 
@@ -31,7 +24,7 @@ namespace Myrmidon.Core.Actions {
             Succeeded = succeeded;
         }
 
-        public ActionResult(bool succeeded, Action alternative) {
+        public ActionResult(bool succeeded, IAction alternative) {
             Succeeded = succeeded;
             Alternative = alternative;
         }

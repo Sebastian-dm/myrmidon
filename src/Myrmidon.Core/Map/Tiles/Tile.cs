@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Drawing;
+using Myrmidon.Core.Utilities.Graphics;
 
-namespace Myrmidon.Core.Map.Tiles {
+
+namespace Myrmidon.Core.Maps.Tiles {
     /// <summary>
     /// Abstract and basic. TileBase is the simple form. Of all the tiles
     /// </summary>
@@ -10,7 +11,11 @@ namespace Myrmidon.Core.Map.Tiles {
         public string Name;
         public bool IsWalkable;
         public bool IsBlockingLineOfSigth;
-        
+
+        public int Glyph { get; set; } // the tile's glyph
+        public Color Foreground { get; set; } // the tile's foreground colour
+        public Color Background { get; set; } // the tile's background colour
+
         public bool isVisible {
             get { return _isVisible; }
             set { _isVisible = value; OnVisible(); }

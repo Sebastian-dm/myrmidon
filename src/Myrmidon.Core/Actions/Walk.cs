@@ -3,22 +3,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Myrmidon.Entities;
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.Actors;
 using Myrmidon.Core.Utilities.Geometry;
-using Myrmidon.Core.Map.Tiles;
+using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.GameState;
 
 namespace Myrmidon.Core.Actions {
-    public class WalkAction : Action {
+    public class WalkAction : IAction {
 
-        // store the actor's last move state
-        private Vector _originalPosition; 
+        public readonly Actor Performer;
         public readonly Vector Direction;
 
-        public WalkAction(Actor performer, Vector direction) : base(performer) {
+        private Vector _originalPosition;
+
+        public WalkAction(Actor performer, Vector direction) {
+            Performer = performer;
             Direction = direction;
+            _originalPosition = performer.Position.ToVector2();
         }
 
-        public override ActionResult Perform() {
+        public ActionResult Perform(IGameContext context) {
 
             // Do nothing if no length given
             if (Direction.X == 0 && Direction.Y == 0) {
@@ -33,7 +38,7 @@ namespace Myrmidon.Core.Actions {
             Vector newPosition = _originalPosition + Direction;
 
             // Check if there is an actor on new position
-            Monster monster = Program.World.CurrentMap.GetEntityAt<Monster>(newPosition);
+            Monster monster = context.World.CurrentMap.GetEntityAt<Monster>(newPosition);
             if (monster != null) {
                 return new ActionResult( succeeded: false,
                 alternative: new AttackAction(Performer, monster)
@@ -41,7 +46,7 @@ namespace Myrmidon.Core.Actions {
             }
 
             // Check if there is an item on the new position
-            Item item = Program.World.CurrentMap.GetEntityAt<Item>(newPosition);
+            Item item = context.World.CurrentMap.GetEntityAt<Item>(newPosition);
             if (item != null) {
                 return new ActionResult( succeeded: false,
                 alternative: new PickupAction(Performer, item)
@@ -49,7 +54,7 @@ namespace Myrmidon.Core.Actions {
             }
 
             // Check for the presence of a door
-            TileDoor door = Program.World.CurrentMap.GetTileAt<TileDoor>(newPosition);
+            TileDoor door = context.World.CurrentMap.GetTileAt<TileDoor>(newPosition);
             if (door != null && !door.IsOpen) {
                 return new ActionResult(succeeded: false,
                 alternative: new OpenDoorAction(Performer, door)
@@ -57,7 +62,7 @@ namespace Myrmidon.Core.Actions {
             }
 
             // Check if it is possible to go there
-            if (Program.World.CurrentMap.IsTileWalkable(newPosition)) {
+            if (context.World.CurrentMap.IsTileWalkable(newPosition)) {
                 Performer.MoveTo(newPosition);
                 return new ActionResult(succeeded: true);
             }

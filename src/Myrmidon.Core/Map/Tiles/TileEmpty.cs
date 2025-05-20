@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace Myrmidon.Core.Map.Tiles {
+namespace Myrmidon.Core.Maps.Tiles {
     // TileFloor is based on TileBase
     // Floor tiles to be used in maps.
     public class TileEmpty : Tile {

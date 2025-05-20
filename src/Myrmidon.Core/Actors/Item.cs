@@ -1,5 +1,8 @@
 ﻿using System;
-using System.Drawing;
+
+using Myrmidon.Core.Utilities.Geometry;
+using Myrmidon.Core.Utilities.Graphics;
+
 
 namespace Myrmidon.Core.Actors {
     

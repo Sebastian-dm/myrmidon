@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Myrmidon.Core.Map.Tiles {
+namespace Myrmidon.Core.Maps.Tiles {
     // TileWall is based on TileBase
     public class TileWall : Tile {
 

@@ -4,23 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Myrmidon.Entities;
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.Actors;
+using Myrmidon.Core.Utilities.Geometry;
+using Myrmidon.Core.Actions;
+using Myrmidon.Core.GameState;
 
 namespace Myrmidon.Core.Actions {
-    internal class PickupAction : Action {
+    internal class PickupAction : IAction {
 
+        public readonly Actor Performer;
         public readonly Item Item;
 
-        public PickupAction(Actor performer, Item item) : base(performer) {
+        public PickupAction(Actor performer, Item item) {
+            Performer = performer;
             Item = item;
         }
 
-        public override ActionResult Perform() {
+        public ActionResult Perform(IGameContext context) {
 
             double Distance = (Performer.Position - Item.Position).ToVector2().LengthSquared();
             if (Distance < 2) {
                 Performer.Inventory.Add(Item);
-                Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
+                //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
                 Item.Destroy();
                 return new ActionResult(succeeded: true);
             }

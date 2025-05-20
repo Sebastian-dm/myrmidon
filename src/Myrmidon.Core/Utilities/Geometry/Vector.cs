@@ -39,15 +39,15 @@ namespace Myrmidon.Core.Utilities.Geometry {
         }
 
 
-        public int LengthSquared {
-            get { return X * X + Y * Y; }
+        public int LengthSquared() {
+            return X * X + Y * Y;
         }
 
         /// The Cartesian length of the vector.
         /// If you just need to compare the magnitude of two vectors, prefer using
         /// the comparison operators or [lengthSquared], both of which are faster.
         public double Length {
-            get { return Math.Sqrt(LengthSquared); }
+            get { return Math.Sqrt(LengthSquared()); }
         }
 
         /// The eight Vecs surrounding this one to the north, south, east, and west
@@ -123,20 +123,20 @@ namespace Myrmidon.Core.Utilities.Geometry {
         public static bool operator <=(VectorBase vector, Object other) {
             if (other is VectorBase) {
                 VectorBase otherVector = (VectorBase)other;
-                return vector.LengthSquared <= otherVector.LengthSquared;
+                return vector.LengthSquared() <= otherVector.LengthSquared();
             }
             else if (IsNumber(other)) {
-                return vector.LengthSquared <= (dynamic)other * (dynamic)other;
+                return vector.LengthSquared() <= (dynamic)other * (dynamic)other;
             }
             throw new ArgumentException("Operand must be an int or VectorBase.");
         }
         public static bool operator >=(VectorBase vector, Object other) {
             if (other is VectorBase) {
                 VectorBase otherVector = (VectorBase)other;
-                return vector.LengthSquared >= otherVector.LengthSquared;
+                return vector.LengthSquared() >= otherVector.LengthSquared();
             }
             else if (IsNumber(other)) {
-                return vector.LengthSquared >= (dynamic)other * (dynamic)other;
+                return vector.LengthSquared() >= (dynamic)other * (dynamic)other;
             }
             throw new ArgumentException("Operand must be an int or VectorBase.");
         }

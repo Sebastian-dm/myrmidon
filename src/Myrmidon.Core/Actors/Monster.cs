@@ -1,5 +1,7 @@
 ﻿using System;
-using System.Drawing;
+
+using Myrmidon.Core.Utilities.Geometry;
+using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Actors {
 
@@ -16,7 +18,7 @@ namespace Myrmidon.Core.Actors {
 
             for (int i = 0; i < lootNum; i++) {
                 // monsters are made out of spork, obvs.
-                Item newLoot = new Item(Color.Beige, Color.Transparent, glyph: 384, name: "Loot", 2);
+                Item newLoot = new Item(Color.Yellow, Color.Transparent, glyph: 384, name: "Loot", 2);
                 Inventory.Add(newLoot);
             }
         }

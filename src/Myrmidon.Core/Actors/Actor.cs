@@ -1,11 +1,13 @@
 ﻿using System.Text;
 using System.Collections.Generic;
-using System.Drawing;
 
 
+using Myrmidon.Core.Actions;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Utilities.Geometry;
-using Myrmidon.Core.Map.Tiles;
+using Myrmidon.Core.Utilities.Graphics;
+using Myrmidon.Core.Maps.Tiles;
+using IAction = Myrmidon.Core.Actions.IAction;
 
 namespace Myrmidon.Core.Actors {
     public abstract class Actor : Entity {
@@ -46,7 +48,7 @@ namespace Myrmidon.Core.Actors {
             return true;
         }
 
-        public Action GetAction() {
+        public IAction GetAction() {
             return new SkipAction(this);
         }
 

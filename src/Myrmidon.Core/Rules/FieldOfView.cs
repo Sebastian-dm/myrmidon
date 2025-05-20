@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 
 using Myrmidon.Core.Utilities.Geometry;
-using Myrmidon.Core.Map.Tiles;
-using Myrmidon.Entities;
-using Myrmidon.Maps;
+using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.Maps;
 
 namespace Myrmidon.Rules {
     public class FieldOfView {

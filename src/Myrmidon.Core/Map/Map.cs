@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Drawing;
+
 
 using Myrmidon.Core.Actors;
-using Myrmidon.Core.Map.Tiles;
+using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Geometry;
 
-namespace Myrmidon.Core.Map {
+namespace Myrmidon.Core.Maps {
     // Stores, manipulates and queries Tile data
     public class Map {
 
@@ -71,7 +71,7 @@ namespace Myrmidon.Core.Map {
 
         // Returns an entity if it exists at location. Return null otherwise.
         public T GetEntityAt<T>(Vector location) where T : Actor {
-            return Entities.GetItems(new Point(location.X, location.Y)).OfType<T>().FirstOrDefault();
+            return Entities.GetItems(new GoRogue.Coord(location.X, location.Y)).OfType<T>().FirstOrDefault();
         }
 
 

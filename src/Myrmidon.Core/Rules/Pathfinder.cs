@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Myrmidon.Core.Map;
+using Myrmidon.Core.Maps;
 using Myrmidon.Core.Utilities.Geometry;
 
 namespace Myrmidon.Rules {

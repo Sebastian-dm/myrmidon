@@ -4,7 +4,7 @@ using System.Threading;
 using System.Reflection;
 using System.Linq;
 
-using Myrmidon.Core.Map.Tiles;
+using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Geometry;
 
 /// The random dungeon generator.
@@ -34,7 +34,7 @@ using Myrmidon.Core.Utilities.Geometry;
 /// The end result of this is a multiply-connected dungeon with rooms and lots
 /// of winding corridors.
 
-namespace Myrmidon.Core.Map {
+namespace Myrmidon.Core.Maps {
 
     public class DungeonGenerator {
 

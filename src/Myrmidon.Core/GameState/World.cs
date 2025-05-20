@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 
 using Myrmidon.Core.Actors;
-using Myrmidon.Core.Map.Tiles;
-using Myrmidon.Core.Map;
+using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.Maps;
+using Myrmidon.Core.Utilities.Geometry;
+using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.GameState {
 
@@ -100,7 +102,7 @@ namespace Myrmidon.Core.GameState {
             int numMonsters = 30;
 
             for (int i = 0; i < numMonsters; i++) {
-                Monster newMonster = new Monster(Color.HotPink, Color.Transparent, glyph: 368);
+                Monster newMonster = new Monster(Color.Red, Color.Transparent, glyph: 368);
 
                 int monsterPosition = 0;
                 bool isPositionValid = false;
@@ -129,7 +131,7 @@ namespace Myrmidon.Core.GameState {
             int numLoot = 20;
 
             for (int i = 0; i < numLoot; i++) {
-                Item newLoot = new Item(Color.Beige, Color.Transparent, glyph: 384, name: "Loot", 2);
+                Item newLoot = new Item(Color.Yellow, Color.Transparent, glyph: 384, name: "Loot", 2);
 
                 int lootPosition = 0;
                 bool isPositionValid = false;

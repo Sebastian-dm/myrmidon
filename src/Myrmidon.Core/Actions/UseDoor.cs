@@ -4,19 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Myrmidon.Entities;
-using Myrmidon.Core.Map.Tiles;
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.Actors;
+using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.GameState;
 
 namespace Myrmidon.Core.Actions {
-    internal class OpenDoorAction : Action {
+    internal class OpenDoorAction : IAction {
 
+        public readonly Actor Performer;
         public readonly TileDoor Door;
 
-        public OpenDoorAction(Actor performer, TileDoor door) : base(performer) {
+        public OpenDoorAction(Actor performer, TileDoor door) {
+            Performer = performer;
             Door = door;
         }
 
-        public override ActionResult Perform() {
+        public ActionResult Perform(IGameContext context) {
             try {
                 OpenDoor(Door);
                 return new ActionResult(succeeded: true);
@@ -37,7 +41,7 @@ namespace Myrmidon.Core.Actions {
             // Handled an unlocked door that is closed
             else if (!door.Locked && !door.IsOpen) {
                 door.Open();
-                Program.UIManager.MessageLog.Add($"{Performer.Name} opened {door.Name}");
+                //Program.UIManager.MessageLog.Add($"{Performer.Name} opened {door.Name}");
             }
         }
     }

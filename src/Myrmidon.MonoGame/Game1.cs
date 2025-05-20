@@ -1,5 +1,5 @@
-﻿//using Myrmidon.Core;
-//using Myrmidon.Input;
+﻿using Myrmidon.Core.GameState;
+using Myrmidon.Core.Input;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,8 +12,9 @@ namespace Myrmidon.MonoGame {
         private SpriteBatch _spriteBatch;
 
         // World & Simulation
-        //private GameWorld _world;
-        //private TurnManager _turnManager;
+        private World _world;
+        private IGameContext _context;
+        private TurnManager _turnManager;
 
         // Rendering
         private TileRenderer _tileRenderer;
@@ -37,10 +38,11 @@ namespace Myrmidon.MonoGame {
         protected override void Initialize() {
             base.Initialize();
 
-            // Initialize core systems
-            //_world = new GameWorld();           // Custom world loader from Game.Core
-            //_turnManager = new TurnManager();   // Handles turn-based action resolution
-            //_inputHandler = new MonoGameInputHandler(); // From Game.Input layer
+            //Initialize core systems
+            _world = new World();           // Custom world loader from Game.Core
+            _context = new GameContext(_world); // Holds game state and context
+            _turnManager = new TurnManager();   // Handles turn-based action resolution
+            _inputHandler = new MonoGameInputHandler(); // From Game.Input layer
 
             // Camera/View area
             _viewArea = new Rectangle(0, 0, 80, 45);  // In tiles

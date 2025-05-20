@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 
 
-namespace Myrmidon.Core.Map.Tiles {
+namespace Myrmidon.Core.Maps.Tiles {
     public class TileDoor : Tile {
 
         public bool Locked; // Locked door = 1, Unlocked = 0

@@ -5,13 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Myrmidon.Core.Actors;
+using Myrmidon.Core.GameState;
 
 namespace Myrmidon.Core.Actions {
-    internal class SkipAction : Action {
+    internal class SkipAction : IAction {
 
-        public SkipAction(Actor performer) : base(performer) { }
+        public SkipAction(Actor performer) {
 
-        public override ActionResult Perform() {
+        }
+
+        public ActionResult Perform(IGameContext context) {
             return new ActionResult();
         }
     }

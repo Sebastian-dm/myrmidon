@@ -1,9 +1,10 @@
 ﻿
-using Myrmidon.Core.Map;
+using Myrmidon.Core.Maps;
 using Myrmidon.Core.Actions;
+using Myrmidon.Core.Utilities.Graphics;
 using Myrmidon.Core.Utilities.Geometry;
 
-using System.Drawing;
+
 
 namespace Myrmidon.Core.Entities {
 
@@ -16,6 +17,10 @@ namespace Myrmidon.Core.Entities {
         public uint ID { get; private set; } // stores the entity's unique identification number
         public string Name { get; set; } // stores the entity's name
 
+        public int Glyph { get; set; } // the tile's glyph
+        public Color Foreground { get; set; } // the tile's foreground colour
+        public Color Background { get; set; } // the tile's background colour
+        public bool IsDirty { get; set; } // indicates if the entity needs to be redrawn
 
         public bool isVisible {
             get {
@@ -42,44 +47,41 @@ namespace Myrmidon.Core.Entities {
         internal Color _backgroundHidden;
         internal int _glyphHidden;
 
-        protected Entity(Color foreground, Color background, int glyph) {
+        protected Entity(Color foreground, Color background, int glyph, int width, int height) {
 
             // Set local variables
             _foregroundVisible = foreground;
             _backgroundVisible = background;
             _glyphVisible = glyph;
 
-            _foregroundHidden = Color.FromArgb(0, 0, 0);
-            _backgroundHidden = Color.FromArgb(0, 0, 0);
+            _foregroundHidden = new Color(0, 0, 0);
+            _backgroundHidden = new Color(0, 0, 0);
             _glyphHidden = 0;
 
             // Initial values
-            Animation.CurrentFrame[0].Glyph = _glyphHidden;
-            Animation.CurrentFrame[0].Foreground = _foregroundHidden;
-            Animation.CurrentFrame[0].Background = _backgroundHidden;
-            Animation.IsDirty = true;
+            Glyph = _glyphHidden;
+            Foreground = _foregroundHidden;
+            Background = _backgroundHidden;
+            IsDirty = true;
 
             // Create a new unique identifier for this entity
-            ID = Map.Map.IDGenerator.UseID();
-
-            // Ensure that the entity position/offset is tracked by scrollingconsoles
-            Components.Add(new EntityViewSyncComponent());
+            ID = Maps.Map.IDGenerator.UseID();
 
         }
 
         private void OnVisible() {
             if (_isVisible) {
-                Animation.CurrentFrame[0].Glyph = _glyphVisible;
-                Animation.CurrentFrame[0].Foreground = _foregroundVisible;
-                Animation.CurrentFrame[0].Background = _backgroundVisible;
+                Glyph = _glyphVisible;
+                Foreground = _foregroundVisible;
+                Background = _backgroundVisible;
 
             }
             else {
-                Animation.CurrentFrame[0].Glyph = _glyphHidden;
-                Animation.CurrentFrame[0].Foreground = _foregroundHidden;
-                Animation.CurrentFrame[0].Background = _backgroundHidden;
+                Glyph = _glyphHidden;
+                Foreground = _foregroundHidden;
+                Background = _backgroundHidden;
             }
-            Animation.IsDirty = true;
+            IsDirty = true;
         }
     }
 }
