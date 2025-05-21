@@ -36,7 +36,7 @@ namespace myrmidon.UI {
         /// <param name="title"></param>
         public MessageLogWindow(int width, int height, string title) : base(width, height) {
             // Ensure that the window background is the correct colour
-            ThemeColors = GameLoop.UIManager.CustomColors.Clone();
+            ThemeColors = Program.UIManager.CustomColors.Clone();
             ThemeColors.ControlBack = Color.DarkRed;
             ThemeColors.TitleText = Color.Red;
             ThemeColors.RebuildAppearances();

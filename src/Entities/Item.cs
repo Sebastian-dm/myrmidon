@@ -39,7 +39,7 @@ namespace myrmidon.Entities {
         /// and lets the garbage collector take it out of memory automatically.
         /// </summary>
         public void Destroy() {
-            GameLoop.World.CurrentMap.Remove(this);
+            Program.World.CurrentMap.Remove(this);
         }
     }
 }
