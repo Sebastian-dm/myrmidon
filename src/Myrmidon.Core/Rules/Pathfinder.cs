@@ -6,9 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Myrmidon.Core.Maps;
+using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Geometry;
 
-namespace Myrmidon.Rules {
+namespace Myrmidon.Core.Rules {
 
     internal struct Path {
         public readonly Direction startDirection; // Direction of first step along this path.

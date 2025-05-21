@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Threading;
 using System.Reflection;
@@ -6,6 +6,7 @@ using System.Linq;
 
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Geometry;
+using Myrmidon.Core.Utilities.Random;
 
 /// The random dungeon generator.
 /// This dungeon generator is an implementation of the Hauberk dungeon Generator made by Robert Nystrom
@@ -45,7 +46,7 @@ namespace Myrmidon.Core.Maps {
         private int _windingPercent = 0;
         private int _currentRegion = -1; // Index of current region being carved.
         private int[] _regions; // For each open position in the dungeon, the index of the connected region that that position is a part of.
-        private Random rng = new Random();
+        private RandomNumberGenerator rng = new ();
 
         private readonly int _tileStepWaitMs = 0;
 

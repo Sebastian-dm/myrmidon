@@ -1,0 +1,101 @@
+﻿using Myrmidon.Core.Actors;
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.GameState;
+using Myrmidon.Core.Maps;
+using Myrmidon.Core.UI;
+using Myrmidon.Core.Rules;
+using Myrmidon.Core.Utilities.Geometry;
+using Myrmidon.Core.Utilities.Graphics;
+using GoRogue;
+
+namespace Myrmidon.Simulation {
+    public class WorldController {
+
+        private readonly IGameContext _context;
+        private readonly IFovSystem _fov;
+        private readonly IUIService _ui;
+        private readonly World _world;
+        private readonly Random _rng = new();
+
+        public WorldController(IGameContext context, IFovSystem fov, IUIService ui) {
+            _context = context;
+            _world = context.World;
+            _fov = fov;
+            _ui = ui;
+        }
+
+        public void Update() {
+            if (_world.IsMapGenRequested) {
+                _world.IsMapGenRequested = false;
+                _world.IsMapGenInProgress = true;
+                _ = GenerateMapAsync();
+            }
+
+            if (_world.IsEntityGenRequested) {
+                CreatePlayer();
+                CreateMonsters();
+                CreateLoot();
+                _world.IsEntityGenRequested = false;
+                _fov.Update(_context, _world.Player.Position);
+            }
+
+            _ui.Refresh();
+        }
+
+        private async Task GenerateMapAsync() {
+            var mapGen = new DungeonGenerator();
+            await Task.Run(() => mapGen.Generate(_world.CurrentMap));
+            _world.IsMapGenInProgress = false;
+            _world.IsEntityGenRequested = true;
+        }
+
+        private void CreatePlayer() {
+            var player = new Player(new Color(20, 255, 255), Color.Transparent);
+
+            if (_world.CurrentMap.Rooms.Count > 0) {
+                int index = _rng.Next(_world.CurrentMap.Rooms.Count);
+                player.Position = _world.CurrentMap.Rooms[index].Center;
+            }
+            else {
+                player.Position = new Point(10, 10);
+            }
+
+            _world.Player = player;
+            _world.CurrentMap.Add(player);
+        }
+
+        private void CreateMonsters() {
+            for (int i = 0; i < 30; i++) {
+                var monster = new Monster(Color.Red, Color.Transparent, glyph: 368) {
+                    AttackChance = _rng.Next(0, 50),
+                    AttackStrength = _rng.Next(0, 10),
+                    DefenseChance = _rng.Next(0, 50),
+                    DefenseStrength = _rng.Next(0, 10),
+                    Name = "a common troll"
+                };
+
+                PlaceEntityAtRandomWalkable(monster);
+            }
+        }
+
+        private void CreateLoot() {
+            for (int i = 0; i < 20; i++) {
+                var loot = new Item(Color.Yellow, Color.Transparent, glyph: 384, name: "Loot");
+                PlaceEntityAtRandomWalkable(loot);
+            }
+        }
+
+        private void PlaceEntityAtRandomWalkable(Entity entity) {
+            int pos;
+            bool valid;
+            do {
+                pos = _rng.Next(0, _world.CurrentMap.Width * _world.CurrentMap.Height);
+                valid = _world.CurrentMap.Tiles[pos].IsWalkable;
+            }
+            while (!valid);
+
+            entity.Position = new Point(pos % _world.CurrentMap.Width, pos / _world.CurrentMap.Width);
+            _world.CurrentMap.Entities.Add(entity, new Coord(entity.Position.X, entity.Position.Y));
+        }
+    }
+}

@@ -10,6 +10,8 @@ using Myrmidon.Core.GameState;
 namespace Myrmidon.Core.Actions {
     internal class SkipAction : IAction {
 
+        public bool IsImmediate { get; } = false;
+
         public SkipAction(Actor performer) {
 
         }

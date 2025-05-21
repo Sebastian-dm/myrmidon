@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>myrmidon</RootNamespace>
+    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Myrmidon.Rendering\Myrmidon.Rendering.csproj" />
+    <ProjectReference Include="..\Myrmidon.Core\Myrmidon.Core.csproj" />
   </ItemGroup>
 
 </Project>

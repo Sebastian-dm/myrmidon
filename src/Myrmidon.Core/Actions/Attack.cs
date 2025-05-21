@@ -11,6 +11,7 @@ using Myrmidon.Core.Utilities.Geometry;
 namespace Myrmidon.Core.Actions {
     internal class AttackAction : IAction {
 
+        public bool IsImmediate { get; } = false;
         public readonly Actor Performer;
         public readonly Actor Subject;
 

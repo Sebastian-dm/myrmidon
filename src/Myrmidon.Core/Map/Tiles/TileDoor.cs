@@ -1,5 +1,6 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
+
+using Myrmidon.Core.Utilities.Graphics;
 
 
 namespace Myrmidon.Core.Maps.Tiles {
@@ -31,7 +32,7 @@ namespace Myrmidon.Core.Maps.Tiles {
         //closes a door
         public void Close() {
             IsOpen = false;
-            IsBlockingLineOfSigth = true;
+            IsBlockingLOS = true;
             IsWalkable = false;
             Glyph = 259;
         }
@@ -39,7 +40,7 @@ namespace Myrmidon.Core.Maps.Tiles {
         //opens a door
         public void Open() {
             IsOpen = true;
-            IsBlockingLineOfSigth = false;
+            IsBlockingLOS = false;
             IsWalkable = true;
             Glyph = 258;
         }

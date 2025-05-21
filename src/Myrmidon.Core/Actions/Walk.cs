@@ -12,6 +12,7 @@ using Myrmidon.Core.GameState;
 namespace Myrmidon.Core.Actions {
     public class WalkAction : IAction {
 
+        public bool IsImmediate { get; } = false;
         public readonly Actor Performer;
         public readonly Vector Direction;
 
@@ -63,7 +64,7 @@ namespace Myrmidon.Core.Actions {
 
             // Check if it is possible to go there
             if (context.World.CurrentMap.IsTileWalkable(newPosition)) {
-                Performer.MoveTo(newPosition);
+                Performer.MoveTo(newPosition, context.World.CurrentMap);
                 return new ActionResult(succeeded: true);
             }
 

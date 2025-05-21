@@ -1,5 +1,6 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
+
+using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Maps.Tiles {
     // TileFloor is based on TileBase

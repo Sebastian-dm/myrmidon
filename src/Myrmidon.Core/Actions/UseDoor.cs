@@ -12,6 +12,7 @@ using Myrmidon.Core.GameState;
 namespace Myrmidon.Core.Actions {
     internal class OpenDoorAction : IAction {
 
+        public bool IsImmediate { get; } = false;
         public readonly Actor Performer;
         public readonly TileDoor Door;
 

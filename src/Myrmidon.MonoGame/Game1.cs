@@ -1,10 +1,17 @@
 ﻿using Myrmidon.Core.GameState;
-using Myrmidon.Core.Input;
+//using Myrmidon.Core.Input;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Myrmidon.Rendering.MonoGame;
+using Myrmidon.MonoGame.Rendering;
+using Myrmidon.Simulation;
+using Myrmidon.Core.Actors;
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.Maps;
+using Myrmidon.Core.UI;
+using Myrmidon.Core.Simulation;
+using Myrmidon.Core.Rules;
 
 namespace Myrmidon.MonoGame {
     public class Game1 : Game {
@@ -12,9 +19,10 @@ namespace Myrmidon.MonoGame {
         private SpriteBatch _spriteBatch;
 
         // World & Simulation
-        private World _world;
         private IGameContext _context;
-        private TurnManager _turnManager;
+        private WorldController _worldController;
+        private ActionController _actionController;
+        //private TurnManager _turnManager;
 
         // Rendering
         private TileRenderer _tileRenderer;
@@ -39,10 +47,19 @@ namespace Myrmidon.MonoGame {
             base.Initialize();
 
             //Initialize core systems
-            _world = new World();           // Custom world loader from Game.Core
-            _context = new GameContext(_world); // Holds game state and context
-            _turnManager = new TurnManager();   // Handles turn-based action resolution
-            _inputHandler = new MonoGameInputHandler(); // From Game.Input layer
+            var fovSystem = new FovSystem();      // Field of View system
+            var uiService = new UIService();      // User Interface service
+
+            // Initialize game state
+            var world = new World(90, 60); // Holds game state and entities
+            _context = new GameContext(world); // Holds game state and context
+
+            // Initialize controllers
+            _worldController = new WorldController(_context, fovSystem, uiService); // Handles game state and logic
+            _actionController = new ActionController(_context, fovSystem, uiService); // Handles actions and commands
+
+            //_turnManager = new TurnManager();   // Handles turn-based action resolution
+            //_inputHandler = new MonoGameInputHandler(); // From Game.Input layer
 
             // Camera/View area
             _viewArea = new Rectangle(0, 0, 80, 45);  // In tiles
@@ -61,6 +78,10 @@ namespace Myrmidon.MonoGame {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            // Update game state
+            _worldController.Update();
+            _actionController.Update();
+
             // Process Input
             //var command = _inputHandler.GetCommand(); // e.g., Move(North)
             //if (command != null) {
@@ -76,11 +97,8 @@ namespace Myrmidon.MonoGame {
 
             _spriteBatch.Begin();
 
-            //_tileRenderer.RenderMap(_world.Map, _viewArea);
-            //_tileRenderer.RenderEntities(_world.Entities, _viewArea);
-
-            _tileRenderer.RenderMap(_world.Map, _viewArea);
-            _tileRenderer.RenderEntities(_world.Entities, _viewArea);
+            _tileRenderer.RenderMap(_context.World.CurrentMap, _viewArea);
+            _tileRenderer.RenderEntities(_context.World.Entities.Items, _viewArea);
 
             _spriteBatch.End();
 

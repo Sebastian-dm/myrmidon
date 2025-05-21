@@ -7,23 +7,30 @@ using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.GameState;
 
 using Myrmidon.Core.Utilities.Geometry;
+using Myrmidon.Core.Actions;
+using Myrmidon.Core.Rules;
+using Myrmidon.Core.UI;
 
-
-namespace Myrmidon.Core.Actions {
+namespace Myrmidon.Core.Simulation {
     // Contains all generic actions performed on entities and tiles
     // including combat, movement, and so on.
-    public class ActionManager {
+    public class ActionController {
 
-        private Queue<IAction> _actions;
-        private Queue<IAction> _reactions;
-        private Queue<IAction> _actionsDone;
+        private readonly Queue<IAction> _actions;
+        private readonly Queue<IAction> _reactions;
+        private readonly Queue<IAction> _actionsDone;
 
-        private World _world;
+        private readonly IGameContext _context;
+        private readonly IFovSystem _fov;
+        private readonly IUIService _ui;
 
 
-        public ActionManager(World world) {
-            _world = world;
+        public ActionController(IGameContext context, IFovSystem fov, IUIService ui) {
+            _context = context;
+            _fov = fov;
+            _ui = ui;
             _actions = new Queue<IAction>();
+            _reactions = new Queue<IAction>();
             _actionsDone = new Queue<IAction>(100);
         }
 
@@ -40,12 +47,20 @@ namespace Myrmidon.Core.Actions {
         private void PerformActions() {
             while (_actions.Count > 0) {
                 IAction action = _actions.Dequeue();
-                ActionResult result = action.Perform();
+                ActionResult result = action.Perform(_context);
                 
                 // Try alternatives
                 while (result.Alternative != null) {
                     action = result.Alternative;
-                    result = action.Perform();
+                    result = action.Perform(_context);
+                }
+
+                if (result.Succeeded) {
+                    if (action is WalkAction walk && walk.Performer is Player player) {
+                        _fov.Update(_context, walk.Performer.Position);
+                        _ui.CenterOnActor(player);
+                        _ui.Refresh();
+                    }
                 }
 
                 _actionsDone.Enqueue(action);
@@ -54,7 +69,7 @@ namespace Myrmidon.Core.Actions {
         }
 
         private void CollectEntityActions() {
-            foreach (Actor actor in _world.Entities.Items) {
+            foreach (Actor actor in _context.World.Entities.Items) {
                 _actions.Enqueue(actor.GetAction());
             }
         }

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-
+using Myrmidon.Core.Entities;
 using Myrmidon.Core.Actors;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Geometry;
@@ -37,7 +37,7 @@ namespace Myrmidon.Core.Maps {
         public int Width { get { return _width; } set { _width = value; } }
         public int Height { get { return _height; } set { _height = value; } }
 
-        public GoRogue.MultiSpatialMap<Actor> Entities; // Keeps track of all the Entities on the map
+        public GoRogue.MultiSpatialMap<Entity> Entities; // Keeps track of all the Entities on the map
         public static GoRogue.IDGenerator IDGenerator = new GoRogue.IDGenerator(); // A static IDGenerator that all Entities can access
 
 
@@ -55,7 +55,7 @@ namespace Myrmidon.Core.Maps {
             Tiles = new Tile[width * height];
             for (int i = 0; i < width * height; i++) Tiles[i] = new TileEmpty();
             Rooms = new List<Rect>();
-            Entities = new GoRogue.MultiSpatialMap<Actor>();
+            Entities = new GoRogue.MultiSpatialMap<Entity>();
         }
 
 

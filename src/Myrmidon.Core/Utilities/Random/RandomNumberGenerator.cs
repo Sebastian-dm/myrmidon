@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Myrmidon.Core.Utilities {
-    internal class Random : System.Random {
+namespace Myrmidon.Core.Utilities.Random {
+    internal class RandomNumberGenerator : System.Random {
 
         /// <summary>
         /// Gets a random int within a given range.
@@ -44,7 +44,7 @@ namespace Myrmidon.Core.Utilities {
         /// <param name="list">Array to pick from.</param>
         /// <returns>Random element from array.</returns>
         public T Item<T>(T[] array) {
-            return Item<T>(array.ToList());
+            return Item(array.ToList());
         }
 
 

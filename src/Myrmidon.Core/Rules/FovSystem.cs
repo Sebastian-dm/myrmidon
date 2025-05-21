@@ -9,53 +9,52 @@ using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
+using Myrmidon.Core.GameState;
 
-namespace Myrmidon.Rules {
-    public class FieldOfView {
+namespace Myrmidon.Core.Rules {
+
+    public interface IFovSystem {
+        public void Update(IGameContext context, Point origin);
+    }
+
+
+    public class FovSystem : IFovSystem {
 
         private int _viewDistance;
 
-        public FieldOfView(int viewDistance = 10) {
+        public FovSystem(int viewDistance = 10) {
             _viewDistance = viewDistance;
         }
 
 
         // Recompute the visible area based on a given location.
-        public void Update(Vector origin) {
-            Map map = Program.World.CurrentMap;
+        public void Update(IGameContext context, Point origin) {
+
+            Map map = context.World.CurrentMap;
 
             // Update tiles visiblity
             for (int x = 0; x < map.Width; x++) {
                 for (int y = 0; y < map.Height; y++) {
                     Tile tile = map[x, y];
-                    if (origin.DistanceTo(new Vector(x, y)) <= _viewDistance) {
+                    if (origin.DistanceTo(new Point(x, y)) <= _viewDistance) {
                         tile.IsExplored = true;
-                        tile.isVisible = true;
+                        tile.IsVisible = true;
                     }
                     else {
-                        tile.isVisible = false;
+                        tile.IsVisible = false;
                     }
                 }
             }
 
             // Update entity visibility
             foreach (Entity entity in map.Entities.Items) {
-                if (origin.DistanceTo(entity.Location) <= _viewDistance) {
+                if (origin.DistanceTo(entity.Position) <= _viewDistance) {
                     entity.isVisible = true;
                 }
                 else {
                     entity.isVisible = false;
                 }
             }
-        }
-
-        public void Update() {
-            Vector PlayerPos = new Vector(
-                Program.World.Player.Position.X,
-                Program.World.Player.Position.Y
-                );
-            Update(PlayerPos);
-
         }
     }
 }

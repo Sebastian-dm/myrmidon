@@ -10,13 +10,13 @@ namespace Myrmidon.Core.Maps.Tiles {
 
         public string Name;
         public bool IsWalkable;
-        public bool IsBlockingLineOfSigth;
+        public bool IsBlockingLOS;
 
         public int Glyph { get; set; } // the tile's glyph
         public Color Foreground { get; set; } // the tile's foreground colour
         public Color Background { get; set; } // the tile's background colour
 
-        public bool isVisible {
+        public bool IsVisible {
             get { return _isVisible; }
             set { _isVisible = value; OnVisible(); }
         }
@@ -35,9 +35,14 @@ namespace Myrmidon.Core.Maps.Tiles {
 
         // TileBase is an abstract base class representing the most basic form of all Tiles used. Every TileBase has a Foreground Colour, Background Colour, and Glyph
         // IsBlockingMove and IsBlockingLOS are optional parameters, set to false by default
-        public Tile(Color foreground, Color background, int glyph, bool walkable = true, bool blockingLOS = false, string name = "") : base(new Color(0, 0, 0), new Color(0, 0, 0), 0) {
+        public Tile(Color foreground, Color background, int glyph, bool walkable = true, bool blockingLOS = false, string name = "") {
+
+            Glyph = glyph;
+            Foreground = foreground;
+            Background = background;
+
             IsWalkable = walkable;
-            IsBlockingLineOfSigth = blockingLOS;
+            IsBlockingLOS = blockingLOS;
             Name = name;
 
             _glyphWhenExplored = glyph;

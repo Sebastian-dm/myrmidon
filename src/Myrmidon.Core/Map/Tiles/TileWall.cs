@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+
+using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Maps.Tiles {
     // TileWall is based on TileBase
