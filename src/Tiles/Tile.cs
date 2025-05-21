@@ -1,6 +1,10 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using SadConsole;
+using SadConsole.Controls;
+using SadConsole.Themes;
+using SadConsole.Components;
+
 
 namespace myrmidon.Tiles {
     /// <summary>

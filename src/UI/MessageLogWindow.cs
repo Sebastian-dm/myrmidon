@@ -18,7 +18,7 @@ namespace myrmidon.UI {
         private SadConsole.ScrollingConsole _messageConsole;
 
         //scrollbar for message console
-        private SadConsole.Controls.ScrollBar _messageScrollBar;
+        private ScrollBar _messageScrollBar;
 
         //Track the current position of the scrollbar
         private int _scrollBarCurrentPosition;
@@ -112,7 +112,7 @@ namespace myrmidon.UI {
                     _scrollBarCurrentPosition += _messageConsole.TimesShiftedUp != 0 ? _messageConsole.TimesShiftedUp : 1;
 
                 // Determines the scrollbar's max vertical position
-                _messageScrollBar.Maximum = _scrollBarCurrentPosition - _windowBorderThickness;
+                _messageScrollBar.MaximumValue = _scrollBarCurrentPosition - _windowBorderThickness;
 
                 // This will follow the cursor since we move the render area in the event.
                 _messageScrollBar.Value = _scrollBarCurrentPosition;
