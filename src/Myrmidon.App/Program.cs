@@ -1,12 +1,18 @@
 ﻿using System;
 
-namespace Myrmidon.MonoGame {
+namespace Myrmidon.App {
     public static class Program {
 
         [STAThread]
         public static void Main() {
-            var GameInstance = new Game1();
-            GameInstance.Run();
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm());
+
+
+            var GameInstance = new MainGame();
+            //GameInstance.Run();
         }
     }
 }
