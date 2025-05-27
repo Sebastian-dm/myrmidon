@@ -1,12 +1,11 @@
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Entities;
 
 namespace Myrmidon.Rendering.MonoGame {
     public class TileRenderer {
+
+
         private readonly SpriteFont _font;
         private readonly Texture2D _tilesheet;
         private readonly int _tileSize;

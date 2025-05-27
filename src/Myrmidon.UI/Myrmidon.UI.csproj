@@ -6,4 +6,20 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Myrmidon.Core\Myrmidon.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Bramble.Core">
+      <HintPath>..\External\Bramble.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Malison.Core">
+      <HintPath>..\External\Malison.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Malison.WinForms">
+      <HintPath>..\External\Malison.WinForms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

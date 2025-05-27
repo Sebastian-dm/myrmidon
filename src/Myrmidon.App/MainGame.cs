@@ -8,97 +8,59 @@ using Myrmidon.Core.GameState;
 using Myrmidon.Core.UI;
 using Myrmidon.Core.Simulation;
 using Myrmidon.Core.Rules;
+using Myrmidon.App.UI;
 
 namespace Myrmidon.App {
     public class MainGame {
-        //private GraphicsDeviceManager _graphics;
-        //private SpriteBatch _spriteBatch;
 
-        //// World & Simulation
-        //private IGameContext _context;
-        //private WorldController _worldController;
-        //private ActionController _actionController;
-        ////private TurnManager _turnManager;
+        // World & Simulation
+        public string Name { get; set; } = "Myrmidon";
+        private IGameContext _context;
+        private WorldController _worldController;
+        private ActionController _actionController;
+        private InputController _inputController;
 
-        //// Rendering
-        //private TileRenderer _tileRenderer;
-        //private Texture2D _tileset;
-        //private SpriteFont _font;
-        //private Rectangle _viewArea;
+        public bool WaitingForUserInput { get; set; } = true;
 
-        //// Input
-        ////private IInputHandler _inputHandler;
 
-        //public MainGame() {
-        //    _graphics = new GraphicsDeviceManager(this) {
-        //        PreferredBackBufferWidth = 1280,
-        //        PreferredBackBufferHeight = 720
-        //    };
+        public MainGame(string name) {
+            Name = name;
 
-        //    Content.RootDirectory = "Content";
-        //    IsMouseVisible = true;
-        //}
+            //Initialize core systems
+            var fovSystem = new FovSystem();      // Field of View system
+            var uiService = new UIService();      // User Interface service
 
-        //protected override void Initialize() {
-        //    base.Initialize();
+            // Initialize game state
+            var world = new World(90, 60); // Holds game state and entities
+            _context = new GameContext(world); // Holds game state and context
 
-        //    //Initialize core systems
-        //    var fovSystem = new FovSystem();      // Field of View system
-        //    var uiService = new UIService();      // User Interface service
+            // Initialize controllers
+            _worldController = new WorldController(_context, fovSystem, uiService); // Handles game state and logic
+            _actionController = new ActionController(_context, fovSystem, uiService); // Handles actions and commands
 
-        //    // Initialize game state
-        //    var world = new World(90, 60); // Holds game state and entities
-        //    _context = new GameContext(world); // Holds game state and context
+            //_turnManager = new TurnManager();   // Handles turn-based action resolution
+            //_inputHandler = new MonoGameInputHandler(); // From Game.Input layer
+        }
 
-        //    // Initialize controllers
-        //    _worldController = new WorldController(_context, fovSystem, uiService); // Handles game state and logic
-        //    _actionController = new ActionController(_context, fovSystem, uiService); // Handles actions and commands
+        private void Update() {
 
-        //    //_turnManager = new TurnManager();   // Handles turn-based action resolution
-        //    //_inputHandler = new MonoGameInputHandler(); // From Game.Input layer
+            while (!WaitingForUserInput) {
+                // Update game state
+                _worldController.Update();
+                _actionController.Update();
+            }
 
-        //    // Camera/View area
-        //    _viewArea = new Rectangle(0, 0, 80, 45);  // In tiles
-        //}
+            WaitingForUserInput = true;
+        }
 
-        //protected override void LoadContent() {
-        //    _spriteBatch = new SpriteBatch(GraphicsDevice);
-        //    _tileset = Content.Load<Texture2D>("tiles");
-        //    _font = Content.Load<SpriteFont>("font");
-
-        //    _tileRenderer = new TileRenderer(_spriteBatch, _tileset, 16, _font);
-        //}
-
-        //protected override void Update(GameTime gameTime) {
-        //    // Exit shortcut
-        //    if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-        //        Exit();
-
-        //    // Update game state
-        //    _worldController.Update();
-        //    _actionController.Update();
-
-        //    // Process Input
-        //    //var command = _inputHandler.GetCommand(); // e.g., Move(North)
-        //    //if (command != null) {
-        //    //    _world.ExecuteCommand(command); // Core logic handles effects
-        //    //    _turnManager.AdvanceTurn(_world); // Progress world state
-        //    //}
-
-        //    base.Update(gameTime);
-        //}
-
-        //protected override void Draw(GameTime gameTime) {
-        //    GraphicsDevice.Clear(Color.Black);
-
-        //    _spriteBatch.Begin();
-
-        //    _tileRenderer.RenderMap(_context.World.CurrentMap, _viewArea);
-        //    _tileRenderer.RenderEntities(_context.World.Entities.Items, _viewArea);
-
-        //    _spriteBatch.End();
-
-        //    base.Draw(gameTime);
-        //}
+        public void HandleKeyPress(KeyEventArgs e) {
+            bool userTookAnAction = _inputController.HandleInput(e);
+            if (userTookAnAction) {
+                WaitingForUserInput = false; // User has taken an action, proceed with game update
+            } else {
+                // Handle other key presses or commands
+                // This could include navigation, UI interactions, etc.
+            }
+        }
     }
 }

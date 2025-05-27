@@ -1,18 +1,17 @@
 ﻿using System;
 
+using Myrmidon.App.UI;
+
 namespace Myrmidon.App {
     public static class Program {
 
         [STAThread]
         public static void Main() {
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
 
-
-            var GameInstance = new MainGame();
-            //GameInstance.Run();
+            MainGame mainGame = new MainGame("Myrmidon");
+            UiController uiController = new UiController(mainGame);
+            uiController.Run();
         }
     }
 }
