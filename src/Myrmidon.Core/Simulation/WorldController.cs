@@ -28,7 +28,7 @@ namespace Myrmidon.Simulation {
             if (_world.IsMapGenRequested) {
                 _world.IsMapGenRequested = false;
                 _world.IsMapGenInProgress = true;
-                _ = GenerateMapAsync();
+                GenerateMap();
             }
 
             if (_world.IsEntityGenRequested) {
@@ -42,9 +42,9 @@ namespace Myrmidon.Simulation {
             _ui.Refresh();
         }
 
-        private async Task GenerateMapAsync() {
+        private void GenerateMap() {
             var mapGen = new DungeonGenerator();
-            await Task.Run(() => mapGen.Generate(_world.CurrentMap));
+            mapGen.Generate(_world.Map);
             _world.IsMapGenInProgress = false;
             _world.IsEntityGenRequested = true;
         }
@@ -52,16 +52,16 @@ namespace Myrmidon.Simulation {
         private void CreatePlayer() {
             var player = new Player(new Color(20, 255, 255), Color.Transparent);
 
-            if (_world.CurrentMap.Rooms.Count > 0) {
-                int index = _rng.Next(_world.CurrentMap.Rooms.Count);
-                player.Position = _world.CurrentMap.Rooms[index].Center;
+            if (_world.Map.Rooms.Count > 0) {
+                int index = _rng.Next(_world.Map.Rooms.Count);
+                player.Position = _world.Map.Rooms[index].Center;
             }
             else {
                 player.Position = new Point(10, 10);
             }
 
             _world.Player = player;
-            _world.CurrentMap.Add(player);
+            _world.Map.Add(player);
         }
 
         private void CreateMonsters() {
@@ -89,13 +89,13 @@ namespace Myrmidon.Simulation {
             int pos;
             bool valid;
             do {
-                pos = _rng.Next(0, _world.CurrentMap.Width * _world.CurrentMap.Height);
-                valid = _world.CurrentMap.Tiles[pos].IsWalkable;
+                pos = _rng.Next(0, _world.Map.Width * _world.Map.Height);
+                valid = _world.Map.Tiles[pos].IsWalkable;
             }
             while (!valid);
 
-            entity.Position = new Point(pos % _world.CurrentMap.Width, pos / _world.CurrentMap.Width);
-            _world.CurrentMap.Entities.Add(entity, new Coord(entity.Position.X, entity.Position.Y));
+            entity.Position = new Point(pos % _world.Map.Width, pos / _world.Map.Width);
+            _world.Map.Entities.Add(entity, new Coord(entity.Position.X, entity.Position.Y));
         }
     }
 }

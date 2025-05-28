@@ -13,8 +13,8 @@ namespace Myrmidon.Core.Maps.Tiles {
         public bool IsBlockingLOS;
 
         public int Glyph { get; set; } // the tile's glyph
-        public Color Foreground { get; set; } // the tile's foreground colour
-        public Color Background { get; set; } // the tile's background colour
+        public Color ForegroundColor { get; set; } // the tile's foreground colour
+        public Color BackgroundColor { get; set; } // the tile's background colour
 
         public bool IsVisible {
             get { return _isVisible; }
@@ -38,8 +38,8 @@ namespace Myrmidon.Core.Maps.Tiles {
         public Tile(Color foreground, Color background, int glyph, bool walkable = true, bool blockingLOS = false, string name = "") {
 
             Glyph = glyph;
-            Foreground = foreground;
-            Background = background;
+            ForegroundColor = foreground;
+            BackgroundColor = background;
 
             IsWalkable = walkable;
             IsBlockingLOS = blockingLOS;
@@ -60,8 +60,8 @@ namespace Myrmidon.Core.Maps.Tiles {
         private void OnExplored() {
             if (_isExplored) {
                 Glyph = _glyphWhenExplored;
-                Foreground = _foregroundHidden;
-                Background = _backgroundHidden;
+                ForegroundColor = _foregroundHidden;
+                BackgroundColor = _backgroundHidden;
             }
         }
 
@@ -69,12 +69,12 @@ namespace Myrmidon.Core.Maps.Tiles {
         private void OnVisible() {
             if (_isExplored) {
                 if (_isVisible) {
-                    Foreground = _foregroundVisible;
-                    Background = _backgroundVisible;
+                    ForegroundColor = _foregroundVisible;
+                    BackgroundColor = _backgroundVisible;
                 }
                 else {
-                    Foreground = _foregroundHidden;
-                    Background = _backgroundHidden;
+                    ForegroundColor = _foregroundHidden;
+                    BackgroundColor = _backgroundHidden;
                 }
             }
         }

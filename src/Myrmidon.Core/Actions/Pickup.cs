@@ -28,7 +28,7 @@ namespace Myrmidon.Core.Actions {
             if (Distance < 2) {
                 Performer.Inventory.Add(Item);
                 //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
-                context.World.CurrentMap.Remove(Item);
+                context.World.Map.Remove(Item);
                 return new ActionResult(succeeded: true);
             }
             else {

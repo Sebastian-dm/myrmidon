@@ -39,7 +39,7 @@ namespace Myrmidon.Core.Actions {
             Vector newPosition = _originalPosition + Direction;
 
             // Check if there is an actor on new position
-            Monster monster = context.World.CurrentMap.GetEntityAt<Monster>(newPosition);
+            Monster monster = context.World.Map.GetEntityAt<Monster>(newPosition);
             if (monster != null) {
                 return new ActionResult( succeeded: false,
                 alternative: new AttackAction(Performer, monster)
@@ -47,7 +47,7 @@ namespace Myrmidon.Core.Actions {
             }
 
             // Check if there is an item on the new position
-            Item item = context.World.CurrentMap.GetEntityAt<Item>(newPosition);
+            Item item = context.World.Map.GetEntityAt<Item>(newPosition);
             if (item != null) {
                 return new ActionResult( succeeded: false,
                 alternative: new PickupAction(Performer, item)
@@ -55,7 +55,7 @@ namespace Myrmidon.Core.Actions {
             }
 
             // Check for the presence of a door
-            TileDoor door = context.World.CurrentMap.GetTileAt<TileDoor>(newPosition);
+            TileDoor door = context.World.Map.GetTileAt<TileDoor>(newPosition);
             if (door != null && !door.IsOpen) {
                 return new ActionResult(succeeded: false,
                 alternative: new OpenDoorAction(Performer, door)
@@ -63,8 +63,8 @@ namespace Myrmidon.Core.Actions {
             }
 
             // Check if it is possible to go there
-            if (context.World.CurrentMap.IsTileWalkable(newPosition)) {
-                Performer.MoveTo(newPosition, context.World.CurrentMap);
+            if (context.World.Map.IsTileWalkable(newPosition)) {
+                Performer.MoveTo(newPosition, context.World.Map);
                 return new ActionResult(succeeded: true);
             }
 

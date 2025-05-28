@@ -22,20 +22,27 @@ namespace Myrmidon.App.UI {
 
         private TerminalForm _form;
         private MainGame _game;
+        private TileRenderer _renderer;
 
         public UiController(MainGame game) {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            _form = new TerminalForm(_game.Name, 120, 50);
             _game = game;
+            _form = new TerminalForm(_game.Name, 120, 50);
+            _renderer = new TileRenderer();
 
             // Attach event handlers
             _form.TerminalControl.KeyDown += MainForm_KeyDown;
             _form.TerminalControl.KeyUp += MainForm_KeyUp;
+            _form.Load += MainForm_Load;
+        }
+
+        public void MainForm_Load(object? sender, EventArgs e) {
         }
 
         public void Run() {
+            _renderer.Paint(_form.Terminal, _game.Context);
             Application.Run(_form);
         }
 

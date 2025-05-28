@@ -1,6 +1,10 @@
 ﻿using Bramble.Core;
 using GoRogue;
 using Malison.Core;
+using Myrmidon.Core.GameState;
+using Myrmidon.Core.Maps;
+using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.Actors;
 using System;
 using System.Collections.Generic;
 using System.IO.Packaging;
@@ -13,24 +17,42 @@ using System.Xml.Linq;
 namespace Myrmidon.App.Rendering {
     internal class TileRenderer {
 
-        public void Paint(ITerminal terminal) {
+        public void Paint(ITerminal terminal, IGameContext context) {
+            
             terminal.Clear();
+
+            var map = context.World.Map;
+            if (map == null) return;
+
+            Vec center = new Vec(context.World.Player.Position.X, context.World.Player.Position.Y);
+
+            Rect viewBounds = new Rect(center - terminal.Size/2, terminal.Size);
 
             for (int y = viewBounds.Top; y < viewBounds.Bottom; y++) {
                 for (int x = viewBounds.Left; x < viewBounds.Right; x++) {
-                    //if (!map.IsInBounds(x, y)) continue;
+                    if (!IsInMapBounds(x, y, map)) continue;
 
-                    //var tile = map.GetTile(x, y);
+                    var tile = map.GetTileAt<Tile>(x, y);
 
-                    //var screenPos = new Vector2(
-                    //    (x - viewBounds.Left) * _tileSize,
-                    //    (y - viewBounds.Top) * _tileSize
-                    //);
+                    var screenPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
+                    terminal[screenPos.X, screenPos.Y][TermColor.Brown, TermColor.Yellow].Write(Glyph.Asterisk);
 
-                    //var sourceRect = new Rectangle(tile.Glyph * _tileSize, 0, _tileSize, _tileSize);
-                    //_spriteBatch.Draw(_tilesheet, screenPos, sourceRect, tile.ForegroundColor);
                 }
             }
+        }
+
+        private bool IsInMapBounds(int x, int y, Map map) {
+
+            bool a = x >= map.Bounds.Left;
+            bool b = x < map.Bounds.Right;
+            bool c = y >= map.Bounds.Top;
+            bool d = y < map.Bounds.Bottom;
+
+            if (x > 0 && y > 0) {
+                var g = "";
+            }
+
+            return x >= map.Bounds.Left && x < map.Bounds.Right && y >= map.Bounds.Top && y < map.Bounds.Bottom;
         }
     }
 }
