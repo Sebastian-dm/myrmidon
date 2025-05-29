@@ -1,12 +1,13 @@
 ﻿using Bramble.Core;
 using GoRogue;
 using Malison.Core;
+using Myrmidon.Core.Actors;
 using Myrmidon.Core.GameState;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Actors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Packaging;
 using System.Linq;
 using System.Text;
@@ -28,6 +29,7 @@ namespace Myrmidon.App.Rendering {
 
             Rect viewBounds = new Rect(center - terminal.Size/2, terminal.Size);
 
+            // Paint tiles
             for (int y = viewBounds.Top; y < viewBounds.Bottom; y++) {
                 for (int x = viewBounds.Left; x < viewBounds.Right; x++) {
                     if (!IsInMapBounds(x, y, map)) continue;
@@ -35,8 +37,22 @@ namespace Myrmidon.App.Rendering {
                     var tile = map.GetTileAt<Tile>(x, y);
 
                     var screenPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                    terminal[screenPos.X, screenPos.Y][TermColor.Brown, TermColor.Yellow].Write(Glyph.Asterisk);
+                    terminal[screenPos.X, screenPos.Y][TermColor.Gray, TermColor.Black].Write(tile.Glyph);
 
+                }
+            }
+
+            //Paint entities
+            foreach (var entity in map.Entities.Items) {
+                if (entity == null)
+                    Debug.WriteLine("Null entity in map.Entities!");
+                else
+                    Debug.WriteLine(entity.GetType().FullName);
+
+                if (entity is Actor actor) {
+                    if (!IsInMapBounds(actor.Position.X, actor.Position.Y, map)) continue;
+                    var screenPos = new Vec(actor.Position.X - viewBounds.Left, actor.Position.Y - viewBounds.Top);
+                    terminal[screenPos.X, screenPos.Y][TermColor.LightRed, TermColor.DarkGray].Write(actor.Glyph);
                 }
             }
         }

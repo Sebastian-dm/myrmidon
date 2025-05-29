@@ -2,6 +2,7 @@
 using Malison.Core;
 using Malison.WinForms;
 using Myrmidon.App.Rendering;
+using Myrmidon.Core.GameState;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,16 +21,21 @@ namespace Myrmidon.App.UI {
 
         public Vec Size { get { return _form.Terminal.Size; } }
 
+        
+        private IGameContext _context;
+        private InputController _inputController;
+
         private TerminalForm _form;
-        private MainGame _game;
         private TileRenderer _renderer;
 
-        public UiController(MainGame game) {
+        public UiController(IGameContext context, InputController inputController) {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            _game = game;
-            _form = new TerminalForm(_game.Name, 120, 50);
+            _context = context;
+            _inputController = inputController;
+
+            _form = new TerminalForm("Myrmidon", 80, 30);
             _renderer = new TileRenderer();
 
             // Attach event handlers
@@ -42,7 +48,7 @@ namespace Myrmidon.App.UI {
         }
 
         public void Run() {
-            _renderer.Paint(_form.Terminal, _game.Context);
+            _renderer.Paint(_form.Terminal, _context);
             Application.Run(_form);
         }
 
@@ -59,11 +65,11 @@ namespace Myrmidon.App.UI {
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e) {
-            _game.HandleKeyPress(e);
+            _inputController.HandleInput(e);
         }
 
         private void MainForm_KeyUp(object sender, KeyEventArgs e) {
-            _game.HandleKeyPress(e);
+            _inputController.HandleInput(e);
         }
 
     }

@@ -6,9 +6,9 @@ using Myrmidon.Core.Maps;
 
 using Myrmidon.Core.GameState;
 using Myrmidon.Core.UI;
-using Myrmidon.Core.Simulation;
 using Myrmidon.Core.Rules;
 using Myrmidon.App.UI;
+using Myrmidon.Core.Actions;
 
 namespace Myrmidon.App {
     public class MainGame {
