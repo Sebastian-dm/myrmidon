@@ -6,16 +6,16 @@ using Myrmidon.Core.Maps;
 
 using Myrmidon.Core.GameState;
 using Myrmidon.Core.UI;
-using Myrmidon.Core.Simulation;
 using Myrmidon.Core.Rules;
 using Myrmidon.App.UI;
+using Myrmidon.Core.Actions;
 
 namespace Myrmidon.App {
     public class MainGame {
 
         // World & Simulation
         public string Name { get; set; } = "Myrmidon";
-        private IGameContext _context;
+        public IGameContext Context { get; private set; }
         private WorldController _worldController;
         private ActionController _actionController;
         private InputController _inputController;
@@ -31,12 +31,14 @@ namespace Myrmidon.App {
             var uiService = new UIService();      // User Interface service
 
             // Initialize game state
-            var world = new World(90, 60); // Holds game state and entities
-            _context = new GameContext(world); // Holds game state and context
+            var world = new World(91, 61); // Holds game state and entities
+            Context = new GameContext(world); // Holds game state and context
 
             // Initialize controllers
-            _worldController = new WorldController(_context, fovSystem, uiService); // Handles game state and logic
-            _actionController = new ActionController(_context, fovSystem, uiService); // Handles actions and commands
+            _worldController = new WorldController(Context, fovSystem, uiService); // Handles game state and logic
+            _actionController = new ActionController(Context, fovSystem, uiService); // Handles actions and commands
+
+            _worldController.Update(); // Initial update to set up the world
 
             //_turnManager = new TurnManager();   // Handles turn-based action resolution
             //_inputHandler = new MonoGameInputHandler(); // From Game.Input layer

@@ -7,14 +7,13 @@ using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.GameState;
 
 using Myrmidon.Core.Utilities.Geometry;
-using Myrmidon.Core.Actions;
 using Myrmidon.Core.Rules;
 using Myrmidon.Core.UI;
 
-namespace Myrmidon.Core.Simulation {
+namespace Myrmidon.Core.Actions {
     // Contains all generic actions performed on entities and tiles
     // including combat, movement, and so on.
-    public class ActionController {
+    public class ActionController : IActionController {
 
         private readonly Queue<IAction> _actions;
         private readonly Queue<IAction> _reactions;

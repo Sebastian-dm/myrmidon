@@ -70,17 +70,11 @@ namespace Myrmidon.Core.Maps {
 
 
             FillWithWalls();
-            Thread.Sleep(_tileStepWaitMs);
             AddRooms();
-            Thread.Sleep(_tileStepWaitMs);
             FillSpacesWithMazes();
-            Thread.Sleep(_tileStepWaitMs);
             ConnectRegions();
-            Thread.Sleep(_tileStepWaitMs);
             RemoveDeadEnds();
-            Thread.Sleep(_tileStepWaitMs);
             RefineWallGlyphs();
-            Thread.Sleep(_tileStepWaitMs);
             //_map.Rooms.ForEach(onDecorateRoom);
 
             return _map;
