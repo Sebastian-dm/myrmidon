@@ -9,7 +9,7 @@ using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
-using Myrmidon.Core.GameState;
+using Myrmidon.Core.Game;
 
 namespace Myrmidon.Core.Rules {
 

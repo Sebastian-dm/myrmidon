@@ -1,8 +1,8 @@
 ﻿using Bramble.Core;
 using Malison.Core;
 using Malison.WinForms;
-using Myrmidon.App.Rendering;
-using Myrmidon.Core.GameState;
+using Myrmidon.App.Input;
+using Myrmidon.Core.Game;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,12 +28,12 @@ namespace Myrmidon.App.UI {
         private TerminalForm _form;
         private TileRenderer _renderer;
 
-        public UiController(IGameContext context, InputController inputController) {
+        public UiController(IGameContext context) {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             _context = context;
-            _inputController = inputController;
+            _inputController = new InputController(this, context.);
 
             _form = new TerminalForm("Myrmidon", 80, 30);
             _renderer = new TileRenderer();

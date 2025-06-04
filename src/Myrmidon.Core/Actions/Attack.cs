@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Myrmidon.Core.Actors;
-using Myrmidon.Core.GameState;
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.Game;
 using Myrmidon.Core.Utilities.Geometry;
 
 namespace Myrmidon.Core.Actions {

@@ -1,8 +1,6 @@
 ﻿using Bramble.Core;
 using Malison.Core;
 using Malison.WinForms;
-using Myrmidon.App.Rendering;
-using Myrmidon.Core.GameState;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

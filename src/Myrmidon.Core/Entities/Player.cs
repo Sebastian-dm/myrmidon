@@ -1,9 +1,8 @@
 ﻿using System;
 
 using Myrmidon.Core.Utilities.Graphics;
-using Myrmidon.Core.Actors;
 
-namespace Myrmidon.Core.Actors {
+namespace Myrmidon.Core.Entities {
     // Creates a new player
     // Default glyph is @
     public class Player : Actor {

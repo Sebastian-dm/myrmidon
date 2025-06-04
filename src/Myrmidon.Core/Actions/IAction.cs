@@ -1,5 +1,5 @@
 ﻿using Myrmidon.Core.Actors;
-using Myrmidon.Core.GameState;
+using Myrmidon.Core.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;

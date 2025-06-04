@@ -20,7 +20,7 @@ namespace Myrmidon.MonoGame.Rendering {
             _font = font;
         }
 
-        public void RenderMap(Map map, Rectangle viewBounds) {
+        public void RenderMap(TileMap map, Rectangle viewBounds) {
             for (int y = viewBounds.Top; y < viewBounds.Bottom; y++) {
                 for (int x = viewBounds.Left; x < viewBounds.Right; x++) {
                     //if (!map.IsInBounds(x, y)) continue;

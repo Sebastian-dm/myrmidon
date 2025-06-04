@@ -10,7 +10,7 @@ namespace Myrmidon.App {
 
 
             MainGame mainGame = new MainGame("Myrmidon");
-            UiController uiController = new UiController(mainGame);
+            UiController uiController = new UiController(mainGame.Context);
             uiController.Run();
         }
     }

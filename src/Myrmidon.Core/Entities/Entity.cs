@@ -65,7 +65,7 @@ namespace Myrmidon.Core.Entities {
             IsDirty = true;
 
             // Create a new unique identifier for this entity
-            ID = Maps.Map.IDGenerator.UseID();
+            ID = Maps.TileMap.IDGenerator.UseID();
 
         }
 

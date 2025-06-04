@@ -1,27 +1,24 @@
-﻿using Myrmidon.Core.Actors;
-using Myrmidon.Core.Entities;
-using Myrmidon.Core.GameState;
+﻿using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
-using Myrmidon.Core.UI;
 using Myrmidon.Core.Rules;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Utilities.Graphics;
+using Myrmidon.Core.Maps.Generation;
 using GoRogue;
+using Myrmidon.Core.Game;
 
-namespace Myrmidon.Simulation {
-    public class WorldController {
+namespace Myrmidon.Core.Game {
+    public class SceneManager {
 
         private readonly IGameContext _context;
         private readonly IFovSystem _fov;
-        private readonly IUIService _ui;
-        private readonly World _world;
+        private readonly Scene _world;
         private readonly Random _rng = new();
 
-        public WorldController(IGameContext context, IFovSystem fov, IUIService ui) {
+        public SceneManager(IGameContext context, IFovSystem fov) {
             _context = context;
             _world = context.World;
             _fov = fov;
-            _ui = ui;
         }
 
         public void Update() {
@@ -39,7 +36,7 @@ namespace Myrmidon.Simulation {
                 _fov.Update(_context, _world.Player.Position);
             }
 
-            _ui.Refresh();
+            //_ui.Refresh();
         }
 
         private void GenerateMap() {

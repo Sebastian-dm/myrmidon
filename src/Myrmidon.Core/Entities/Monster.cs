@@ -1,9 +1,8 @@
 ﻿using System;
-
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Utilities.Graphics;
 
-namespace Myrmidon.Core.Actors {
+namespace Myrmidon.Core.Entities {
 
     // A generic monster capable of combat and interaction yields treasure upon death
     public class Monster : Actor {

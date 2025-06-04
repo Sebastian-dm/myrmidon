@@ -3,13 +3,12 @@ using System.Collections.Generic;
 
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Actions;
-using Myrmidon.Core.Entities;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Utilities.Graphics;
 using Myrmidon.Core.Maps.Tiles;
 using IAction = Myrmidon.Core.Actions.IAction;
 
-namespace Myrmidon.Core.Actors {
+namespace Myrmidon.Core.Entities {
     public abstract class Actor : Entity {
 
         //private int _health; //current health
@@ -35,7 +34,7 @@ namespace Myrmidon.Core.Actors {
         /// </summary>
         /// <param name="newPosition"></param>
         /// <returns>returns true if actor was able to move, false if failed to move</returns>
-        public bool MoveTo(Vector newPosition, Map map) {
+        public bool MoveTo(Vector newPosition, TileMap map) {
 
             Position = new Point(newPosition.X, newPosition.Y);
             map.Entities.Move(this, new GoRogue.Coord(newPosition.X, newPosition.Y));

@@ -16,9 +16,8 @@ namespace Myrmidon.Core.Actions {
     public interface IActionController {
 
         public bool Update();
-        public void AddAction(IAction action) {
-            _actions.Enqueue(action);
-        }
+        public void AddAction(InputAction command);
+        public void AddAction(IAction action);
 
     }
 }

@@ -1,10 +1,10 @@
 ﻿using Bramble.Core;
 using GoRogue;
 using Malison.Core;
-using Myrmidon.Core.Actors;
-using Myrmidon.Core.GameState;
+using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.Game;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
-namespace Myrmidon.App.Rendering {
+namespace Myrmidon.App.UI {
     internal class TileRenderer {
 
         public void Paint(ITerminal terminal, IGameContext context) {
@@ -57,7 +57,7 @@ namespace Myrmidon.App.Rendering {
             }
         }
 
-        private bool IsInMapBounds(int x, int y, Map map) {
+        private bool IsInMapBounds(int x, int y, TileMap map) {
 
             bool a = x >= map.Bounds.Left;
             bool b = x < map.Bounds.Right;

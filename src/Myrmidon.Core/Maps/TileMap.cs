@@ -3,13 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Myrmidon.Core.Entities;
-using Myrmidon.Core.Actors;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Geometry;
 
 namespace Myrmidon.Core.Maps {
     // Stores, manipulates and queries Tile data
-    public class Map {
+    public class TileMap {
 
         private Tile[] _tiles; // contain all tile objects
         private int _width;
@@ -49,7 +48,7 @@ namespace Myrmidon.Core.Maps {
 
 
         // Build a new map with a specified width and height
-        public Map(int width, int height) {
+        public TileMap(int width, int height) {
             _width = width;
             _height = height;
             Tiles = new Tile[width * height];

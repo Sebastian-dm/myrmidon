@@ -4,10 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Myrmidon.Core.Entities;
-using Myrmidon.Core.Actors;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.GameState;
+using Myrmidon.Core.Game;
 
 namespace Myrmidon.Core.Actions {
     public class WalkAction : IAction {

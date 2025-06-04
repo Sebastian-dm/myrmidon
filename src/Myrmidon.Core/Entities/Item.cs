@@ -1,10 +1,9 @@
 ﻿using System;
-
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Utilities.Graphics;
 
 
-namespace Myrmidon.Core.Actors {
+namespace Myrmidon.Core.Entities {
     
     /// <summary>
     /// Things that can be picked up or used by actors.
