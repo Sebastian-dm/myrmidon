@@ -44,10 +44,6 @@ namespace Myrmidon.App.UI {
 
             //Paint entities
             foreach (var entity in map.Entities.Items) {
-                if (entity == null)
-                    Debug.WriteLine("Null entity in map.Entities!");
-                else
-                    Debug.WriteLine(entity.GetType().FullName);
 
                 if (entity is Actor actor) {
                     if (!IsInMapBounds(actor.Position.X, actor.Position.Y, map)) continue;

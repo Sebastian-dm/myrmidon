@@ -1,10 +1,10 @@
-﻿using Myrmidon.Core.Actors;
-using Myrmidon.Core.Game;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Myrmidon.Core.Game;
 
 namespace Myrmidon.Core.Actions {
     public interface IAction {

@@ -13,7 +13,6 @@ namespace Myrmidon.Core.Game {
 
         FovSystem FovSystem { get; }
 
-        public IActionController ActionController { get; }
     }
 
 

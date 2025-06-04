@@ -13,7 +13,7 @@ namespace Myrmidon.App.Input {
         bool HandleInput(KeyEventArgs e);
     }
 
-    public class InputController {
+    public class InputController : IInputController {
 
         private IUiController _uiController;
         private IActionController _actionController;
@@ -32,7 +32,7 @@ namespace Myrmidon.App.Input {
             var command = GetInputActionFromKey(e.KeyCode);
 
             if (command != InputAction.None) {
-                _actionController.AddAction(command);
+                _actionController.AddFromPlayerInput(command);
                 return true;
             }
 

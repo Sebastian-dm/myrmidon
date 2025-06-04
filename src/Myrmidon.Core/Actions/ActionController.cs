@@ -1,102 +1,124 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Myrmidon.Core.Maps.Tiles;
-
-using Myrmidon.Core.Utilities.Geometry;
-using Myrmidon.Core.Rules;
+﻿using Myrmidon.Core.Entities;
 using Myrmidon.Core.Game;
-using Myrmidon.Core.Entities;
+using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.Rules;
+using Myrmidon.Core.Utilities.Geometry;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Myrmidon.Core.Actions {
-    // Contains all generic actions performed on entities and tiles
-    // including combat, movement, and so on.
+
+    public interface IActionController {
+
+        public bool IsPlayersTurn { get; }
+        public bool IsMonstersTurn { get; }
+        public bool CanAcceptInput { get; }
+        public bool HasPendingActions { get; }
+        public void AddFromPlayerInput(InputAction command);
+        public void Add(IAction action);
+        public void ResolveAllActions();
+        public void ResolveNextAction();
+        public void CollectEntityActions();
+
+    }
+
+
     public class ActionController : IActionController {
 
-        private readonly Queue<IAction> _actions;
-        private readonly Queue<IAction> _reactions;
-        private readonly Queue<IAction> _actionsDone;
+        public bool IsPlayersTurn {get; private set;} = true;
+        public bool IsMonstersTurn => !IsPlayersTurn;
 
-        private readonly IGameState _context;
+        public bool CanAcceptInput => (IsPlayersTurn && _reactionQueue.Count == 0 && _actionQueue.Count == 0);
+        public bool HasPendingActions => (_reactionQueue.Count > 0 || _actionQueue.Count > 0);
+
+
+        private readonly Queue<IAction> _actionQueue = new Queue<IAction>();
+        private readonly Queue<IAction> _reactionQueue = new Queue<IAction>();
+        private readonly Queue<IAction> _actionsHistory = new Queue<IAction>(100);
+
+        private readonly IGameState _gameState;
         private readonly IFovSystem _fov;
 
 
-        public ActionController(IGameState context, IFovSystem fov) {
-            _context = context;
+
+
+        public ActionController(IGameState gameState, IFovSystem fov) {
+            _gameState = gameState;
             _fov = fov;
-            _actions = new Queue<IAction>();
-            _reactions = new Queue<IAction>();
-            _actionsDone = new Queue<IAction>(100);
-        }
-
-        public bool Update() {
-            //PerformActions();
-            //CollectEntityActions();
-            return true;
-
-        }
-
-        private IAction? CreateActionFromInput(InputAction command) {
-            return command switch {
-                InputAction.MovePlayerUp => new WalkAction(_context.World.Player, new Vector(0, -1)),
-                InputAction.MovePlayerDown => new WalkAction(_context.World.Player, new Vector(0, 1)),
-                InputAction.MovePlayerLeft => new WalkAction(_context.World.Player, new Vector(-1, 0)),
-                InputAction.MovePlayerRight => new WalkAction(_context.World.Player, new Vector(1, 0)),
-                InputAction.SkipPlayerTurn => new SkipAction(_context.World.Player),
-                _ => null
-            };
         }
 
 
-        private void PerformActions() {
-            while (_actions.Count > 0) {
-                IAction action = _actions.Dequeue();
-                ActionResult result = action.Perform(_context);
-                
-                // Try alternatives
-                while (result.Alternative != null) {
-                    action = result.Alternative;
-                    result = action.Perform(_context);
-                }
 
-                if (result.Succeeded) {
-                    if (action is WalkAction walk && walk.Performer is Player player) {
-                        _fov.Recompute(_context, walk.Performer.Position);
-                        //_ui.CenterOnActor(player);
-                        //_ui.Refresh();
-                    }
-                }
 
-                _actionsDone.Enqueue(action);
-                
-            }
-        }
-
-        private void CollectEntityActions() {
-            foreach (Actor actor in _context.World.Entities.Items) {
-                _actions.Enqueue(actor.GetAction());
-            }
-        }
-
-        public void AddAction(InputAction inputAction) {
+        public void AddFromPlayerInput(InputAction inputAction) {
             var action = CreateActionFromInput(inputAction);
             if (action != null) {
-                AddAction(action);
+                Add(action);
             }
             else if (inputAction == InputAction.None) {
                 // No action to add
+                return;
             }
             else {
                 throw new ArgumentException($"Unknown input action: {inputAction}");
             }
         }
 
-        public void AddAction(IAction action) {
-            if (action.IsImmediate) {
-                _reactions.Enqueue(action);
+        public void Add(IAction action) {
+            if (CanAcceptInput) {
+                if (action.IsImmediate)
+                    _reactionQueue.Enqueue(action);
+                else
+                    _actionQueue.Enqueue(action);
+            }
+        }
+
+        public void ResolveAllActions() {
+            while (HasPendingActions) {
+                ResolveNextAction();
+            }
+            IsPlayersTurn = !IsPlayersTurn;
+        }
+
+        public void ResolveNextAction() {
+
+            if (!HasPendingActions) return;
+
+            IAction? action;
+            if (_reactionQueue.Count > 0) {
+                action = _reactionQueue.Dequeue();
             }
             else {
-                _actions.Enqueue(action);
+                action = _actionQueue.Dequeue();
+            }
+
+            var result = action.Perform(_gameState);
+            if (result.Alternative != null)
+                Add(result.Alternative);
+            else if (result.Succeeded)
+                _actionsHistory.Enqueue(action);
+        }
+            
+
+
+
+        private IAction? CreateActionFromInput(InputAction command) {
+            return command switch {
+                InputAction.MovePlayerUp => new WalkAction(_gameState.World.Player, new Vector(0, -1)),
+                InputAction.MovePlayerDown => new WalkAction(_gameState.World.Player, new Vector(0, 1)),
+                InputAction.MovePlayerLeft => new WalkAction(_gameState.World.Player, new Vector(-1, 0)),
+                InputAction.MovePlayerRight => new WalkAction(_gameState.World.Player, new Vector(1, 0)),
+                InputAction.SkipPlayerTurn => new SkipAction(_gameState.World.Player),
+                _ => null
+            };
+        }
+
+
+        public void CollectEntityActions() {
+            foreach (Actor actor in _gameState.World.Entities.Items) {
+                _actionQueue.Enqueue(actor.GetAction());
             }
         }
 

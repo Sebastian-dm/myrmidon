@@ -11,19 +11,18 @@ namespace Myrmidon.App {
         [STAThread]
         public static void Main() {
 
+            // Initialize world
             var fovSystem = new FovSystem();      // Field of View system
             var world = new Scene(91, 61); // Holds game state and entities
-            var gameState = new GameState(world); // Holds game state and context
+            var gameState = new GameState(world, fovSystem); // Holds game state and context
+            var sceneManager = new SceneManager(gameState, fovSystem); // Manages the game world and entities
 
             // Initialize controllers
             var worldController = new SceneManager(gameState, fovSystem); // Handles game state and logic
             var actionController = new ActionController(gameState, fovSystem); // Handles actions and commands
-            
-            var uiController = new UiController(gameState);
-            var inputController = new InputController(uiController, actionController); // Handles user input
+            MainLoop mainLoop = new MainLoop(gameState, sceneManager, actionController);
 
-            MainLoop mainGame = new MainLoop(gameState, inputController, uiController);
-
+            var uiController = new UiController(gameState, mainLoop, actionController);
             uiController.Run();
         }
     }

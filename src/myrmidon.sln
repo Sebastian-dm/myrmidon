@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.Core", "Myrmidon.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.App", "Myrmidon.App\Myrmidon.App.csproj", "{F9DF4B0D-569D-4E09-866F-CE4C3F075027}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.UI", "Myrmidon.UI\Myrmidon.UI.csproj", "{8A1759B3-506B-E6B5-1203-602322708080}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{F9DF4B0D-569D-4E09-866F-CE4C3F075027}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9DF4B0D-569D-4E09-866F-CE4C3F075027}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9DF4B0D-569D-4E09-866F-CE4C3F075027}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8A1759B3-506B-E6B5-1203-602322708080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8A1759B3-506B-E6B5-1203-602322708080}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8A1759B3-506B-E6B5-1203-602322708080}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8A1759B3-506B-E6B5-1203-602322708080}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,21 +15,14 @@ namespace Myrmidon.App {
 
         private IGameState _gameState;
         private SceneManager _sceneManager;
-
-        private IInputController _input;
-        private IUiController _ui;
         private IActionController _actionController;
-        
-
-        public bool WaitingForUserInput { get; set; } = true;
 
 
-        public MainLoop(IGameState gameState, IInputController inputController, IUiController uiController, IActionController actionController) {
+        public MainLoop(IGameState gameState, SceneManager sceneManager,IActionController actionController) {
 
 
             _gameState = gameState;
-            _input = inputController;
-            _ui = uiController;
+            _sceneManager = sceneManager;
             _actionController = actionController;
 
 
@@ -37,37 +30,19 @@ namespace Myrmidon.App {
 
         }
 
-        private void Tick() {
+        public void Tick() {
 
-            // 1. Check if there's a player action ready
-            if (_gameState.ActionController.CanAcceptInput) {
-                var action = _input.GetNextAction(_gameState);
-                if (action != null)
-                    _gameState.ActionController.Add(action);
+            // Collect AI actions if it's not the player's turn
+            if (!_actionController.IsPlayersTurn) {
+                _actionController.CollectEntityActions();
             }
 
-            // 2. Advance simulation only if actions exist
-            if (_gameState.ActionController.HasPendingActions) {
-                _gameState.ActionController.ResolveNextAction(_gameState);
-            }
+            // Process all actions
+            _actionController.ResolveAllActions();
 
             // 3. Recalculate FOV if needed (not time-bound)
-            if (_gameState.FovSystem.RequiresUpdate)
-                _gameState.FovSystem.Recalculate(_gameState);
-
-            // 4. Always update animations/effects/UI
-            _ui.UpdateAnimations();   // optional
-            _ui.Render(_gameState);
-        }
-
-        public void HandleKeyPress(KeyEventArgs e) {
-            bool userTookAnAction = _input.HandleInput(e);
-            if (userTookAnAction) {
-                WaitingForUserInput = false; // User has taken an action, proceed with game update
-            } else {
-                // Handle other key presses or commands
-                // This could include navigation, UI interactions, etc.
-            }
+            //if (_gameState.FovSystem.RequiresUpdate)
+            //    _gameState.FovSystem.Recalculate(_gameState);
         }
     }
 }
