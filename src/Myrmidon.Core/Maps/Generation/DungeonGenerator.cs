@@ -35,11 +35,11 @@ using Myrmidon.Core.Utilities.Random;
 /// The end result of this is a multiply-connected dungeon with rooms and lots
 /// of winding corridors.
 
-namespace Myrmidon.Core.Maps {
+namespace Myrmidon.Core.Maps.Generation {
 
     public class DungeonGenerator {
 
-        private Map _map;
+        private TileMap _map;
         private int _maxRooms = 1000; // Number of attempts to create rooms
         private int _extraConnectorChance = 30; // Inverse chance of adding connector between two already joined regions.
         private int _roomExtraSize = 5; // Increasing this allows rooms to be larger.
@@ -56,7 +56,7 @@ namespace Myrmidon.Core.Maps {
         };
 
 
-        public Map Generate(Map map) {
+        public TileMap Generate(TileMap map) {
             _map = map;
 
             _regions = Enumerable.Repeat(-1, _map.Width * _map.Height).ToArray();

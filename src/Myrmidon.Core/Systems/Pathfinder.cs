@@ -38,11 +38,11 @@ namespace Myrmidon.Core.Rules {
         /// us. Monster pathfinding treats things like door and occupied tiles as
         /// accessible but expensive. Likewise, sound pathfinding treats doors as
         /// blocking some but not all sound.
-        readonly Map stage;
+        readonly TileMap stage;
         readonly Vector start;
         readonly Vector end;
 
-        public Pathfinder(Map stage, Vector start, Vector end) {
+        public Pathfinder(TileMap stage, Vector start, Vector end) {
             this.stage = stage;
             this.start = start;
             this.end = end;
