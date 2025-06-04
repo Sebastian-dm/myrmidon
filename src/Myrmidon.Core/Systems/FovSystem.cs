@@ -14,7 +14,7 @@ using Myrmidon.Core.Game;
 namespace Myrmidon.Core.Rules {
 
     public interface IFovSystem {
-        public void Update(IGameContext context, Point origin);
+        public void Recompute(IGameState context, Point origin);
     }
 
 
@@ -28,7 +28,7 @@ namespace Myrmidon.Core.Rules {
 
 
         // Recompute the visible area based on a given location.
-        public void Update(IGameContext context, Point origin) {
+        public void Recompute(IGameState context, Point origin) {
 
             TileMap map = context.World.Map;
 

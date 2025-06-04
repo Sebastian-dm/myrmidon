@@ -8,6 +8,11 @@ using Myrmidon.App.UI;
 using Myrmidon.Core.Actions;
 
 namespace Myrmidon.App.Input {
+
+    public interface IInputController {
+        bool HandleInput(KeyEventArgs e);
+    }
+
     public class InputController {
 
         private IUiController _uiController;

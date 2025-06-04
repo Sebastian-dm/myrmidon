@@ -14,14 +14,14 @@ namespace Myrmidon.Core.Actions {
         public readonly Actor Performer;
         public readonly Actor Subject;
 
-        private IGameContext? _context;
+        private IGameState? _context;
 
         public AttackAction(Actor performer, Actor subject) {
             Performer = performer;
             Subject = subject;
         }
 
-        public ActionResult Perform(IGameContext context) {
+        public ActionResult Perform(IGameState context) {
             
             double Distance = (Performer.Position - Subject.Position).ToVector2().LengthSquared();
             if (Distance < 2) {

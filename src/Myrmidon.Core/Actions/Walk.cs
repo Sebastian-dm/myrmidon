@@ -23,7 +23,7 @@ namespace Myrmidon.Core.Actions {
             _originalPosition = performer.Position.ToVector2();
         }
 
-        public ActionResult Perform(IGameContext context) {
+        public ActionResult Perform(IGameState context) {
 
             // Do nothing if no length given
             if (Direction.X == 0 && Direction.Y == 0) {

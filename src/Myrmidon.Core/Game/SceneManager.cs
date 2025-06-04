@@ -10,12 +10,12 @@ using Myrmidon.Core.Game;
 namespace Myrmidon.Core.Game {
     public class SceneManager {
 
-        private readonly IGameContext _context;
+        private readonly IGameState _context;
         private readonly IFovSystem _fov;
         private readonly Scene _world;
         private readonly Random _rng = new();
 
-        public SceneManager(IGameContext context, IFovSystem fov) {
+        public SceneManager(IGameState context, IFovSystem fov) {
             _context = context;
             _world = context.World;
             _fov = fov;
@@ -33,7 +33,7 @@ namespace Myrmidon.Core.Game {
                 CreateMonsters();
                 CreateLoot();
                 _world.IsEntityGenRequested = false;
-                _fov.Update(_context, _world.Player.Position);
+                _fov.Recompute(_context, _world.Player.Position);
             }
 
             //_ui.Refresh();

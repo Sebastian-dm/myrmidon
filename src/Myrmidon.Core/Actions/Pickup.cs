@@ -21,7 +21,7 @@ namespace Myrmidon.Core.Actions {
             Item = item;
         }
 
-        public ActionResult Perform(IGameContext context) {
+        public ActionResult Perform(IGameState context) {
 
             double Distance = (Performer.Position - Item.Position).ToVector2().LengthSquared();
             if (Distance < 2) {

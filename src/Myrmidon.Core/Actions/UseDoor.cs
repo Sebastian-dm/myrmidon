@@ -20,7 +20,7 @@ namespace Myrmidon.Core.Actions {
             Door = door;
         }
 
-        public ActionResult Perform(IGameContext context) {
+        public ActionResult Perform(IGameState context) {
             try {
                 OpenDoor(Door);
                 return new ActionResult(succeeded: true);

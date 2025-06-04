@@ -15,20 +15,27 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Myrmidon.App.UI {
-    public class UiController {
+
+    public interface IUiController {
+
+        public void Quit();
+    }
+
+
+    public class UiController : IUiController {
 
         public string Title { get { return _form.Text; } }
 
         public Vec Size { get { return _form.Terminal.Size; } }
 
         
-        private IGameContext _context;
+        private IGameState _context;
         private InputController _inputController;
 
         private TerminalForm _form;
         private TileRenderer _renderer;
 
-        public UiController(IGameContext context) {
+        public UiController(IGameState context) {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

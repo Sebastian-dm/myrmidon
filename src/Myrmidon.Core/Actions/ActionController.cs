@@ -5,7 +5,6 @@ using Myrmidon.Core.Maps.Tiles;
 
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Rules;
-using Myrmidon.Core.UI;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Entities;
 
@@ -18,15 +17,13 @@ namespace Myrmidon.Core.Actions {
         private readonly Queue<IAction> _reactions;
         private readonly Queue<IAction> _actionsDone;
 
-        private readonly IGameContext _context;
+        private readonly IGameState _context;
         private readonly IFovSystem _fov;
-        private readonly IUIService _ui;
 
 
-        public ActionController(IGameContext context, IFovSystem fov, IUIService ui) {
+        public ActionController(IGameState context, IFovSystem fov) {
             _context = context;
             _fov = fov;
-            _ui = ui;
             _actions = new Queue<IAction>();
             _reactions = new Queue<IAction>();
             _actionsDone = new Queue<IAction>(100);
@@ -64,9 +61,9 @@ namespace Myrmidon.Core.Actions {
 
                 if (result.Succeeded) {
                     if (action is WalkAction walk && walk.Performer is Player player) {
-                        _fov.Update(_context, walk.Performer.Position);
-                        _ui.CenterOnActor(player);
-                        _ui.Refresh();
+                        _fov.Recompute(_context, walk.Performer.Position);
+                        //_ui.CenterOnActor(player);
+                        //_ui.Refresh();
                     }
                 }
 

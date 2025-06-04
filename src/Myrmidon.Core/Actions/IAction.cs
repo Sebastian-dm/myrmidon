@@ -10,7 +10,7 @@ namespace Myrmidon.Core.Actions {
     public interface IAction {
 
         bool IsImmediate { get; }
-        ActionResult Perform(IGameContext context);
+        ActionResult Perform(IGameState context);
     }
 
     public class ActionResult {

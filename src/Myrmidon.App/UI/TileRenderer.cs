@@ -18,7 +18,7 @@ using System.Xml.Linq;
 namespace Myrmidon.App.UI {
     internal class TileRenderer {
 
-        public void Paint(ITerminal terminal, IGameContext context) {
+        public void Paint(ITerminal terminal, IGameState context) {
             
             terminal.Clear();
 
