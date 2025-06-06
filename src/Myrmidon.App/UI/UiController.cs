@@ -57,7 +57,6 @@ namespace Myrmidon.App.UI {
 
             // Attach event handlers
             _form.TerminalControl.KeyDown += MainForm_KeyDown;
-            _form.TerminalControl.KeyUp += MainForm_KeyUp;
             _form.Load += MainForm_Load;
         }
 

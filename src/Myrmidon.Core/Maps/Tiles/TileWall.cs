@@ -8,23 +8,23 @@ namespace Myrmidon.Core.Maps.Tiles {
     public class TileWall : Tile {
 
         private enum TileIndices {
-            None = 272,
-            North = 273,
-            East = 274,
-            South = 275,
-            West = 276,
-            NorthSouth = 277,
-            EastWest = 278,
-            NorthWest = 279,
-            NorthEast = 280,
-            SouthEast = 281,
-            SouthWest = 282,
-            NoSouth = 283,
-            NoWest = 284,
-            NoNorth = 285,
-            NoEast = 286,
-            All = 287,
-            Unknown = 176,
+            None = 178,
+            North = 178,
+            East = 178,
+            South = 178,
+            West = 178,
+            NorthSouth = 178,
+            EastWest = 178,//186,
+            NorthWest = 178,
+            NorthEast = 178,
+            SouthEast = 178,
+            SouthWest = 178,
+            NoSouth = 178,
+            NoWest = 178,
+            NoNorth = 178,
+            NoEast = 178,
+            All = 178,
+            Unknown = 178,
         }
 
         [Flags]
@@ -35,22 +35,10 @@ namespace Myrmidon.Core.Maps.Tiles {
             W = 8,
         }
 
-        [Flags]
-        private enum dir8 {
-            N = 1,
-            E = 2,
-            S = 4,
-            W = 8,
-            NW = 16,
-            NE = 32,
-            SW = 64,
-            SE = 128,
-        }
-
         // Walls are set to block movement and line of sight by default
         // and have a light gray foreground and a transparent background
         // represented by the # symbol
-        public TileWall(bool walkable = false, bool blocksLOS = true) : base(new Color(68, 65, 59), new Color(38, 36, 34), glyph:272, walkable, blocksLOS) {
+        public TileWall(bool walkable = false, bool blocksLOS = true) : base(new Color(68, 65, 59), new Color(38, 36, 34), glyph:0, walkable, blocksLOS) {
             Name = "Wall";
         }
 

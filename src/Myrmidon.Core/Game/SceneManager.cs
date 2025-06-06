@@ -63,7 +63,7 @@ namespace Myrmidon.Core.Game {
 
         private void CreateMonsters() {
             for (int i = 0; i < 30; i++) {
-                var monster = new Monster(Color.Red, Color.Transparent, glyph: 368) {
+                var monster = new Monster(Color.Red, Color.Transparent, glyph: 2) {
                     AttackChance = _rng.Next(0, 50),
                     AttackStrength = _rng.Next(0, 10),
                     DefenseChance = _rng.Next(0, 50),
@@ -77,7 +77,7 @@ namespace Myrmidon.Core.Game {
 
         private void CreateLoot() {
             for (int i = 0; i < 20; i++) {
-                var loot = new Item(Color.Yellow, Color.Transparent, glyph: 384, name: "Loot");
+                var loot = new Item(Color.Yellow, Color.Transparent, glyph: 36, name: "Loot");
                 PlaceEntityAtRandomWalkable(loot);
             }
         }

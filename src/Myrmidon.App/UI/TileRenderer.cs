@@ -19,7 +19,10 @@ namespace Myrmidon.App.UI {
     internal class TileRenderer {
 
         public void Paint(ITerminal terminal, IGameState context) {
-            
+
+            TermColor backgroundColor = TermColor.Black;
+
+
             terminal.Clear();
 
             var map = context.World.Map;
@@ -37,7 +40,7 @@ namespace Myrmidon.App.UI {
                     var tile = map.GetTileAt<Tile>(x, y);
 
                     var screenPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                    terminal[screenPos.X, screenPos.Y][TermColor.Gray, TermColor.Black].Write(tile.Glyph);
+                    terminal[screenPos.X, screenPos.Y][TermColor.Gray, backgroundColor].Write(tile.Glyph);
 
                 }
             }
@@ -47,9 +50,16 @@ namespace Myrmidon.App.UI {
 
                 if (entity is Actor actor) {
                     if (!IsInMapBounds(actor.Position.X, actor.Position.Y, map)) continue;
+                    if (!IsInViewBounds(actor.Position.X, actor.Position.Y, viewBounds)) continue;
                     var screenPos = new Vec(actor.Position.X - viewBounds.Left, actor.Position.Y - viewBounds.Top);
-                    terminal[screenPos.X, screenPos.Y][TermColor.LightRed, TermColor.DarkGray].Write(actor.Glyph);
+                    terminal[screenPos.X, screenPos.Y][TermColor.LightRed, backgroundColor].Write(actor.Glyph);
                 }
+            }
+
+            // Paint player
+            if (context.World.Player != null) {
+                var playerPos = new Vec(context.World.Player.Position.X - viewBounds.Left, context.World.Player.Position.Y - viewBounds.Top);
+                terminal[playerPos.X, playerPos.Y][TermColor.LightGreen, backgroundColor].Write(context.World.Player.Glyph);
             }
         }
 
@@ -65,6 +75,20 @@ namespace Myrmidon.App.UI {
             }
 
             return x >= map.Bounds.Left && x < map.Bounds.Right && y >= map.Bounds.Top && y < map.Bounds.Bottom;
+        }
+
+        private bool IsInViewBounds(int x, int y, Rect viewBounds) {
+
+            bool a = x >= viewBounds.Left;
+            bool b = x < viewBounds.Right;
+            bool c = y >= viewBounds.Top;
+            bool d = y < viewBounds.Bottom;
+
+            if (x > 0 && y > 0) {
+                var g = "";
+            }
+
+            return x >= viewBounds.Left && x < viewBounds.Right && y >= viewBounds.Top && y < viewBounds.Bottom;
         }
     }
 }
