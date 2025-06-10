@@ -4,8 +4,8 @@ using System.Threading;
 using System.Reflection;
 using System.Linq;
 
+using Bramble.Core;
 using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Utilities.Random;
 
 /// The random dungeon generator.
@@ -51,8 +51,8 @@ namespace Myrmidon.Core.Maps.Generation {
         private readonly int _tileStepWaitMs = 0;
 
 
-        private readonly List<Vector> CardinalDirections = new List<Vector>() {
-            new Vector(0,1), new Vector(0, -1), new Vector(1, 0), new Vector(-1, 0)
+        private readonly List<Vec> CardinalDirections = new List<Vec>() {
+            new Vec(0,1), new Vec(0, -1), new Vec(1, 0), new Vec(-1, 0)
         };
 
 
@@ -129,24 +129,15 @@ namespace Myrmidon.Core.Maps.Generation {
                 int x = rng.Range((_map.Width - width) / 2) * 2 + 1;
                 int y = rng.Range((_map.Height - height) / 2) * 2 + 1;
 
-                Rect Room = new Rect(x, y, width, height);
+                Rect newRoom = new Rect(x, y, width, height);
 
-                bool overlaps = false;
-                for (int r = 0; r < _map.Rooms.Count; r++) {
-                    Rect other = _map.Rooms[r];
-                    int dist = Room.DistanceTo(other);
-                    if (dist <= 0) {
-                        overlaps = true;
-                        break;
-                    }
-                }
-
+                bool overlaps = _map.Rooms.Any(r => r.Overlaps(newRoom));
                 if (overlaps) continue;
 
-                _map.Rooms.Add(Room);
+                _map.Rooms.Add(newRoom);
 
                 StartRegion();
-                foreach (Vector pos in new Rect(x, y, width, height)) {
+                foreach (Vec pos in new Rect(x, y, width, height)) {
                     Carve(pos);
                 }
 
@@ -159,7 +150,7 @@ namespace Myrmidon.Core.Maps.Generation {
             // Fill in all of the empty space with mazes.
             for (int y = 1; y < _map.Height; y += 2) {
                 for (int x = 1; x < _map.Width; x += 2) {
-                    Vector location = new Vector(x, y);
+                    Vec location = new Vec(x, y);
                     if (_map.GetTileAt<TileWall>(location) != null) {
                         GrowMaze(location);
                     }
@@ -170,26 +161,26 @@ namespace Myrmidon.Core.Maps.Generation {
 
         /// Implementation of the "growing tree" algorithm from here:
         /// http://www.astrolog.org/labyrnth/algrithm.htm.
-        private void GrowMaze(Vector start) {
-            var cells = new List<Vector>();
-            var lastDir = new Vector(-1, -1);
+        private void GrowMaze(Vec start) {
+            var cells = new List<Vec>();
+            var lastDir = new Vec(-1, -1);
 
             StartRegion();
             Carve(start);
 
             cells.Add(start);
             while (cells.Count > 0) {
-                Vector cell = cells.Last();
+                Vec cell = cells.Last();
 
                 // See which adjacent cells are open.
-                List<Vector> unmadeCells = new List<Vector>();
-                foreach (Vector dir in CardinalDirections) {
+                List<Vec> unmadeCells = new List<Vec>();
+                foreach (Vec dir in CardinalDirections) {
                     if (CanCarve(cell, dir)) unmadeCells.Add(dir);
                 }
 
                 if (unmadeCells.Count > 0) {
                     // Based on how "windy" passages are, try to prefer carving in the same direction.
-                    Vector dir;
+                    Vec dir;
                     if (unmadeCells.Contains(lastDir) && rng.Next(100) > _windingPercent) {
                         dir = lastDir;
                     }
@@ -208,7 +199,7 @@ namespace Myrmidon.Core.Maps.Generation {
                     cells.RemoveAt(cells.Count - 1);
 
                     // This path has ended.
-                    lastDir = new Vector(-1, -1); ;
+                    lastDir = new Vec(-1, -1); ;
                 }
 
                 Thread.Sleep(_tileStepWaitMs/5);
@@ -220,19 +211,19 @@ namespace Myrmidon.Core.Maps.Generation {
         private void ConnectRegions() {
 
             // Find all connectors (tiles that can connect two or more regions).
-            Dictionary<Vector, HashSet<int>> ConnectorRegions = new Dictionary<Vector, HashSet<int>>();
+            Dictionary<Vec, HashSet<int>> ConnectorRegions = new Dictionary<Vec, HashSet<int>>();
 
             for (int x = 1; x < _map.Width - 1; x++) {
                 for (int y = 1; y < _map.Height - 1; y++) {
-                    Vector pos = new Vector(x, y);
+                    Vec pos = new Vec(x, y);
 
                     // Must be a wall tile to be a connector
                     if (_map.GetTileAt<TileWall>(pos) == null) continue;
 
                     // Can't already be part of a region.
                     HashSet<int> AdjacentRegions = new HashSet<int>();
-                    foreach (Vector dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
-                        Vector PosAdjacent = pos + dir;
+                    foreach (Vec dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
+                        Vec PosAdjacent = pos + dir;
                         int PosAdjacentIndex = PosAdjacent.Y * _map.Width + PosAdjacent.X;
                         int RegionInDirection = _regions[PosAdjacentIndex];
                         if (RegionInDirection != -1) AdjacentRegions.Add(RegionInDirection);
@@ -243,7 +234,7 @@ namespace Myrmidon.Core.Maps.Generation {
                 }
             }
 
-            List<Vector> PossibleConnectors = ConnectorRegions.Keys.ToList();
+            List<Vec> PossibleConnectors = ConnectorRegions.Keys.ToList();
 
 
             // Keep track of which regions have been merged. This maps an original
@@ -258,7 +249,7 @@ namespace Myrmidon.Core.Maps.Generation {
             // Keep connecting regions until we're down to one.
             while (OpenRegions.Count > 1) {
                 // Pick a connector
-                Vector PickedConnector = rng.Item(PossibleConnectors);
+                Vec PickedConnector = rng.Item(PossibleConnectors);
 
                 // Carve the connection.
                 LinkRegions(PickedConnector);
@@ -301,7 +292,7 @@ namespace Myrmidon.Core.Maps.Generation {
             }
         }
 
-        private void LinkRegions(Vector pos) {
+        private void LinkRegions(Vec pos) {
             if (rng.OneIn(4)) {
                 _map[pos] = rng.OneIn(3) ? new TileDoor(locked: false, open: true) : new TileFloor();
             }
@@ -318,7 +309,7 @@ namespace Myrmidon.Core.Maps.Generation {
                 
                 for (int x = 1; x < _map.Width-1; x++) {
                     for (int y = 1; y < _map.Height - 1; y++) {
-                        Vector pos = new Vector(x, y);
+                        Vec pos = new Vec(x, y);
                         if (_map.GetTileAt<TileWall>(pos) != null) continue;
 
                         // If it only has one exit, it's a dead end.
@@ -342,14 +333,14 @@ namespace Myrmidon.Core.Maps.Generation {
         /// [Cell] at [pos] to the adjacent Cell facing [direction]. Returns `true`
         /// if the starting Cell is in bounds and the destination Cell is filled
         /// (or out of bounds).</returns>
-        private bool CanCarve(Vector pos, Vector direction) {
+        private bool CanCarve(Vec pos, Vec direction) {
             // Must end in bounds.
-            Vector NextCell = pos + direction * 3;
-            bool InsideMapBoundary = _map.Bounds.DoesContain(NextCell);
+            Vec NextCell = pos + direction * 3;
+            bool InsideMapBoundary = _map.Bounds.Contains(NextCell);
             if (!InsideMapBoundary) return false;
 
             // Destination must not be open.
-            Vector destination = pos + direction * 2;
+            Vec destination = pos + direction * 2;
             return _map.GetTileAt<TileWall>(destination) != null;
         }
 
@@ -357,7 +348,7 @@ namespace Myrmidon.Core.Maps.Generation {
             _currentRegion++;
         }
 
-        private void Carve(Vector location) {
+        private void Carve(Vec location) {
             _map[location] = new TileFloor();
             int locationIndex = location.Y * _map.Width + location.X;
             _regions[locationIndex] = _currentRegion;

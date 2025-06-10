@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using Bramble.Core;
+
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Utilities.Geometry;
+//using Myrmidon.Core.Utilities.Geometry;
 
 namespace Myrmidon.Core.Maps {
     // Stores, manipulates and queries Tile data
@@ -25,7 +27,7 @@ namespace Myrmidon.Core.Maps {
             get => Tiles[i];
             set => Tiles[i] = value;
         }
-        public Tile this[VectorBase v] {
+        public Tile this[Vec v] {
             get => Tiles[v.X + v.Y * Width];
             set => Tiles[v.X + v.Y * Width] = value;
         }
@@ -59,7 +61,7 @@ namespace Myrmidon.Core.Maps {
 
 
         // Checks whether actor tried to walk off map or into solid tiles.
-        public bool IsTileWalkable(Vector location) {
+        public bool IsTileWalkable(Vec location) {
             // first make sure that actor isn't trying to move off the limits of the map
             if (location.X < 0 || location.Y < 0 || location.X >= Width || location.Y >= Height)
                 return false;
@@ -69,13 +71,13 @@ namespace Myrmidon.Core.Maps {
 
 
         // Returns an entity if it exists at location. Return null otherwise.
-        public T GetEntityAt<T>(Vector location) where T : Actor {
+        public T GetEntityAt<T>(Vec location) where T : Actor {
             return Entities.GetItems(new GoRogue.Coord(location.X, location.Y)).OfType<T>().FirstOrDefault();
         }
 
 
         // Returns a tile if it exists at location. Return null otherwise.
-        public T GetTileAt<T>(int x, int y) where T : Tile {
+        public T? GetTileAt<T>(int x, int y) where T : Tile {
             int locationIndex = GetIndexFromPoint(x, y, Width);
             // make sure the index is within the boundaries of the map!
             if (0 <= locationIndex && locationIndex < Width * Height) {
@@ -85,29 +87,30 @@ namespace Myrmidon.Core.Maps {
             }
             else return null;
         }
-        public T GetTileAt<T>(Vector location) where T : Tile {
+        public T? GetTileAt<T>(Vec location) where T : Tile {
             return GetTileAt<T>(location.X, location.Y);
         }
 
 
         // Checks if a specific type of tile at a specified location is on the map. If it exists, returns that Tile.
-        public T[] GetAdjacentTiles<T>(Vector loc) where T : Tile {
+        public T?[] GetAdjacentTiles<T>(Vec loc) where T : Tile {
             int w = Width;
             int h = Height;
 
-            T[] result = new T[8];
-            result[0] = (loc.X <= 0   | loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X-1, loc.Y-1);
-            result[1] = (               loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X  , loc.Y-1);
-            result[2] = (loc.X >= w-1 | loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X+1, loc.Y-1);
-            result[3] = (loc.X >= w-1               ) ? null : GetTileAt<T>(loc.X+1, loc.Y  );
-            result[4] = (loc.X >= w-1 | loc.Y >= h-1) ? null : GetTileAt<T>(loc.X+1, loc.Y+1);
-            result[5] = (               loc.Y >= h-1) ? null : GetTileAt<T>(loc.X  , loc.Y+1);
-            result[6] = (loc.X <= 0   | loc.Y >= h-1) ? null : GetTileAt<T>(loc.X-1, loc.Y+1);
-            result[7] = (loc.X <= 0                 ) ? null : GetTileAt<T>(loc.X-1, loc.Y  );
+            T[] result = [
+                (loc.X <= 0   | loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X-1, loc.Y-1),
+                (               loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X  , loc.Y-1),
+                (loc.X >= w-1 | loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X+1, loc.Y-1),
+                (loc.X >= w-1               ) ? null : GetTileAt<T>(loc.X+1, loc.Y  ),
+                (loc.X >= w-1 | loc.Y >= h-1) ? null : GetTileAt<T>(loc.X+1, loc.Y+1),
+                (               loc.Y >= h-1) ? null : GetTileAt<T>(loc.X  , loc.Y+1),
+                (loc.X <= 0   | loc.Y >= h-1) ? null : GetTileAt<T>(loc.X-1, loc.Y+1),
+                (loc.X <= 0                 ) ? null : GetTileAt<T>(loc.X-1, loc.Y  ),
+            ];
             return result;
         }
-        public T[] GetAdjacentTiles<T>(int x, int y) where T : Tile {
-            return GetAdjacentTiles<T>(new Vector(x, y));
+        public T?[] GetAdjacentTiles<T>(int x, int y) where T : Tile {
+            return GetAdjacentTiles<T>(new Vec(x, y));
         }
 
 

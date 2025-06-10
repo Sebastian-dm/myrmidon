@@ -3,6 +3,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Bramble.Core;
+
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
@@ -13,14 +15,14 @@ namespace Myrmidon.Core.Actions {
 
         public bool IsImmediate { get; } = false;
         public readonly Actor Performer;
-        public readonly Vector Direction;
+        public readonly Vec Direction;
 
-        private Vector _originalPosition;
+        private Vec _originalPosition;
 
-        public WalkAction(Actor performer, Vector direction) {
+        public WalkAction(Actor performer, Vec direction) {
             Performer = performer;
             Direction = direction;
-            _originalPosition = performer.Position.ToVector2();
+            _originalPosition = performer.Position;
         }
 
         public ActionResult Perform(IGameState context) {
@@ -34,8 +36,8 @@ namespace Myrmidon.Core.Actions {
             }
 
             // store the actor's last move state
-            _originalPosition = new Vector(Performer.Position.X, Performer.Position.Y);
-            Vector newPosition = _originalPosition + Direction;
+            _originalPosition = new Vec(Performer.Position.X, Performer.Position.Y);
+            Vec newPosition = _originalPosition + Direction;
 
             // Check if there is an actor on new position
             Monster monster = context.World.Map.GetEntityAt<Monster>(newPosition);

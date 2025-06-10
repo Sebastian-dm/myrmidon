@@ -51,7 +51,7 @@ namespace Myrmidon.App.UI {
             _renderer = new TileRenderer();
 
             // Set up game timer
-            _gameTimer = new Timer { Interval = 33 };
+            _gameTimer = new Timer { Interval = 10 };
             _gameTimer.Tick += GameTick;
             _gameTimer.Start();
 

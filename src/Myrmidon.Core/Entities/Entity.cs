@@ -1,4 +1,4 @@
-﻿
+﻿using Bramble.Core;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Utilities.Graphics;
@@ -33,9 +33,9 @@ namespace Myrmidon.Core.Entities {
                 }
             }
         }
-        public Point Position;
-        public Vector Location {
-            get { return new Vector(Position.X, Position.Y); }
+        public Vec Position;
+        public Vec Location {
+            get { return new Vec(Position.X, Position.Y); }
         }
 
 

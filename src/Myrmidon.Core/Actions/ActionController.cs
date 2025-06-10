@@ -1,8 +1,9 @@
-﻿using Myrmidon.Core.Entities;
+﻿using Bramble.Core;
+using Myrmidon.Core.Entities;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Rules;
-using Myrmidon.Core.Utilities.Geometry;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +14,6 @@ namespace Myrmidon.Core.Actions {
     public interface IActionController {
 
         public bool IsPlayersTurn { get; }
-        public bool IsMonstersTurn { get; }
         public bool CanAcceptInput { get; }
         public bool HasPendingActions { get; }
         public void AddFromPlayerInput(InputAction command);
@@ -28,7 +28,6 @@ namespace Myrmidon.Core.Actions {
     public class ActionController : IActionController {
 
         public bool IsPlayersTurn {get; private set;} = true;
-        public bool IsMonstersTurn => !IsPlayersTurn;
 
         public bool CanAcceptInput => (IsPlayersTurn && _reactionQueue.Count == 0 && _actionQueue.Count == 0);
         public bool HasPendingActions => (_reactionQueue.Count > 0 || _actionQueue.Count > 0);
@@ -79,7 +78,13 @@ namespace Myrmidon.Core.Actions {
             while (HasPendingActions) {
                 ResolveNextAction();
             }
+
+            // After resolving all actions, switch turns
+            // and update the FOV if needed
             IsPlayersTurn = !IsPlayersTurn;
+            if (!IsPlayersTurn) {
+                _fov.Recompute(_gameState, _gameState.World.Player.Position);
+            }
         }
 
         public void ResolveNextAction() {
@@ -106,10 +111,10 @@ namespace Myrmidon.Core.Actions {
 
         private IAction? CreateActionFromInput(InputAction command) {
             return command switch {
-                InputAction.MovePlayerUp => new WalkAction(_gameState.World.Player, new Vector(0, -1)),
-                InputAction.MovePlayerDown => new WalkAction(_gameState.World.Player, new Vector(0, 1)),
-                InputAction.MovePlayerLeft => new WalkAction(_gameState.World.Player, new Vector(-1, 0)),
-                InputAction.MovePlayerRight => new WalkAction(_gameState.World.Player, new Vector(1, 0)),
+                InputAction.MovePlayerUp => new WalkAction(_gameState.World.Player, new Vec(0, -1)),
+                InputAction.MovePlayerDown => new WalkAction(_gameState.World.Player, new Vec(0, 1)),
+                InputAction.MovePlayerLeft => new WalkAction(_gameState.World.Player, new Vec(-1, 0)),
+                InputAction.MovePlayerRight => new WalkAction(_gameState.World.Player, new Vec(1, 0)),
                 InputAction.SkipPlayerTurn => new SkipAction(_gameState.World.Player),
                 _ => null
             };

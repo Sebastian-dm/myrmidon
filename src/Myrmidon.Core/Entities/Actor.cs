@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Collections.Generic;
-
+using Bramble.Core;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Utilities.Geometry;
@@ -34,9 +34,9 @@ namespace Myrmidon.Core.Entities {
         /// </summary>
         /// <param name="newPosition"></param>
         /// <returns>returns true if actor was able to move, false if failed to move</returns>
-        public bool MoveTo(Vector newPosition, TileMap map) {
+        public bool MoveTo(Vec newPosition, TileMap map) {
 
-            Position = new Point(newPosition.X, newPosition.Y);
+            Position = new Vec(newPosition.X, newPosition.Y);
             map.Entities.Move(this, new GoRogue.Coord(newPosition.X, newPosition.Y));
 
             return true;

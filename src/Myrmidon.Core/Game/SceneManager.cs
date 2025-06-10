@@ -1,4 +1,5 @@
-﻿using Myrmidon.Core.Entities;
+﻿using Bramble.Core;
+using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Rules;
 using Myrmidon.Core.Utilities.Geometry;
@@ -54,7 +55,7 @@ namespace Myrmidon.Core.Game {
                 player.Position = _world.Map.Rooms[index].Center;
             }
             else {
-                player.Position = new Point(10, 10);
+                player.Position = new Vec(10, 10);
             }
 
             _world.Player = player;
@@ -91,7 +92,7 @@ namespace Myrmidon.Core.Game {
             }
             while (!valid);
 
-            entity.Position = new Point(pos % _world.Map.Width, pos / _world.Map.Width);
+            entity.Position = new Vec(pos % _world.Map.Width, pos / _world.Map.Width);
             _world.Map.Entities.Add(entity, new Coord(entity.Position.X, entity.Position.Y));
         }
     }

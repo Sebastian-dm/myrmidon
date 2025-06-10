@@ -20,7 +20,6 @@ namespace Myrmidon.App {
 
         public MainLoop(IGameState gameState, SceneManager sceneManager,IActionController actionController) {
 
-
             _gameState = gameState;
             _sceneManager = sceneManager;
             _actionController = actionController;

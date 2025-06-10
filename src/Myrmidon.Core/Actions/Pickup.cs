@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Bramble.Core;
 using Myrmidon.Core.Entities;
-using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Game;
 
@@ -23,8 +23,7 @@ namespace Myrmidon.Core.Actions {
 
         public ActionResult Perform(IGameState context) {
 
-            double Distance = (Performer.Position - Item.Position).ToVector2().LengthSquared();
-            if (Distance < 2) {
+            if (Performer.Position.IsAdjacentTo(Item.Position)) {
                 Performer.Inventory.Add(Item);
                 //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
                 context.World.Map.Remove(Item);

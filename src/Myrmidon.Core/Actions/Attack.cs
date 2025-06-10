@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Bramble.Core;
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Myrmidon.Core.Entities;
-using Myrmidon.Core.Game;
-using Myrmidon.Core.Utilities.Geometry;
 
 namespace Myrmidon.Core.Actions {
     internal class AttackAction : IAction {
@@ -23,8 +23,7 @@ namespace Myrmidon.Core.Actions {
 
         public ActionResult Perform(IGameState context) {
             
-            double Distance = (Performer.Position - Subject.Position).ToVector2().LengthSquared();
-            if (Distance < 2) {
+            if (Performer.Position.IsAdjacentTo(Subject.Position)) {
                 _context = context;
                 Attack(Performer, Subject);
                 return new ActionResult(succeeded: true);

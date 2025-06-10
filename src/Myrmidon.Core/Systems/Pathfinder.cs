@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Bramble.Core;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Geometry;
@@ -12,12 +13,12 @@ using Myrmidon.Core.Utilities.Geometry;
 namespace Myrmidon.Core.Rules {
 
     internal struct Path {
-        public readonly Direction startDirection; // Direction of first step along this path.
-        public readonly Vector pos;
+        public readonly Vec startDirection; // Direction of first step along this path.
+        public readonly Vec pos;
         public readonly int length;
         public readonly int cost; // Total cost spent to walk this path so far.
 
-        public Path(Direction startDirection, Vector pos, int length, int cost) {
+        public Path(Vec startDirection, Vec pos, int length, int cost) {
             this.startDirection = startDirection;
             this.pos = pos;
             this.length = length;
@@ -39,10 +40,10 @@ namespace Myrmidon.Core.Rules {
         /// accessible but expensive. Likewise, sound pathfinding treats doors as
         /// blocking some but not all sound.
         readonly TileMap stage;
-        readonly Vector start;
-        readonly Vector end;
+        readonly Vec start;
+        readonly Vec end;
 
-        public Pathfinder(TileMap stage, Vector start, Vector end) {
+        public Pathfinder(TileMap stage, Vec start, Vec end) {
             this.stage = stage;
             this.start = start;
             this.end = end;
@@ -99,9 +100,9 @@ namespace Myrmidon.Core.Rules {
             var paths = new PathingBucketQueue<Path>();
 
             // The set of tiles we have completely explored already.
-            var explored = new HashSet<Vector>();
+            var explored = new HashSet<Vec>();
 
-            var startPath = new Path(Direction.None, start, 0, 0);
+            var startPath = new Path(Vec.Zero, start, 0, 0);
             paths.Add(startPath, Priority(startPath, end));
 
             while (true) {
@@ -140,7 +141,7 @@ namespace Myrmidon.Core.Rules {
                         if (cost == null) continue;
 
                         var newPath = new Path(
-                            path.startDirection == Direction.None ? dir : path.startDirection,
+                            path.startDirection == Vec.Zero ? dir : path.startDirection,
                             neighbor,
                             path.length + 1,
                             path.cost + cost);
@@ -153,17 +154,17 @@ namespace Myrmidon.Core.Rules {
             return UnreachableGoal();
         }
 
-        int Priority(Path path, Vector end) {
+        int Priority(Path path, Vec end) {
             return path.cost + Heuristic(path.pos, end);
         }
 
         /// The estimated cost from [pos] to [end].
         /// By default, uses the king length.
-        internal int Heuristic(Vector pos, Vector end) => (end - pos).KingLength;
+        internal int Heuristic(Vec pos, Vec end) => (end - pos).KingLength;
 
         /// The cost required to enter [tile] at [pos] from a neighboring tile or
         /// `null` if the tile cannot be entered.
-        internal abstract int StepCost(Vector pos, Tile tile);
+        internal abstract int StepCost(Vec pos, Tile tile);
 
         /// Called for each step of pathfinding where [path] is the current path
         /// being processed.
