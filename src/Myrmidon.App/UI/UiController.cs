@@ -7,6 +7,7 @@ using Myrmidon.Core.Game;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -32,6 +33,9 @@ namespace Myrmidon.App.UI {
         private IGameState _gameState;
         private readonly MainLoop _mainLoop;
         private readonly Timer _gameTimer;
+        private readonly Stopwatch _stopwatch;
+        private TimeSpan _accumulator = TimeSpan.Zero;
+        private readonly TimeSpan _frameStep = TimeSpan.FromMilliseconds(50);
         private IInputController _inputController;
         private TerminalForm _form;
         private TileRenderer _renderer;
@@ -49,6 +53,7 @@ namespace Myrmidon.App.UI {
 
             _form = new TerminalForm("Myrmidon", 80, 30);
             _renderer = new TileRenderer();
+            _stopwatch = Stopwatch.StartNew();
 
             // Set up game timer
             _gameTimer = new Timer { Interval = 10 };
@@ -56,7 +61,7 @@ namespace Myrmidon.App.UI {
             _gameTimer.Start();
 
             // Attach event handlers
-            _form.TerminalControl.KeyDown += MainForm_KeyDown;
+            //_form.TerminalControl.KeyDown += MainForm_KeyDown;
             _form.Load += MainForm_Load;
         }
 
@@ -84,17 +89,22 @@ namespace Myrmidon.App.UI {
 
 
         private void GameTick(object? sender, EventArgs e) {
-            _mainLoop.Tick();
-            //UpdateAnimations(_gameState);
-            Render(_gameState);
-        }
 
-        private void MainForm_KeyDown(object? sender, KeyEventArgs e) {
-            _inputController.HandleInput(e);
-        }
+            _inputController.HandleInput();
 
-        private void MainForm_KeyUp(object? sender, KeyEventArgs e) {
-            _inputController.HandleInput(e);
+            // Add time since last tick to accumulator
+            _accumulator += _stopwatch.Elapsed;
+            _stopwatch.Restart();
+
+            // Update simulation at a fixed timestep
+            if (_accumulator >= _frameStep) {
+                _mainLoop.Tick();
+                _accumulator -= _frameStep;
+
+                //UpdateAnimations(_gameState);
+                Render(_gameState);
+            }
+            
         }
 
     }
