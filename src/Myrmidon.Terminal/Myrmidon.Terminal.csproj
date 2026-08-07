@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="SDL3-CS" Version="3.4.14" />
+    <PackageReference Include="SDL3-CS.Linux" Version="3.4.14" />
     <PackageReference Include="SDL3-CS.Windows" Version="3.4.14" />
   </ItemGroup>
 

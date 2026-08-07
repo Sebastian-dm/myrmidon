@@ -4,29 +4,49 @@ using SDL3;
 
 namespace Myrmidon.Terminal {
 
+    public interface ITerminal : IDisposable {
 
-    public class SdlTerminal : IDisposable {
+        // todo add properties for width, height, etc.
+        
 
-        private readonly int _width;
-        private readonly int _height;
+        void Initialize(int width, int height, string title);
+        void Run();
+        void Close();
+    }
+
+    public class SdlTerminal : ITerminal {
+
         private IntPtr _window;
         private IntPtr _renderer;
         private bool _isRunning;
 
-        public SdlTerminal(int width, int height) {
-            _width = width;
-            _height = height;
+        // Add properties for width, height to get them from window size
+        public int Width {
+            get {
+                SDL.GetWindowSize(_window, out int width, out _);
+                return width;
+            }
+        }
+        public int Height {
+            get {
+                SDL.GetWindowSize(_window, out _, out int height);
+                return height;
+            }
         }
 
-        public void Initialize() {
+
+        public SdlTerminal() {
+        }
+
+        public void Initialize(int width, int height, string title) {
             if (!SDL.Init(SDL.InitFlags.Video)) {
                 throw new Exception($"Failed to initialize SDL: {SDL.GetError()}");
             }
 
             _window = SDL.CreateWindow(
-                "Myrmidon Terminal - Hello World",
-                _width,
-                _height,
+                title,
+                width,
+                height,
                 SDL.WindowFlags.Resizable
             );
 
@@ -54,7 +74,7 @@ namespace Myrmidon.Terminal {
         private void HandleEvents() {
             while (SDL.PollEvent(out SDL.Event e)) {
                 if (e.Type == (int)SDL.EventType.Quit) {
-                    _isRunning = false;
+                    Close();
                 }
             }
         }
@@ -66,6 +86,10 @@ namespace Myrmidon.Terminal {
 
             // Present the rendered frame
             SDL.RenderPresent(_renderer);
+        }
+
+        public void Close() {
+            _isRunning = false;
         }
 
         public void Dispose() {

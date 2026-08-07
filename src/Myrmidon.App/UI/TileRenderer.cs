@@ -1,11 +1,4 @@
-﻿using Bramble.Core;
-using GoRogue;
-using Malison.Core;
-using Myrmidon.Core.Entities;
-using Myrmidon.Core.Maps;
-using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Game;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Packaging;
@@ -14,6 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+
+using Bramble.Core;
+
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.Maps;
+using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.Game;
+using Myrmidon.Terminal;
 
 namespace Myrmidon.App.UI {
     internal class TileRenderer {

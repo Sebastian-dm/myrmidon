@@ -1,9 +1,4 @@
 ﻿using Bramble.Core;
-using Malison.Core;
-using Malison.WinForms;
-using Myrmidon.App.Input;
-using Myrmidon.Core.Actions;
-using Myrmidon.Core.Game;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,6 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
+
+using Myrmidon.App.Input;
+using Myrmidon.Core.Actions;
+using Myrmidon.Core.Game;
+using Myrmidon.Terminal;
 
 
 namespace Myrmidon.App.UI {
@@ -27,8 +27,7 @@ namespace Myrmidon.App.UI {
 
     public class UiController : IUiController {
 
-        public string Title { get { return _form.Text; } }
-        public Vec Size { get { return _form.Terminal.Size; } }
+        public Vec Size { get { return new Vec(800, 600); } }
 
         private IGameState _gameState;
         private readonly MainLoop _mainLoop;
@@ -37,7 +36,7 @@ namespace Myrmidon.App.UI {
         private TimeSpan _accumulator = TimeSpan.Zero;
         private readonly TimeSpan _frameStep = TimeSpan.FromMilliseconds(50);
         private IInputController _inputController;
-        private TerminalForm _form;
+        private ITerminal _terminal;
         private TileRenderer _renderer;
 
         
@@ -51,7 +50,9 @@ namespace Myrmidon.App.UI {
             _mainLoop = mainLoop;
             _inputController = new InputController(this, actionController); // Handles user input;
 
-            _form = new TerminalForm("Myrmidon", 80, 30);
+            _terminal = new SdlTerminal();
+            _terminal.Initialize(800, 600, "Myrmidon");
+
             _renderer = new TileRenderer();
             _stopwatch = Stopwatch.StartNew();
 
@@ -62,27 +63,21 @@ namespace Myrmidon.App.UI {
 
             // Attach event handlers
             //_form.TerminalControl.KeyDown += MainForm_KeyDown;
-            _form.Load += MainForm_Load;
         }
 
-
-
-
-        public void MainForm_Load(object? sender, EventArgs e) {
-        }
 
         public void Run() {
-            Application.Run(_form);
+            _terminal.Run();
         }
 
         public void Quit() {
-            _form.Close();
+            _terminal.Close();
         }
 
         public void Render(IGameState context) {
-            if (!context.World.IsMapGenInProgress)
-                _renderer.Paint(_form.Terminal, context);
-            _form.TerminalControl.Invalidate(); // Refresh the terminal control to show changes
+            //if (!context.World.IsMapGenInProgress)
+            //    _renderer.Paint(_terminal, context);
+            //_form.TerminalControl.Invalidate(); // Refresh the terminal control to show changes
         }
 
 

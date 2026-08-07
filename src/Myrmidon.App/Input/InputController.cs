@@ -1,15 +1,14 @@
-﻿using System.Runtime.InteropServices;
-using System.Windows.Forms;
-
-using Myrmidon.App.UI;
-using Myrmidon.Core.Actions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Xml.Linq;
+using System.Runtime.InteropServices;
+
+using Myrmidon.App.UI;
+using Myrmidon.Core.Actions;
+
 
 namespace Myrmidon.App.Input {
 
