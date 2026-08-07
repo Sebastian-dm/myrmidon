@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Myrmidon.Core\Myrmidon.Core.csproj" />
+    <ProjectReference Include="..\Myrmidon.Terminal\Myrmidon.Terminal.csproj" />
   </ItemGroup>
 
   <ItemGroup>

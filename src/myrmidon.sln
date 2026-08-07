@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32526.322
+# Visual Studio Version 18
+VisualStudioVersion = 18.8.12023.21 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.Core", "Myrmidon.Core\Myrmidon.Core.csproj", "{A5488407-1975-BF3D-8131-E68457F1BF4E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.App", "Myrmidon.App\Myrmidon.App.csproj", "{F9DF4B0D-569D-4E09-866F-CE4C3F075027}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.Terminal", "Myrmidon.Terminal\Myrmidon.Terminal.csproj", "{2E29F20E-FF6D-473B-9113-8A86CE221600}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F9DF4B0D-569D-4E09-866F-CE4C3F075027}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9DF4B0D-569D-4E09-866F-CE4C3F075027}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9DF4B0D-569D-4E09-866F-CE4C3F075027}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

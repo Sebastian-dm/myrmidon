@@ -3,6 +3,7 @@ using Myrmidon.App.UI;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Rules;
+using Myrmidon.Terminal;
 using System;
 
 namespace Myrmidon.App {
@@ -22,8 +23,12 @@ namespace Myrmidon.App {
             var actionController = new ActionController(gameState, fovSystem); // Handles actions and commands
             MainLoop mainLoop = new MainLoop(gameState, sceneManager, actionController);
 
-            var uiController = new UiController(gameState, mainLoop, actionController);
-            uiController.Run();
+            using var terminal = new SdlTerminal(800, 600);
+            terminal.Initialize();
+            terminal.Run();
+
+            //var uiController = new UiController(gameState, mainLoop, actionController);
+            //uiController.Run();
         }
     }
 }
