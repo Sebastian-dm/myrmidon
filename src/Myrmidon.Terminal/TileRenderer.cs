@@ -5,7 +5,6 @@ using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Xml.Linq;
 
 using Bramble.Core;
@@ -14,10 +13,10 @@ using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Game;
-using Myrmidon.Terminal;
 
-namespace Myrmidon.App.UI {
-    internal class TileRenderer {
+namespace Myrmidon.Terminal {
+    
+    public class TileRenderer {
 
         public void Paint(ITerminal terminal, IGameState context) {
 
@@ -73,5 +72,15 @@ namespace Myrmidon.App.UI {
 
             return x >= viewBounds.Left && x < viewBounds.Right && y >= viewBounds.Top && y < viewBounds.Bottom;
         }
+    }
+    
+    public enum  TermColor {
+        LightRed,
+        LightGreen,
+        LightBlue,
+        Gray,
+        LightYellow,
+        Black,
+        White
     }
 }

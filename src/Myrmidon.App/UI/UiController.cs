@@ -6,8 +6,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
-using Timer = System.Windows.Forms.Timer;
 
 using Myrmidon.App.Input;
 using Myrmidon.Core.Actions;
@@ -43,8 +41,6 @@ namespace Myrmidon.App.UI {
 
 
         public UiController(IGameState gameState, MainLoop mainLoop, IActionController actionController) {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
 
             _gameState = gameState;
             _mainLoop = mainLoop;
@@ -57,9 +53,7 @@ namespace Myrmidon.App.UI {
             _stopwatch = Stopwatch.StartNew();
 
             // Set up game timer
-            _gameTimer = new Timer { Interval = 10 };
-            _gameTimer.Tick += GameTick;
-            _gameTimer.Start();
+            //_gameTimer = new Timer(GameTick(this,e),10,10);
 
             // Attach event handlers
             //_form.TerminalControl.KeyDown += MainForm_KeyDown;

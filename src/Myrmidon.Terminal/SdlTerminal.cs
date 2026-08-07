@@ -1,5 +1,6 @@
 ﻿using System;
 using SDL3;
+using Bramble.Core;
 
 
 namespace Myrmidon.Terminal {
@@ -7,9 +8,9 @@ namespace Myrmidon.Terminal {
     public interface ITerminal : IDisposable {
 
         // todo add properties for width, height, etc.
-        
+        public Vec Size { get; }
 
-        void Initialize(int width, int height, string title);
+        void Initialize(string title);
         void Run();
         void Close();
     }
@@ -19,34 +20,26 @@ namespace Myrmidon.Terminal {
         private IntPtr _window;
         private IntPtr _renderer;
         private bool _isRunning;
+        public Vec Size { get { return mCharacters.Size; } }
+        
+        private readonly Array2D<Character> mCharacters;
 
-        // Add properties for width, height to get them from window size
-        public int Width {
-            get {
-                SDL.GetWindowSize(_window, out int width, out _);
-                return width;
-            }
-        }
-        public int Height {
-            get {
-                SDL.GetWindowSize(_window, out _, out int height);
-                return height;
-            }
+
+        public SdlTerminal(int width, int height) {
+            mCharacters = new Array2D<Character>(width, height);
+            mCharacters.Fill(new Character(' '));
         }
 
-
-        public SdlTerminal() {
-        }
-
-        public void Initialize(int width, int height, string title) {
+        public void Initialize(string title) {
             if (!SDL.Init(SDL.InitFlags.Video)) {
                 throw new Exception($"Failed to initialize SDL: {SDL.GetError()}");
             }
+            
 
             _window = SDL.CreateWindow(
                 title,
-                width,
-                height,
+                mCharacters.Width,
+                mCharacters.Height,
                 SDL.WindowFlags.Resizable
             );
 
