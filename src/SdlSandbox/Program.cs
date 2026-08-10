@@ -19,7 +19,7 @@ internal static class Program {
             "appIdentifier",
             "windowTitle",
             1200,
-            800);
+            900);
         _texture = BitmapTexture.Create(_context.Renderer, 128, 128, "Images/Default.png");
 
 
