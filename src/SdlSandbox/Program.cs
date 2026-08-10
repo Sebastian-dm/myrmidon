@@ -23,7 +23,7 @@ internal static class Program {
         _texture = BitmapTexture.Create(_context.Renderer, 128, 128, "Images/Default.png");
 
 
-        bool running = true;
+        var running = true;
 
         while (running) {
             while (SDL.PollEvent(out SDL.Event e)) {
