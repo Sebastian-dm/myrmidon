@@ -1,13 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.8.12023.21 stable
+VisualStudioVersion = 18.8.12023.21
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.Core", "Myrmidon.Core\Myrmidon.Core.csproj", "{A5488407-1975-BF3D-8131-E68457F1BF4E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.App", "Myrmidon.App\Myrmidon.App.csproj", "{F9DF4B0D-569D-4E09-866F-CE4C3F075027}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.Terminal", "Myrmidon.Terminal\Myrmidon.Terminal.csproj", "{2E29F20E-FF6D-473B-9113-8A86CE221600}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bramble.Core", "Bramble.Core\Bramble.Core.csproj", "{43282A77-9789-30B0-824F-96C6CE69BFE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Malison.Core", "Malison.Core\Malison.Core.csproj", "{D2817EA5-D488-4346-605F-18600C3068D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SdlSandbox", "SdlSandbox\SdlSandbox.csproj", "{1EFBF9D9-10FE-4B35-BAAD-2E75F2271B9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +33,18 @@ Global
 		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43282A77-9789-30B0-824F-96C6CE69BFE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43282A77-9789-30B0-824F-96C6CE69BFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43282A77-9789-30B0-824F-96C6CE69BFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43282A77-9789-30B0-824F-96C6CE69BFE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2817EA5-D488-4346-605F-18600C3068D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2817EA5-D488-4346-605F-18600C3068D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2817EA5-D488-4346-605F-18600C3068D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2817EA5-D488-4346-605F-18600C3068D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EFBF9D9-10FE-4B35-BAAD-2E75F2271B9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EFBF9D9-10FE-4B35-BAAD-2E75F2271B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EFBF9D9-10FE-4B35-BAAD-2E75F2271B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EFBF9D9-10FE-4B35-BAAD-2E75F2271B9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

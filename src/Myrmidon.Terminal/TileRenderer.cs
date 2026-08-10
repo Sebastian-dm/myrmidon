@@ -13,6 +13,7 @@ using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Game;
+using Malison.Core;
 
 namespace Myrmidon.Terminal {
     
@@ -20,7 +21,7 @@ namespace Myrmidon.Terminal {
 
         public void Paint(ITerminal terminal, IGameState context) {
 
-            TermColor backgroundColor = TermColor.Black;
+            TerminalColor backgroundColor = TerminalColor.Black;
 
             //terminal.Clear();
 
@@ -38,7 +39,7 @@ namespace Myrmidon.Terminal {
                     var tile = map.GetTileAt<Tile>(x, y);
 
                     var screenPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                    terminal[screenPos.X, screenPos.Y][TermColor.Gray, backgroundColor].Write(tile.Glyph);
+                    terminal[screenPos.X, screenPos.Y][TerminalColor.Gray, backgroundColor].Write(tile.Glyph);
 
                 }
             }
@@ -51,14 +52,14 @@ namespace Myrmidon.Terminal {
                     if (!IsInViewBounds(actor.Position.X, actor.Position.Y, viewBounds)) continue;
                     int screenX = actor.Position.X - viewBounds.Left;
                     int screenY = actor.Position.Y - viewBounds.Top;
-                    terminal[screenX, screenY][TermColor.LightRed, backgroundColor].Write(actor.Glyph);
+                    terminal[screenX, screenY][TerminalColor.LightRed, backgroundColor].Write(actor.Glyph);
                 }
             }
 
             // Paint player
             if (context.World.Player != null) {
                 var playerPos = new Vec(context.World.Player.Position.X - viewBounds.Left, context.World.Player.Position.Y - viewBounds.Top);
-                terminal[playerPos.X, playerPos.Y][TermColor.LightGreen, backgroundColor].Write(context.World.Player.Glyph);
+                terminal[playerPos.X, playerPos.Y][TerminalColor.LightGreen, backgroundColor].Write(context.World.Player.Glyph);
             }
         }
 
@@ -72,15 +73,5 @@ namespace Myrmidon.Terminal {
 
             return x >= viewBounds.Left && x < viewBounds.Right && y >= viewBounds.Top && y < viewBounds.Bottom;
         }
-    }
-    
-    public enum  TermColor {
-        LightRed,
-        LightGreen,
-        LightBlue,
-        Gray,
-        LightYellow,
-        Black,
-        White
     }
 }

@@ -22,18 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Bramble.Core\Bramble.Core.csproj" />
     <ProjectReference Include="..\Myrmidon.Core\Myrmidon.Core.csproj" />
     <ProjectReference Include="..\Myrmidon.Terminal\Myrmidon.Terminal.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Bramble.Core">
-      <HintPath>..\External\Bramble.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

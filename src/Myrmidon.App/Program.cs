@@ -12,6 +12,10 @@ namespace Myrmidon.App {
         [STAThread]
         public static void Main() {
 
+
+
+
+
             // Initialize world
             var fovSystem = new FovSystem();      // Field of View system
             var world = new Scene(91, 61); // Holds game state and entities

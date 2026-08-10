@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
+using Malison.Core;
 using Myrmidon.App.Input;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Game;
@@ -46,7 +47,7 @@ namespace Myrmidon.App.UI {
             _mainLoop = mainLoop;
             _inputController = new InputController(this, actionController); // Handles user input;
 
-            _terminal = new SdlTerminal();
+            _terminal = new SdlTerminal(800, 600);
             _terminal.Initialize(800, 600, "Myrmidon");
 
             _renderer = new TileRenderer();
