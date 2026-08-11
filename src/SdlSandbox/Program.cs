@@ -10,6 +10,7 @@ internal static class Program {
 
     [STAThread]
     private static int Main(string[] args) {
+        
         if (!SDL.Init(SDL.InitFlags.Video))
             return -1;
 
@@ -20,20 +21,39 @@ internal static class Program {
             "windowTitle",
             1200,
             900);
-        _texture = BitmapTexture.Create(_context.Renderer, 128, 128, "Images/Default.png");
-
+        //_texture = BitmapTexture.Create(_context.Renderer, 128, 128, "Images/Default.png");
+        
+        var keys = SDL.GetKeyboardState(out var numKeys);
 
         var running = true;
 
         while (running) {
-            while (SDL.PollEvent(out SDL.Event e)) {
-                if (e.Type == ((uint)SDL.EventType.Quit))
-                    running = false;
+            // Input handling
+            while (SDL.PollEvent(out var e)) {
+                switch (e.Type) {
+                    case (uint)SDL.EventType.Quit:
+                        running = false;
+                        break;
+                    case (uint)SDL.EventType.KeyDown:
+                        SDL.Log($"A key was pressed: {e.Key.Key}");
+                        break;
+                }
             }
-            RenderFrame(_context);
-
+            
+            if (keys[(int)SDL.Scancode.L] && keys[(int)SDL.Scancode.K]) {
+                SDL.Log("L+K was pressed");
+            }
+            
+            // Rendering
+            //RendertextureTestFrame(_context);
+            
+            // Game loop
+            
+            
             SDL.Delay(16);
         }
+        
+        
         _context.Dispose();
         Cleanup();
         SDL.Quit();
@@ -41,9 +61,10 @@ internal static class Program {
         return 0;
     }
 
-
-
-    private static void RenderFrame(RenderContext context) {
+    
+    
+    
+    private static void RendertextureTestFrame(RenderContext context) {
 
         var texture = _texture ?? throw new InvalidOperationException("Texture was not created.");
         var ticks = SDL.GetTicks();
