@@ -24,7 +24,8 @@ public class SpriteSheet : IDisposable {
     public SpriteSheet(string id) {
         Id = id;
         var configText = File.ReadAllText($"images/{id}.json");
-        var config = JsonSerializer.Deserialize<SpriteSheetConfig>(configText);
+        var config = JsonSerializer.Deserialize<SpriteSheetConfig>(configText)
+            ?? throw new InvalidOperationException($"Couldn't load sprite sheet config for {id}");
         
         _spritesPerRow = config.SpritesPerRow;
         _spriteRows = config.SpriteRows;
@@ -32,7 +33,7 @@ public class SpriteSheet : IDisposable {
 
         var bitMapFileName = $"images/{id}.png";
         _sheetSurface = SDL.LoadPNG(bitMapFileName);
-        
+
         _characterCache = new Dictionary<Character, BitmapTexture>();
     }
 
@@ -46,24 +47,21 @@ public class SpriteSheet : IDisposable {
         }
 
         // not there, so create it
-        using (Graphics g = Graphics.FromImage(characterTexture)) {
-            byte Sprite = (byte)character.Sprite;
-            int column = Sprite % _spritesPerRow;
-            int row = Sprite / _spritesPerRow;
+        byte glyph = (byte)character.Glyph;
+        int column = glyph % _spritesPerRow;
+        int row = glyph / _spritesPerRow;
 
-            Rectangle destRect = new Rectangle(0, 0, Width, Height);
+        Rectangle destRect = new Rectangle(0, 0, Width, Height);
 
-            ColorMap map = new ColorMap();
-            map.OldColor = Color.Black;
-            map.NewColor = character.ForeColor.ToSystemColor();
+        //Remap colors
+        SDL.Surface frame = SDL.PointerToStructure<SDL.Surface>(_sheetSurface) ?? default;
+        SDL.SetSurfaceColorKey(_sheetSurface, true, SDL.MapRGB(SDL.GetPixelFormatDetails(frame.Format), IntPtr.Zero, 255, 0, 255));
+        // Todo: Implement color remapping based on character.ForeColor and character.BackColor
 
-            ImageAttributes attributes = new ImageAttributes();
-            attributes.SetRemapTable(new ColorMap[] { map });
-
-            g.DrawImage(_bitmap, destRect,
-                column * Width, row * Height, Width, Height,
-                GraphicsUnit.Pixel, attributes);
-        }
+        characterTexture = BitmapTexture.Create(SDL.GetRenderer(SDL.GetWindowFromSurface(_sheetSurface)), Width, Height);
+        g.DrawImage(_bitmap, destRect,
+            column * Width, row * Height, Width, Height,
+            GraphicsUnit.Pixel, attributes);
 
         // cache it
         _characterCache[character] = characterTexture;
@@ -83,6 +81,7 @@ public class SpriteSheet : IDisposable {
             W = characterTexture.Width,
             H = characterTexture.Height
         };
+
         SDL.RenderTexture(context.Renderer, characterTexture.Handle, IntPtr.Zero, destRect);
     }
 
