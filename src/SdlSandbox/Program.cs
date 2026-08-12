@@ -7,11 +7,13 @@ internal static class Program {
     private static bool mRunning = true;
     private static IntPtr mWindow;
     private static BitmapTexture? mTexture;
+    private static byte[]? mKeys;
     private static RenderContext? mContext;
 
 
     [STAThread]
     private static int Main(string[] args) {
+        
         Initialize();
         MainLoop();
         Cleanup();
@@ -31,32 +33,71 @@ internal static class Program {
             "windowTitle",
             1200,
             900);
-        _texture = BitmapTexture.Create(_context.Renderer, 128, 128, "Images/Default.png");
-
-
-        var running = true;
-
-        while (running) {
-            while (SDL.PollEvent(out SDL.Event e)) {
-                if (e.Type == ((uint)SDL.EventType.Quit))
-                    running = false;
-            }
-            RenderFrame(_context);
-
-            SDL.Delay(16);
-        }
-        _context.Dispose();
-        Cleanup();
-        SDL.Quit();
-
-        return 0;
+        mTexture = BitmapTexture.Create(mContext.Renderer, 128, 128, "Images/Default.png");
+        mKeys = SDL.GetKeyboardState(out var numKeys);
     }
 
 
+    private static void MainLoop() {
 
-    private static void RenderFrame(RenderContext context) {
+        int fps = 0;
+        ulong lastTime = 0;
 
-        var texture = _texture ?? throw new InvalidOperationException("Texture was not created.");
+        while (mRunning) {
+
+            var currentTick = SDL.GetTicks();
+            Tick();
+            fps++;
+            var deltatime = SDL.GetTicks() - currentTick;
+            if (currentTick - lastTime >= 1000) {
+                SDL.SetWindowTitle(mContext.Window, $"FPS: {fps}");
+                fps = 0;
+                lastTime = currentTick;
+            }
+            //SDL.Delay(16);
+        }
+    }
+
+    private static void Tick() {
+        // Do a frame
+        Input();
+        Update();
+        Render(mContext);
+    }
+
+    private static void Input() {
+        // Handle input events
+        while (SDL.PollEvent(out SDL.Event e)) {
+            switch (e.Type) {
+                case (uint)SDL.EventType.Quit:
+                    mRunning = false;
+                    break;
+                case (uint)SDL.EventType.KeyDown:
+                    SDL.Log($"A key was pressed: {e.Key.Key}");
+                    break;
+            }
+        }
+    }
+
+    private static void InputKeyboard() {
+        if (mKeys is null)
+            return;
+
+        if (mKeys[(int)SDL.Scancode.Escape] != 0)
+            mRunning = false;
+        
+        if (mKeys[(int)SDL.Scancode.L] != 0 && mKeys[(int)SDL.Scancode.K] != 0) {
+            SDL.Log("L+K was pressed");
+        }
+    }
+
+    private static void Update() {
+        // Update game logic
+    }
+
+    private static void Render(RenderContext context) {
+        // Render the scene
+        var texture = mTexture ?? throw new InvalidOperationException("Texture was not created.");
         var ticks = SDL.GetTicks();
         var direction = (ticks % 2000) >= 1000 ? 1.0f : -1.0f;
         var scale = ((((int)(ticks % 1000)) - 500) / 500.0f) * direction;
