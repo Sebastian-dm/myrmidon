@@ -45,20 +45,6 @@ internal class RenderContext : IDisposable {
         return new RenderContext(window, renderer, width, height);
     }
 
-    public bool PollEvents(Func<SDL.Event, bool>? handleEvent = null) {
-        while (SDL.PollEvent(out var sdlEvent)) {
-            if (sdlEvent.Type == (uint)SDL.EventType.Quit) {
-                return false;
-            }
-
-            if (handleEvent?.Invoke(sdlEvent) == false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public void Dispose() {
         if (_disposed) {
             return;
