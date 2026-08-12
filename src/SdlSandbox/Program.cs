@@ -31,58 +31,32 @@ internal static class Program {
             "windowTitle",
             1200,
             900);
-        mTexture = BitmapTexture.Create(mContext.Renderer, 128, 128, "Images/Default.png");
-    }
+        _texture = BitmapTexture.Create(_context.Renderer, 128, 128, "Images/Default.png");
 
 
-    private static void MainLoop() {
+        var running = true;
 
-        int fps = 0;
-        ulong lastTime = 0;
-
-        while (mRunning) {
-
-            var currentTick = SDL.GetTicks();
-            Tick();
-            fps++;
-            var deltatime = SDL.GetTicks() - currentTick;
-            if (currentTick - lastTime >= 1000) {
-                SDL.SetWindowTitle(mContext.Window, $"FPS: {fps}");
-                fps = 0;
-                lastTime = currentTick;
+        while (running) {
+            while (SDL.PollEvent(out SDL.Event e)) {
+                if (e.Type == ((uint)SDL.EventType.Quit))
+                    running = false;
             }
-            //SDL.Delay(16);
+            RenderFrame(_context);
+
+            SDL.Delay(16);
         }
+        _context.Dispose();
+        Cleanup();
+        SDL.Quit();
+
+        return 0;
     }
 
-    private static void Tick() {
-        // Do a frame
-        Input();
-        Update();
-        Render(mContext);
-    }
 
-    private static void Input() {
-        // Handle input events
-        while (SDL.PollEvent(out SDL.Event e)) {
-            switch (e.Type) {
-                case (uint)SDL.EventType.Quit:
-                    mRunning = false;
-                    break;
-                case (uint)SDL.EventType.KeyDown:
-                    // Handle keyboard events here
-                    break;
-            }
-        }
-    }
 
-    private static void Update() {
-        // Update game logic
-    }
+    private static void RenderFrame(RenderContext context) {
 
-    private static void Render(RenderContext context) {
-        // Render the scene
-        var texture = mTexture ?? throw new InvalidOperationException("Texture was not created.");
+        var texture = _texture ?? throw new InvalidOperationException("Texture was not created.");
         var ticks = SDL.GetTicks();
         var direction = (ticks % 2000) >= 1000 ? 1.0f : -1.0f;
         var scale = ((((int)(ticks % 1000)) - 500) / 500.0f) * direction;
