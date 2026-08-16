@@ -1,8 +1,8 @@
 ﻿using SDL3;
 
-namespace SdlSandbox;
+namespace Myrmidon.App.Render;
 
-internal public class BitmapTexture : IDisposable {
+public class BitmapTexture : IDisposable {
     private bool _disposed;
 
     private BitmapTexture(IntPtr handle, int width, int height) {

@@ -151,7 +151,7 @@ namespace Myrmidon.Core.Actions {
                     item.Position = defender.Position;
 
                     // Now let the MultiSpatialMap know that the Item is visible
-                    _context?.World.Map.Add(item);
+                    _context?.Hectare.Map.Add(item);
 
                     // Append the item to the deathMessage
                     deathMessage.Append(", " + item.Name);
@@ -167,7 +167,7 @@ namespace Myrmidon.Core.Actions {
             }
 
             // actor goes bye-bye
-            _context?.World.Map.Remove(defender);
+            _context?.Hectare.Map.Remove(defender);
 
             // Now show the deathMessage in the messagelog
             //Program.UIManager.MessageLog.Add(deathMessage.ToString());

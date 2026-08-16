@@ -8,7 +8,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 
 namespace Myrmidon.Terminal {
-    public class SdlTerminal {
+    public class MalisonTerminalTranslation {
 
         private IntPtr _window;
         private IntPtr _renderer;
@@ -19,7 +19,7 @@ namespace Myrmidon.Terminal {
         private Array2D<Character> mCharacters;
         private const int Padding = 2;
 
-        private GlyphSheet mGlyphSheet;
+        //private GlyphSheet mGlyphSheet;
 
         private ITerminal mTerminal;
 
@@ -36,14 +36,14 @@ namespace Myrmidon.Terminal {
         }
 
 
-        public SdlTerminal(int width, int height) {
+        public MalisonTerminalTranslation(int width, int height) {
 
             mTerminal = new Malison.Core.Terminal(width, height);
 
             mCharacters = new Array2D<Character>(mTerminal.Size.X, mTerminal.Size.Y);
             mCharacters.Fill(new Character(' '));
 
-            mGlyphSheet = GlyphSheet.GetGlyphSheet("Terminal6x10");
+            //mGlyphSheet = GlyphSheet.GetGlyphSheet("Terminal6x10");
 
 
             Initialize("Myrmidon Terminal");
@@ -199,8 +199,8 @@ namespace Myrmidon.Terminal {
 
 
         private void InvalidateCharacter(Vec pos) {
-            int width = mGlyphSheet.Width;
-            int height = mGlyphSheet.Height;
+            int width = 0;//mGlyphSheet.Width;
+            int height = 0;//mGlyphSheet.Height;
             int left = (pos.X * width) + Padding;
             int top = (pos.Y * height) + Padding;
 

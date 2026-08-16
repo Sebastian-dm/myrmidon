@@ -33,10 +33,4 @@
     <ProjectReference Include="..\Myrmidon.Core\Myrmidon.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Images\Default.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>

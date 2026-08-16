@@ -6,64 +6,72 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
 
-using Myrmidon.App.UI;
 using Myrmidon.Core.Actions;
 
+using SDL3;
 
-namespace Myrmidon.App.Input {
 
-    public interface IInputController {
+namespace Myrmidon.App.Input;
 
-        void HandleInput();
+public class InputController {
+    
+    public event EventHandler Quit;
+    private IActionController _actionController;
+
+
+    public InputController(IActionController actionController) {
+        _actionController = actionController;
     }
 
-    public class InputController : IInputController {
+    public void HandleInput() {
+        // This method can be used to handle input in a loop or during the main game loop
+        // For example, you might check for key presses or mouse clicks here
 
-        private IUiController _uiController;
-        private IActionController _actionController;
+        var action = InputAction.None;
+        
+        //NativeKeyboard.
 
-
-        public InputController(IUiController uiController, IActionController actionController) {
-            _uiController = uiController;
-            _actionController = actionController;
-        }
-
-        public void HandleInput() {
-            // This method can be used to handle input in a loop or during the main game loop
-            // For example, you might check for key presses or mouse clicks here
-
-            var action = InputAction.None;
-            
-            //NativeKeyboard.
-
-            // if (NativeKeyboard.IsKeyDown())          action = InputAction.MovePlayerUp;
-            // else if (NativeKeyboard.IsKeyDown(Keys.Down))   action = InputAction.MovePlayerDown;
-            // else if (NativeKeyboard.IsKeyDown(Keys.Left))   action = InputAction.MovePlayerLeft;
-            //  else if (NativeKeyboard.IsKeyDown(Keys.Right))  action = InputAction.MovePlayerRight;
-            //  else if (NativeKeyboard.IsKeyDown(Keys.Space))  action = InputAction.SkipPlayerTurn;
-            //
-            //  if (action != InputAction.None) {
-            //      _actionController.AddFromPlayerInput(action);
-            //      return;
-            //  }
-            //
-            //  if (NativeKeyboard.IsKeyDown(Keys.Escape)) {
-            //      _uiController.Quit();
-            //      return;
-            //  }
-
-        }
-
-        // public static class NativeKeyboard {
-        //     [DllImport("user32.dll")]
-        //     private static extern short GetAsyncKeyState(Keys vKey);
+        // if (NativeKeyboard.IsKeyDown())          action = InputAction.MovePlayerUp;
+        // else if (NativeKeyboard.IsKeyDown(Keys.Down))   action = InputAction.MovePlayerDown;
+        // else if (NativeKeyboard.IsKeyDown(Keys.Left))   action = InputAction.MovePlayerLeft;
+        //  else if (NativeKeyboard.IsKeyDown(Keys.Right))  action = InputAction.MovePlayerRight;
+        //  else if (NativeKeyboard.IsKeyDown(Keys.Space))  action = InputAction.SkipPlayerTurn;
         //
-        //     public static bool IsKeyDown(Keys key) {
-        //         return (GetAsyncKeyState(key) & 0x8000) != 0;
-        //     }
-        // }
-
+        //  if (action != InputAction.None) {
+        //      _actionController.AddFromPlayerInput(action);
+        //      return;
+        //  }
+        //
+        //  if (NativeKeyboard.IsKeyDown(Keys.Escape)) {
+        //      _uiController.Quit();
+        //      return;
+        //  }
 
     }
     
+    public void PollInput() {
+        // Handle input events
+        while (SDL.PollEvent(out SDL.Event e)) {
+            switch (e.Type) {
+                case (uint)SDL.EventType.Quit:
+                    Quit?.Invoke(this, EventArgs.Empty);
+                    break;
+                case (uint)SDL.EventType.KeyDown:
+                    SDL.Log($"A key was pressed: {e.Key.Key}");
+                    break;
+            }
+        }
+    }
+
+    private void InputKeyboard() {
+        var keys = SDL.GetKeyboardState(out var numKeys);
+
+        if (keys[(int)SDL.Scancode.Escape])
+            Quit?.Invoke(this, EventArgs.Empty);
+        if (keys[(int)SDL.Scancode.L] && keys[(int)SDL.Scancode.K]) {
+            SDL.Log("L+K was pressed");
+        }
+    }
+
+
 }

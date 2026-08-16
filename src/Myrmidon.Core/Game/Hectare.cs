@@ -9,7 +9,7 @@ using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Game {
-    public class Scene {
+    public class Hectare {
         public TileMap Map { get; set; }
         public Player Player { get; set; }
 
@@ -19,7 +19,7 @@ namespace Myrmidon.Core.Game {
 
         public GoRogue.MultiSpatialMap<Entity> Entities => Map.Entities;
 
-        public Scene(int width, int height) {
+        public Hectare(int width, int height) {
             Map = new TileMap(width, height);
         }
     }

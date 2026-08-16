@@ -9,16 +9,16 @@ using GoRogue;
 using Myrmidon.Core.Game;
 
 namespace Myrmidon.Core.Game {
-    public class SceneManager {
+    public class HectareManager {
 
         private readonly IGameState _context;
         private readonly IFovSystem _fov;
-        private readonly Scene _world;
+        private readonly Hectare _world;
         private readonly Random _rng = new();
 
-        public SceneManager(IGameState context, IFovSystem fov) {
+        public HectareManager(IGameState context, IFovSystem fov) {
             _context = context;
-            _world = context.World;
+            _world = context.Hectare;
             _fov = fov;
         }
 

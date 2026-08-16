@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.Core", "Myrmidon.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.App", "Myrmidon.App\Myrmidon.App.csproj", "{F9DF4B0D-569D-4E09-866F-CE4C3F075027}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Myrmidon.Terminal", "Myrmidon.Terminal\Myrmidon.Terminal.csproj", "{2E29F20E-FF6D-473B-9113-8A86CE221600}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bramble.Core", "Bramble.Core\Bramble.Core.csproj", "{43282A77-9789-30B0-824F-96C6CE69BFE0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Malison.Core", "Malison.Core\Malison.Core.csproj", "{D2817EA5-D488-4346-605F-18600C3068D6}"
@@ -29,10 +27,6 @@ Global
 		{F9DF4B0D-569D-4E09-866F-CE4C3F075027}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9DF4B0D-569D-4E09-866F-CE4C3F075027}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9DF4B0D-569D-4E09-866F-CE4C3F075027}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E29F20E-FF6D-473B-9113-8A86CE221600}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43282A77-9789-30B0-824F-96C6CE69BFE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{43282A77-9789-30B0-824F-96C6CE69BFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43282A77-9789-30B0-824F-96C6CE69BFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -30,7 +30,7 @@ namespace Myrmidon.Core.Rules {
         // Recompute the visible area based on a given location.
         public void Recompute(IGameState context, Vec origin) {
 
-            TileMap map = context.World.Map;
+            TileMap map = context.Hectare.Map;
 
             // Update tiles visiblity
             for (int x = 0; x < map.Width; x++) {
