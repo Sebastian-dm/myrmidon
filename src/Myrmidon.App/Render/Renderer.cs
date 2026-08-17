@@ -11,29 +11,54 @@ public class Renderer : IDisposable {
     private static IntPtr _window;
     private static IntPtr _renderer;
     private static IntPtr _surface;
+    private FpsCounter _fpsCounter;
 
-    public Renderer() {
+    public Renderer(FpsCounter fpsCounter) {
+        _fpsCounter = fpsCounter;
         if (!SDL.Init(SDL.InitFlags.Video))
             throw new InvalidOperationException("Failed to initialize SDL.");
+
+        _window = SDL.CreateWindow("Myrmidon", 320, 240, SDL.WindowFlags.Resizable);
+
+        //Check renderers available
+        List<string> renderDrivers = new List<string>();
+        SDL.Log("Available render drivers:");
+        for (int i = 0; i < SDL.GetNumRenderDrivers(); i++) {
+            renderDrivers.Add(SDL.GetRenderDriver(i));
+            SDL.Log(SDL.GetRenderDriver(i));
+        }
+
+        // Create renderer with Direct3D if available, otherwise use default
+        if (renderDrivers.Contains("opengl"))
+            _renderer = SDL.CreateRenderer(_window, "opengl");
+        else
+            _renderer = SDL.CreateRenderer(_window, null);
+        if (_renderer == IntPtr.Zero)
+            throw new InvalidOperationException("Failed to create SDL renderer.");
+        else
+            SDL.Log("Chosen renderer: " + SDL.GetRendererName(_renderer));
         
-        SDL.CreateWindowAndRenderer("windowTitle",
-            1200, 900,
-            SDL.WindowFlags.Resizable,
-            out _window, out _renderer);
+        SDL.SetRenderLogicalPresentation(_renderer, 320, 240, SDL.RendererLogicalPresentation.Letterbox);
+        SDL.SetRenderVSync(_renderer, 1);
 
         _surface = SDL.LoadPNG("Images/Default.png");
     }
 
+
     public void Render(GameState context) {
-        //SDL.SetWindowTitle(_window, $"FPS: {(_fpsCounter.Fps).ToString()}");
-        SDL.SetRenderDrawColor(_renderer, 200,200,200,255);
+        string fpstext = $"FPS: {string.Format("{0:F1}", _fpsCounter.Fps)}";
+        SDL.SetWindowTitle(_window, fpstext);
+
+        // Clear
+        SDL.SetRenderDrawColor(_renderer, 0xAA, 0xAA, 0xFF, 0xFF);
         SDL.RenderClear(_renderer);
-        SDL.RenderPresent(_renderer);
-        SDL.SetRenderScale(_renderer,100,100);
-        SDL.SetRenderDrawColor(_renderer, 0,0,0,255);
-        //SDL.RenderDebugText(_renderer, 50,50,$"FPS: {_fpsCounter.Fps.ToString()}");
-        SDL.RenderPresent(_renderer);
-        
+
+        // Render the debug text
+        //SDL.SetRenderScale(_renderer, 100, 100);
+        SDL.SetRenderDrawColor(_renderer, 0x00, 0x00 , 0x00, 0xFF);
+        SDL.RenderDebugText(_renderer, 0.1f, 0.1f, fpstext);
+
+
         // // Render the scene
         // var texture = mTexture ?? throw new InvalidOperationException("Texture was not created.");
         // var ticks = SDL.GetTicks();
@@ -60,9 +85,9 @@ public class Renderer : IDisposable {
         // SDL.RenderTexture(context.Renderer, texture.Handle, IntPtr.Zero, in dstRect);
         //
         // SDL.RenderPresent(context.Renderer);
-        
-        
-        
+
+
+
         //
         // TerminalColor backgroundColor = TerminalColor.Black;
         //
@@ -104,6 +129,8 @@ public class Renderer : IDisposable {
         //     var playerPos = new Vec(context.Hectare.Player.Position.X - viewBounds.Left, context.Hectare.Player.Position.Y - viewBounds.Top);
         //     terminal[playerPos.X, playerPos.Y][TerminalColor.LightGreen, backgroundColor].Write(context.Hectare.Player.Glyph);
         // }
+
+        SDL.RenderPresent(_renderer);
     }
 
     private bool IsInViewBounds(int x, int y, Rect viewBounds) {

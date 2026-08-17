@@ -16,7 +16,8 @@ namespace Myrmidon.App;
 public static class Program {
     
     private static bool _running = true;
-    
+    public static double FPS {  get { return _fpsCounter.Fps; }}
+
     private static FovSystem _fovSystem;
     private static HectareManager _hectareManager;
     private static ActionController _actionController;
@@ -34,7 +35,7 @@ public static class Program {
         _hectareManager = new HectareManager(_gameState, _fovSystem); // Manages the game world and entities
 
         // Initialize controllers
-        var worldController = new HectareManager(_gameState, _fovSystem); // Handles game state and logic
+        _hectareManager = new HectareManager(_gameState, _fovSystem); // Handles game state and logic
         _actionController = new ActionController(_gameState, _fovSystem); // Handles actions and commands
         _hectareManager.Update(); // Initial update to set up the world
         
@@ -42,7 +43,7 @@ public static class Program {
         _inputController.Quit += (sender, e) => _running = false;
         
         // Initialize terminal
-        var _terminal = new Renderer();
+        _renderer = new Renderer(_fpsCounter);
 
         MainLoop();
     }
@@ -51,6 +52,7 @@ public static class Program {
         while (_running) {
             Tick();
             _fpsCounter.Update();
+            var remainder = (uint)(_fpsCounter.GetTickRemainderMs());
             SDL.Delay(16);
         }
     }
@@ -59,8 +61,9 @@ public static class Program {
 
         PollInput();
         UpdateGameState();
-        
-        
+        Render(_gameState);
+
+
     }
 
     private static void PollInput() {

@@ -1,6 +1,6 @@
 using SDL3;
 
-namespace Myrmidon.Terminal;
+namespace Myrmidon.App;
 
 public class FpsCounter {
 
@@ -17,10 +17,10 @@ public class FpsCounter {
         _targetTime = 1000.0 / targetFps;
     }
 
-    public ulong GetTickRemainderMs() {
+    public double GetTickRemainderMs() {
         var remainder = (_targetTime - _elapsedTime);
         if (remainder < 0) return 0;
-        return (ulong)remainder;
+        return remainder;
     }
 
     public void SetTargetFps(int targetFps) {
@@ -33,12 +33,12 @@ public class FpsCounter {
         var currentTime = SDL.GetPerformanceCounter();
         _elapsedTime = (currentTime - _lastTime) / (double)SDL.GetPerformanceFrequency();
 
-        if (!(_elapsedTime >= 0.1))
+        if (_elapsedTime < 0.1)
             return;
         
         Fps = _frameCount / _elapsedTime;
         _frameCount = 0;
         _lastTime = currentTime;
-        SDL.Log($"Elapsed, {_elapsedTime}, Target: {_targetTime}, Remainder: {GetTickRemainderMs()}");
+        //SDL.Log($"Elapsed, {string.Format("{0:F3}", _elapsedTime)}, Target: {string.Format("{0:F3}", _targetTime)}, Remainder: {string.Format("{0:F3}", GetTickRemainderMs())}");
     }
 }

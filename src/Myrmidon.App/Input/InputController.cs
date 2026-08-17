@@ -57,19 +57,23 @@ public class InputController {
                     Quit?.Invoke(this, EventArgs.Empty);
                     break;
                 case (uint)SDL.EventType.KeyDown:
+                    PollKeyboard();
                     SDL.Log($"A key was pressed: {e.Key.Key}");
                     break;
             }
         }
     }
 
-    private void InputKeyboard() {
+    private void PollKeyboard() {
         var keys = SDL.GetKeyboardState(out var numKeys);
 
         if (keys[(int)SDL.Scancode.Escape])
             Quit?.Invoke(this, EventArgs.Empty);
         if (keys[(int)SDL.Scancode.L] && keys[(int)SDL.Scancode.K]) {
             SDL.Log("L+K was pressed");
+        }
+        else {
+            SDL.Log($"An unknown key was pressed");
         }
     }
 
