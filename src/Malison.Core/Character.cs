@@ -10,12 +10,12 @@ namespace Malison.Core
         /// <summary>
         /// Gets the default foreground <see cref="Color"/> for a Character.
         /// </summary>
-        public static TerminalColor DefaultForeColor { get { return TerminalColor.White; } }
+        public static TermColor DefaultForeColor { get { return TermColor.White; } }
 
         /// <summary>
         /// Gets the default background <see cref="Color"/> for a Character.
         /// </summary>
-        public static TerminalColor DefaultBackColor { get { return TerminalColor.Black; } }
+        public static TermColor DefaultBackColor { get { return TermColor.Black; } }
 
         /// <summary>
         /// Gets the <see cref="Glyph"/> represented by the given ASCII character.
@@ -53,8 +53,8 @@ namespace Malison.Core
             if (parts.Length > 3) throw new ArgumentException("Character.Parse() should be formatted \"Glyph\", \"ForeColor Glyph\", or \"ForeColor BackColor Glyph\".");
 
             Glyph glyph;
-            TerminalColor foreColor = DefaultForeColor;
-            TerminalColor backColor = DefaultBackColor;
+            TermColor foreColor = DefaultForeColor;
+            TermColor backColor = DefaultBackColor;
 
             // parse the glyph
             glyph = ParseGlyph(parts[parts.Length - 1]);
@@ -96,7 +96,7 @@ namespace Malison.Core
         /// <summary>
         /// Gets the foreground <see cref="Color"/> of this Character.
         /// </summary>
-        public TerminalColor ForeColor
+        public TermColor ForeColor
         {
             get
             {
@@ -112,7 +112,7 @@ namespace Malison.Core
         /// <summary>
         /// Gets the background <see cref="Color"/> of this Character.
         /// </summary>
-        public TerminalColor BackColor
+        public TermColor BackColor
         {
             get
             {
@@ -135,9 +135,9 @@ namespace Malison.Core
         /// Initializes a new Character.
         /// </summary>
         /// <param name="glyph">Glyph used to draw the Character.</param>
-        /// <param name="foreColor">Foreground <see cref="TerminalColor"/> of the Character.</param>
-        /// <param name="backColor">Background <see cref="TerminalColor"/> of the Character.</param>
-        public Character(Glyph glyph, TerminalColor foreColor, TerminalColor backColor)
+        /// <param name="foreColor">Foreground <see cref="TermColor"/> of the Character.</param>
+        /// <param name="backColor">Background <see cref="TermColor"/> of the Character.</param>
+        public Character(Glyph glyph, TermColor foreColor, TermColor backColor)
         {
             mGlyph = glyph;
             mBackColor = backColor;
@@ -145,18 +145,18 @@ namespace Malison.Core
         }
 
         /// <summary>
-        /// Initializes a new Character using the default background <see cref="TerminalColor"/>.
+        /// Initializes a new Character using the default background <see cref="TermColor"/>.
         /// </summary>
         /// <param name="glyph">Glyph used to draw the Character.</param>
-        /// <param name="foreColor">Foreground <see cref="TerminalColor"/> of the Character.</param>
-        public Character(Glyph glyph, TerminalColor foreColor)
+        /// <param name="foreColor">Foreground <see cref="TermColor"/> of the Character.</param>
+        public Character(Glyph glyph, TermColor foreColor)
             : this(glyph, foreColor, DefaultBackColor)
         {
         }
 
         /// <summary>
         /// Initializes a new Character using the default background and foreground
-        /// <see cref="TerminalColor"/>.
+        /// <see cref="TermColor"/>.
         /// </summary>
         /// <param name="glyph">Glyph used to draw the Character.</param>
         public Character(Glyph glyph)
@@ -169,9 +169,9 @@ namespace Malison.Core
         /// </summary>
         /// <param name="ascii">ASCII representation of the <see cref="Glyph"/> used
         /// to draw the Character.</param>
-        /// <param name="foreColor">Foreground <see cref="TerminalColor"/> of the Character.</param>
-        /// <param name="backColor">Background <see cref="TerminalColor"/> of the Character.</param>
-        public Character(char ascii, TerminalColor foreColor, TerminalColor backColor)
+        /// <param name="foreColor">Foreground <see cref="TermColor"/> of the Character.</param>
+        /// <param name="backColor">Background <see cref="TermColor"/> of the Character.</param>
+        public Character(char ascii, TermColor foreColor, TermColor backColor)
             : this(Character.ToGlyph(ascii), foreColor, backColor)
         {
         }
@@ -181,8 +181,8 @@ namespace Malison.Core
         /// </summary>
         /// <param name="ascii">ASCII representation of the <see cref="Glyph"/> used
         /// to draw the Character.</param>
-        /// <param name="foreColor">Foreground <see cref="TerminalColor"/> of the Character.</param>
-        public Character(char ascii, TerminalColor foreColor)
+        /// <param name="foreColor">Foreground <see cref="TermColor"/> of the Character.</param>
+        public Character(char ascii, TermColor foreColor)
             : this(Character.ToGlyph(ascii), foreColor, DefaultBackColor)
         {
         }
@@ -243,7 +243,7 @@ namespace Malison.Core
         #endregion
 
         private Glyph mGlyph;
-        private TerminalColor mForeColor;
-        private TerminalColor mBackColor;
+        private TermColor mForeColor;
+        private TermColor mBackColor;
     }
 }

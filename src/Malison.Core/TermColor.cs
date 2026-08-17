@@ -10,7 +10,7 @@ namespace Malison.Core
     /// fixed colors is used here to avoid making Malison.Core dependent on
     /// System.Drawing or some other assembly that provides a color type.
     /// </summary>
-    public enum TerminalColor
+    public enum TermColor
     {
         Black,
         White,

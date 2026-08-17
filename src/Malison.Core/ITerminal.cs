@@ -34,8 +34,8 @@ namespace Malison.Core
         void DrawBox();
         void DrawBox(DrawBoxOptions options);
 
-        ITerminal this[TerminalColor foreColor] { get; }
-        ITerminal this[TerminalColor foreColor, TerminalColor backColor] { get; }
+        ITerminal this[TermColor foreColor] { get; }
+        ITerminal this[TermColor foreColor, TermColor backColor] { get; }
         ITerminal this[ColorPair color] { get; }
 
         ITerminal this[Vec pos] { get; }

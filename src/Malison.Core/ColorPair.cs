@@ -8,10 +8,10 @@ namespace Malison.Core
     //### bob: get rid of this?
     public class ColorPair
     {
-        public TerminalColor Fore;
-        public TerminalColor Back;
+        public TermColor Fore;
+        public TermColor Back;
 
-        public ColorPair(TerminalColor fore, TerminalColor back)
+        public ColorPair(TermColor fore, TermColor back)
         {
             Fore = fore;
             Back = back;

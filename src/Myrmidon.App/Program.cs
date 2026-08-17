@@ -58,12 +58,9 @@ public static class Program {
     }
 
     private static void Tick() {
-
         PollInput();
         UpdateGameState();
         Render(_gameState);
-
-
     }
 
     private static void PollInput() {

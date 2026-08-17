@@ -1,7 +1,9 @@
-﻿using Bramble.Core;
+﻿using System.Drawing;
+using Bramble.Core;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Terminal;
 using SDL3;
 
 namespace Myrmidon.App.Render;
@@ -10,8 +12,9 @@ public class Renderer : IDisposable {
     
     private static IntPtr _window;
     private static IntPtr _renderer;
-    private static IntPtr _surface;
     private FpsCounter _fpsCounter;
+    
+    private static IntPtr _testSurface;
 
     public Renderer(FpsCounter fpsCounter) {
         _fpsCounter = fpsCounter;
@@ -40,33 +43,45 @@ public class Renderer : IDisposable {
         
         SDL.SetRenderLogicalPresentation(_renderer, 320, 240, SDL.RendererLogicalPresentation.Letterbox);
         SDL.SetRenderVSync(_renderer, 1);
-
-        _surface = SDL.LoadPNG("Images/Default.png");
     }
 
 
     public void Render(GameState context) {
-        string fpstext = $"FPS: {string.Format("{0:F1}", _fpsCounter.Fps)}";
-        SDL.SetWindowTitle(_window, fpstext);
-
         // Clear
-        SDL.SetRenderDrawColor(_renderer, 0xAA, 0xAA, 0xFF, 0xFF);
+        SetRenderDrawColor("DarkGray");
         SDL.RenderClear(_renderer);
+        
+        DrawFpsText(1f, 1f, 2);
+        
+        SDL.RenderPresent(_renderer);
+    }
 
-        // Render the debug text
-        //SDL.SetRenderScale(_renderer, 100, 100);
-        SDL.SetRenderDrawColor(_renderer, 0x00, 0x00 , 0x00, 0xFF);
-        SDL.RenderDebugText(_renderer, 0.1f, 0.1f, fpstext);
+    private static void SetRenderDrawColor(string color, byte? alpha = null) {
+        Color c = TerminalColor.ToSystemColor(color);
+        SDL.SetRenderDrawColor(_renderer, c.R, c.G, c.B, alpha ?? c.A);
+    }
+    
 
-
+    private void DrawFpsText(float x, float y, int pad) {
+        string fpsText = $"FPS: {_fpsCounter.Fps:F1}";
+        SetRenderDrawColor("Black", 0x55);
+        var rect = new SDL.FRect { X = x, Y = y, W = 2*pad+fpsText.Length*8-1, H = 2*pad+7 };
+        SDL.RenderFillRect(_renderer, rect);
+        SetRenderDrawColor("White");
+        SDL.RenderDebugText(_renderer, x+pad, y+pad, fpsText);
+    }
+    
+    
+    private void DrawTestScene(GameState context) {
+        // _testSurface = SDL.LoadPNG("Images/Default.png");
         // // Render the scene
         // var texture = mTexture ?? throw new InvalidOperationException("Texture was not created.");
         // var ticks = SDL.GetTicks();
         // var direction = (ticks % 2000) >= 1000 ? 1.0f : -1.0f;
         // var scale = ((((int)(ticks % 1000)) - 500) / 500.0f) * direction;
         //
-        // SDL.SetRenderDrawColor(context.Renderer, 255, 255, 255, 255);
-        // SDL.RenderClear(context.Renderer);
+        // SDL.SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+        // SDL.RenderClear(_renderer);
         //
         // var dstRect = new SDL.FRect {
         //     X = 100.0f * scale,
@@ -74,23 +89,22 @@ public class Renderer : IDisposable {
         //     W = texture.Width,
         //     H = texture.Height
         // };
-        // SDL.RenderTexture(context.Renderer, texture.Handle, IntPtr.Zero, in dstRect);
+        // SDL.RenderTexture(_renderer, texture.Handle, IntPtr.Zero, in dstRect);
         //
         // dstRect.X = (context.Width - texture.Width) / 2.0f;
         // dstRect.Y = (context.Height - texture.Height) / 2.0f;
-        // SDL.RenderTexture(context.Renderer, texture.Handle, IntPtr.Zero, in dstRect);
+        // SDL.RenderTexture(_renderer, texture.Handle, IntPtr.Zero, in dstRect);
         //
         // dstRect.X = context.Width - texture.Width - (100.0f * scale);
         // dstRect.Y = context.Height - texture.Height;
-        // SDL.RenderTexture(context.Renderer, texture.Handle, IntPtr.Zero, in dstRect);
+        // SDL.RenderTexture(_renderer, texture.Handle, IntPtr.Zero, in dstRect);
         //
-        // SDL.RenderPresent(context.Renderer);
-
-
-
-        //
+        // SDL.RenderPresent(_renderer);
+    }
+    
+    
+    private void RenderScene(GameState context) {
         // TerminalColor backgroundColor = TerminalColor.Black;
-        //
         // //terminal.Clear();
         //
         // var map = context.Hectare.Map;
@@ -129,18 +143,16 @@ public class Renderer : IDisposable {
         //     var playerPos = new Vec(context.Hectare.Player.Position.X - viewBounds.Left, context.Hectare.Player.Position.Y - viewBounds.Top);
         //     terminal[playerPos.X, playerPos.Y][TerminalColor.LightGreen, backgroundColor].Write(context.Hectare.Player.Glyph);
         // }
-
-        SDL.RenderPresent(_renderer);
     }
+    
 
     private bool IsInViewBounds(int x, int y, Rect viewBounds) {
-
         return x >= viewBounds.Left && x < viewBounds.Right && y >= viewBounds.Top && y < viewBounds.Bottom;
     }
 
 
     public void Dispose() {
-        SDL.DestroySurface(_surface);
+        SDL.DestroySurface(_testSurface);
         SDL.DestroyWindow(_window);
         SDL.Quit();
     }

@@ -8,11 +8,11 @@ namespace Malison.Core
 {
     public abstract class TerminalBase : ITerminal
     {
-        public TerminalBase() : this(TerminalColor.White, TerminalColor.Black)
+        public TerminalBase() : this(TermColor.White, TermColor.Black)
         {
         }
 
-        public TerminalBase(TerminalColor foreColor, TerminalColor backColor)
+        public TerminalBase(TermColor foreColor, TermColor backColor)
         {
             ForeColor = foreColor;
             BackColor = backColor;
@@ -24,8 +24,8 @@ namespace Malison.Core
 
         public abstract Vec Size { get; }
 
-        public TerminalColor ForeColor { get; private set; }
-        public TerminalColor BackColor { get; private set; }
+        public TermColor ForeColor { get; private set; }
+        public TermColor BackColor { get; private set; }
 
         public Character Get(Vec pos)
         {
@@ -81,7 +81,7 @@ namespace Malison.Core
             get { return this[new Rect(x, y, width, height)]; }
         }
 
-        public ITerminal this[TerminalColor foreColor, TerminalColor backColor]
+        public ITerminal this[TermColor foreColor, TermColor backColor]
         {
             get
             {
@@ -94,7 +94,7 @@ namespace Malison.Core
             get { return this[color.Fore, color.Back]; }
         }
 
-        public ITerminal this[TerminalColor foreColor]
+        public ITerminal this[TermColor foreColor]
         {
             get { return this[foreColor, BackColor]; }
         }
@@ -326,7 +326,7 @@ namespace Malison.Core
         /// <returns><c>true</c> if the character is different from what was already there.</returns>
         protected abstract bool SetValueCore(Vec pos, Character value);
 
-        internal abstract ITerminal CreateWindowCore(TerminalColor foreColor, TerminalColor backColor, Rect bounds);
+        internal abstract ITerminal CreateWindowCore(TermColor foreColor, TermColor backColor, Rect bounds);
 
         private Vec FlipNegativePosition(Vec pos)
         {

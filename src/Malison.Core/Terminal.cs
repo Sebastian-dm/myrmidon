@@ -33,7 +33,7 @@ namespace Malison.Core
             return true;
         }
 
-        internal override ITerminal CreateWindowCore(TerminalColor foreColor, TerminalColor backColor, Rect bounds)
+        internal override ITerminal CreateWindowCore(TermColor foreColor, TermColor backColor, Rect bounds)
         {
             return new WindowTerminal(this, foreColor, backColor, bounds);
         }

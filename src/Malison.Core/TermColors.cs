@@ -6,55 +6,55 @@ using System.Text;
 namespace Malison.Core
 {
     /// <summary>
-    /// Static class containing helper functions for dealing with <see cref="TerminalColor"/> values.
+    /// Static class containing helper functions for dealing with <see cref="TermColor"/> values.
     /// </summary>
     public static class TermColors
     {
-        public static TerminalColor FromName(string name)
+        public static TermColor FromName(string name)
         {
-            return (TerminalColor)Enum.Parse(typeof(TerminalColor), name);
+            return (TermColor)Enum.Parse(typeof(TermColor), name);
         }
 
-        public static TerminalColor FromEscapeChar(char c)
+        public static TermColor FromEscapeChar(char c)
         {
             switch (c)
             {
-                case 'k': return TerminalColor.DarkGray;
-                case 'K': return TerminalColor.Black;
+                case 'k': return TermColor.DarkGray;
+                case 'K': return TermColor.Black;
 
-                case 'm': return TerminalColor.Gray; // "m"edium
+                case 'm': return TermColor.Gray; // "m"edium
 
-                case 'w': return TerminalColor.White;
-                case 'W': return TerminalColor.LightGray;
+                case 'w': return TermColor.White;
+                case 'W': return TermColor.LightGray;
 
-                case 'r': return TerminalColor.Red;
-                case 'R': return TerminalColor.DarkRed;
+                case 'r': return TermColor.Red;
+                case 'R': return TermColor.DarkRed;
 
-                case 'o': return TerminalColor.Orange;
-                case 'O': return TerminalColor.DarkOrange;
+                case 'o': return TermColor.Orange;
+                case 'O': return TermColor.DarkOrange;
 
-                case 'l': return TerminalColor.Gold;
-                case 'L': return TerminalColor.DarkGold;
+                case 'l': return TermColor.Gold;
+                case 'L': return TermColor.DarkGold;
 
-                case 'y': return TerminalColor.Yellow;
-                case 'Y': return TerminalColor.DarkYellow;
+                case 'y': return TermColor.Yellow;
+                case 'Y': return TermColor.DarkYellow;
 
-                case 'g': return TerminalColor.Green;
-                case 'G': return TerminalColor.DarkGreen;
+                case 'g': return TermColor.Green;
+                case 'G': return TermColor.DarkGreen;
 
-                case 'c': return TerminalColor.Cyan;
-                case 'C': return TerminalColor.DarkCyan;
+                case 'c': return TermColor.Cyan;
+                case 'C': return TermColor.DarkCyan;
 
-                case 'b': return TerminalColor.Blue;
-                case 'B': return TerminalColor.DarkBlue;
+                case 'b': return TermColor.Blue;
+                case 'B': return TermColor.DarkBlue;
 
-                case 'p': return TerminalColor.Purple;
-                case 'P': return TerminalColor.DarkPurple;
+                case 'p': return TermColor.Purple;
+                case 'P': return TermColor.DarkPurple;
 
-                case 'f': return TerminalColor.Flesh;
-                case 'F': return TerminalColor.Brown;
+                case 'f': return TermColor.Flesh;
+                case 'F': return TermColor.Brown;
 
-                default: return TerminalColor.White;
+                default: return TermColor.White;
             }
         }
     }

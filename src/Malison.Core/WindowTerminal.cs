@@ -8,7 +8,7 @@ namespace Malison.Core
 {
     public class WindowTerminal : TerminalBase
     {
-        public WindowTerminal(TerminalBase parent, TerminalColor foreColor, TerminalColor backColor, Rect bounds)
+        public WindowTerminal(TerminalBase parent, TermColor foreColor, TermColor backColor, Rect bounds)
             : base(foreColor, backColor)
         {
             mParent = parent;
@@ -29,7 +29,7 @@ namespace Malison.Core
             return mParent.SetInternal(pos + mBounds.Position, value);
         }
 
-        internal override ITerminal CreateWindowCore(TerminalColor foreColor, TerminalColor backColor, Rect bounds)
+        internal override ITerminal CreateWindowCore(TermColor foreColor, TermColor backColor, Rect bounds)
         {
             // transform by this window's bounds and then defer to the parent.
             // this flattens out a chain of windows at creation time so that

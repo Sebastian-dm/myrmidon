@@ -37,9 +37,9 @@ namespace Malison.Core
         /// Color escape codes will also be parsed out of the string.
         /// </summary>
         /// <param name="text"></param>
-        public CharacterString(string text, TerminalColor foreColor, TerminalColor backColor)
+        public CharacterString(string text, TermColor foreColor, TermColor backColor)
         {
-            TerminalColor originalForeColor = foreColor;
+            TermColor originalForeColor = foreColor;
 
             bool waitingForColor = false;
 

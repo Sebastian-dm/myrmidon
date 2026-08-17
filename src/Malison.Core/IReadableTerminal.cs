@@ -12,8 +12,8 @@ namespace Malison.Core
 
         Vec Size { get; }
 
-        TerminalColor ForeColor { get; }
-        TerminalColor BackColor { get; }
+        TermColor ForeColor { get; }
+        TermColor BackColor { get; }
 
         Character Get(Vec pos);
         Character Get(int x, int y);
