@@ -1,10 +1,12 @@
 ﻿using System.Drawing;
-using Bramble.Core;
-using Myrmidon.Core.Entities;
-using Myrmidon.Core.Game;
-using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Terminal;
+
 using SDL3;
+
+using Bramble.Core;
+using Myrmidon.Terminal;
+using Myrmidon.Core.Game;
+using Myrmidon.Core.Entities;
+using Myrmidon.Core.Maps.Tiles;
 
 namespace Myrmidon.App.Render;
 
@@ -14,8 +16,7 @@ public class Renderer : IDisposable {
     private static IntPtr _renderer;
     private FpsCounter _fpsCounter;
     
-    private static IntPtr _testSurface;
-
+    
     public Renderer(FpsCounter fpsCounter) {
         _fpsCounter = fpsCounter;
         if (!SDL.Init(SDL.InitFlags.Video))
@@ -24,18 +25,15 @@ public class Renderer : IDisposable {
         _window = SDL.CreateWindow("Myrmidon", 320, 240, SDL.WindowFlags.Resizable);
 
         //Check renderers available
-        List<string> renderDrivers = new List<string>();
+        var renderDrivers = new List<string>();
         SDL.Log("Available render drivers:");
         for (int i = 0; i < SDL.GetNumRenderDrivers(); i++) {
-            renderDrivers.Add(SDL.GetRenderDriver(i));
-            SDL.Log(SDL.GetRenderDriver(i));
+            renderDrivers.Add(SDL.GetRenderDriver(i) ?? "N/A");
+            SDL.Log(SDL.GetRenderDriver(i) ?? "N/A");
         }
 
         // Create renderer with Direct3D if available, otherwise use default
-        if (renderDrivers.Contains("opengl"))
-            _renderer = SDL.CreateRenderer(_window, "opengl");
-        else
-            _renderer = SDL.CreateRenderer(_window, null);
+        _renderer = SDL.CreateRenderer(_window, renderDrivers.Contains("opengl") ? "opengl" : null);
         if (_renderer == IntPtr.Zero)
             throw new InvalidOperationException("Failed to create SDL renderer.");
         else
@@ -152,7 +150,6 @@ public class Renderer : IDisposable {
 
 
     public void Dispose() {
-        SDL.DestroySurface(_testSurface);
         SDL.DestroyWindow(_window);
         SDL.Quit();
     }
