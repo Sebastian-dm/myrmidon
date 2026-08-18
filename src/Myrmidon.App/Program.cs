@@ -5,7 +5,6 @@ using Myrmidon.App.Render;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Rules;
-using Myrmidon.Terminal;
 
 
 using SDL3;
@@ -43,7 +42,7 @@ public static class Program {
         _inputController.Quit += (sender, e) => _running = false;
         
         // Initialize terminal
-        _renderer = new Renderer(_fpsCounter);
+        _renderer = new Renderer(_fpsCounter, _gameState);
 
         MainLoop();
     }
@@ -60,7 +59,7 @@ public static class Program {
     private static void Tick() {
         PollInput();
         UpdateGameState();
-        Render(_gameState);
+        Render();
     }
 
     private static void PollInput() {
@@ -78,9 +77,9 @@ public static class Program {
         _gameState.FovSystem.Recompute(_gameState, _gameState.Hectare.Player.Position);
     }
 
-    private static void Render(GameState gameState) {
-        if (!gameState.Hectare.IsMapGenInProgress)
-            _renderer.Render(gameState);
+    private static void Render() {
+        if (!_gameState.Hectare.IsMapGenInProgress)
+            _renderer.Render();
         
     }
     
