@@ -3,26 +3,40 @@
 using SDL3;
 
 using Bramble.Core;
-using Myrmidon.Terminal;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
 
 namespace Myrmidon.App.Render;
 
-public class Renderer : IDisposable {
+public class Terminal : IDisposable {
+    
+    
+    public IntPtr Window => _window;
+    public IntPtr Renderer => _renderer;
     
     private static IntPtr _window;
     private static IntPtr _renderer;
     private FpsCounter _fpsCounter;
+
+    private int _tileWidth = 16;
+    private int _tileHeight = 24;
+    private int _windowWidth;
+    private int _windowHeight;
+
+
+    private List<IPanel> _panels;
     
     
-    public Renderer(FpsCounter fpsCounter) {
+    public Terminal(FpsCounter fpsCounter,  int widthTiles, int heightTiles) {
         _fpsCounter = fpsCounter;
         if (!SDL.Init(SDL.InitFlags.Video))
             throw new InvalidOperationException("Failed to initialize SDL.");
+        
+        _windowWidth = widthTiles*_tileWidth;
+        _windowHeight = heightTiles*_tileHeight;
 
-        _window = SDL.CreateWindow("Myrmidon", 320, 240, SDL.WindowFlags.Resizable);
+        _window = SDL.CreateWindow("Myrmidon", _windowWidth, _windowHeight, SDL.WindowFlags.Resizable);
 
         //Check renderers available
         var renderDrivers = new List<string>();
@@ -39,25 +53,71 @@ public class Renderer : IDisposable {
         else
             SDL.Log("Chosen renderer: " + SDL.GetRendererName(_renderer));
         
-        SDL.SetRenderLogicalPresentation(_renderer, 320, 240, SDL.RendererLogicalPresentation.Letterbox);
+        SDL.SetRenderLogicalPresentation(_renderer, _windowWidth, _windowHeight, SDL.RendererLogicalPresentation.Letterbox);
         SDL.SetRenderVSync(_renderer, 1);
+        
+        _panels = new List<IPanel>();
     }
 
-
-    public void Render(GameState context) {
+    public void Render() {
         // Clear
         SetRenderDrawColor("DarkGray");
         SDL.RenderClear(_renderer);
+
+        foreach (var panel in _panels) {
+            panel.Render();
+        }
         
         DrawFpsText(1f, 1f, 2);
         
         SDL.RenderPresent(_renderer);
     }
 
-    private static void SetRenderDrawColor(string color, byte? alpha = null) {
+    public void RegisterPanel(Panel panel) {
+        _panels.Add(panel);
+    }
+    
+
+    public void SetRenderDrawColor(string color, byte? alpha = null) {
         Color c = TerminalColor.ToSystemColor(color);
         SDL.SetRenderDrawColor(_renderer, c.R, c.G, c.B, alpha ?? c.A);
     }
+
+    public void SetPanelArea(Rect panelRect) {
+        SDL.SetRenderViewport(_renderer, GetPixelRect(panelRect));
+    }
+
+    public void RenderFillRect(Rect panelRect, Rect fillRect) {
+        
+        var rect = new SDL.Rect {
+            X = (panelRect.X + fillRect.X),
+            Y = (panelRect.Y + fillRect.Y),
+            W = fillRect.Width,
+            H = fillRect.Height
+        };
+        SDL.RectToFRect(GetPixelRect(rect), out var frect);
+        SDL.RenderFillRect(Renderer, frect);
+    }
+    
+    
+    private SDL.Rect GetPixelRect(SDL.Rect rect) {
+        return new SDL.Rect {
+            X = rect.X * _tileWidth,
+            Y = rect.Y * _tileHeight,
+            W = rect.W * _tileWidth,
+            H = rect.W * _tileHeight
+        };
+    }
+
+    private SDL.Rect GetPixelRect(Rect rect) {
+        return new SDL.Rect {
+            X = rect.X * _tileWidth,
+            Y = rect.Y * _tileHeight,
+            W = rect.Width * _tileWidth,
+            H = rect.Height * _tileHeight
+        };
+    }
+    
     
 
     private void DrawFpsText(float x, float y, int pad) {
@@ -67,85 +127,6 @@ public class Renderer : IDisposable {
         SDL.RenderFillRect(_renderer, rect);
         SetRenderDrawColor("White");
         SDL.RenderDebugText(_renderer, x+pad, y+pad, fpsText);
-    }
-    
-    
-    private void DrawTestScene(GameState context) {
-        // _testSurface = SDL.LoadPNG("Images/Default.png");
-        // // Render the scene
-        // var texture = mTexture ?? throw new InvalidOperationException("Texture was not created.");
-        // var ticks = SDL.GetTicks();
-        // var direction = (ticks % 2000) >= 1000 ? 1.0f : -1.0f;
-        // var scale = ((((int)(ticks % 1000)) - 500) / 500.0f) * direction;
-        //
-        // SDL.SetRenderDrawColor(_renderer, 255, 255, 255, 255);
-        // SDL.RenderClear(_renderer);
-        //
-        // var dstRect = new SDL.FRect {
-        //     X = 100.0f * scale,
-        //     Y = 0.0f,
-        //     W = texture.Width,
-        //     H = texture.Height
-        // };
-        // SDL.RenderTexture(_renderer, texture.Handle, IntPtr.Zero, in dstRect);
-        //
-        // dstRect.X = (context.Width - texture.Width) / 2.0f;
-        // dstRect.Y = (context.Height - texture.Height) / 2.0f;
-        // SDL.RenderTexture(_renderer, texture.Handle, IntPtr.Zero, in dstRect);
-        //
-        // dstRect.X = context.Width - texture.Width - (100.0f * scale);
-        // dstRect.Y = context.Height - texture.Height;
-        // SDL.RenderTexture(_renderer, texture.Handle, IntPtr.Zero, in dstRect);
-        //
-        // SDL.RenderPresent(_renderer);
-    }
-    
-    
-    private void RenderScene(GameState context) {
-        // TerminalColor backgroundColor = TerminalColor.Black;
-        // //terminal.Clear();
-        //
-        // var map = context.Hectare.Map;
-        // if (map == null) return;
-        //
-        // Vec center = new Vec(context.Hectare.Player.Position.X, context.Hectare.Player.Position.Y);
-        // Rect viewBounds = new Rect(center - terminal.Size/2, terminal.Size);
-        //
-        // // Paint tiles
-        // for (int y = viewBounds.Top; y < viewBounds.Bottom; y++) {
-        //     for (int x = viewBounds.Left; x < viewBounds.Right; x++) {
-        //         if (!IsInMapBounds(x, y, map)) continue;
-        //
-        //         var tile = map.GetTileAt<Tile>(x, y);
-        //
-        //         var screenPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-        //         terminal[screenPos.X, screenPos.Y][TerminalColor.Gray, backgroundColor].Write(tile.Glyph);
-        //
-        //     }
-        // }
-        //
-        // //Paint entities
-        // foreach (var entity in map.Entities.Items) {
-        //
-        //     if (entity is Actor actor) {
-        //         if (!IsInMapBounds(actor.Position.X, actor.Position.Y, map)) continue;
-        //         if (!IsInViewBounds(actor.Position.X, actor.Position.Y, viewBounds)) continue;
-        //         int screenX = actor.Position.X - viewBounds.Left;
-        //         int screenY = actor.Position.Y - viewBounds.Top;
-        //         terminal[screenX, screenY][TerminalColor.ToSystemColor("LightRed"), backgroundColor].Write(actor.Glyph);
-        //     }
-        // }
-        //
-        // // Paint player
-        // if (context.Hectare.Player != null) {
-        //     var playerPos = new Vec(context.Hectare.Player.Position.X - viewBounds.Left, context.Hectare.Player.Position.Y - viewBounds.Top);
-        //     terminal[playerPos.X, playerPos.Y][TerminalColor.LightGreen, backgroundColor].Write(context.Hectare.Player.Glyph);
-        // }
-    }
-    
-
-    private bool IsInViewBounds(int x, int y, Rect viewBounds) {
-        return x >= viewBounds.Left && x < viewBounds.Right && y >= viewBounds.Top && y < viewBounds.Bottom;
     }
 
 

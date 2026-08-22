@@ -1,4 +1,5 @@
 ﻿using System;
+using Bramble.Core;
 using Myrmidon.App.Input;
 using Myrmidon.App.Render;
 
@@ -22,7 +23,7 @@ public static class Program {
     private static ActionController _actionController;
     private static FpsCounter _fpsCounter = new FpsCounter(60);
     private static GameState _gameState;
-    private static Renderer _renderer;
+    private static Terminal _terminal;
     private static InputController _inputController;
 
     [STAThread]
@@ -42,7 +43,10 @@ public static class Program {
         _inputController.Quit += (sender, e) => _running = false;
         
         // Initialize terminal
-        _renderer = new Renderer(_fpsCounter, _gameState);
+        _terminal = new Terminal(_fpsCounter, 120, 50);
+        var sceneRect = new Rect(0, 0, 100, 45);
+        var scenePanel = new ScenePanel(_terminal, sceneRect, _gameState);
+        _terminal.RegisterPanel(scenePanel);
 
         MainLoop();
     }
@@ -79,7 +83,7 @@ public static class Program {
 
     private static void Render() {
         if (!_gameState.Hectare.IsMapGenInProgress)
-            _renderer.Render();
+            _terminal.Render();
         
     }
     

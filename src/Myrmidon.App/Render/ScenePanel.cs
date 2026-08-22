@@ -1,4 +1,5 @@
 ﻿using Myrmidon.Core.Game;
+using Bramble.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,28 +11,22 @@ using SDL3;
 namespace Myrmidon.App.Render;
 
 
-internal class SceneRenderer : ISubRenderer {
-
-    private IntPtr _renderer;
-    private SDL.Rect _uiArea;
+internal class ScenePanel : Panel {
+    
     private GameState _gameState;
 
-    public SceneRenderer(IntPtr renderer, SDL.Rect uiArea, GameState gameState) {
-        _renderer = renderer;
-        _uiArea = uiArea;
+    public ScenePanel(Terminal terminal, Rect rect, GameState gameState) : base(terminal, rect) {
         _gameState = gameState;
     }
 
-
-    public void Render() {
-        SDL.SetRenderViewport(_renderer, _uiArea);
+    public override void Render() {
+        base.Render();
         RenderWorld();
     }
 
     public void RenderWorld() {
-        Renderer.SetRenderDrawColor("green");
-        SDL.RectToFRect(_uiArea, out var frect);
-        SDL.RenderFillRect(_renderer, frect);
+        Terminal.SetRenderDrawColor("green");
+        RenderFillRect(UiArea);
         //TerminalColor backgroundColor = TerminalColor.Black;
         //SDL.Clear
         ////terminal.Clear();
