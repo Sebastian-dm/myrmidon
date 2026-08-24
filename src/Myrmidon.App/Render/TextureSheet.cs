@@ -14,11 +14,11 @@ public class TextureSheet : IDisposable {
 
     public IntPtr Texture => _texture;
 
-    private readonly int _spriteWidth;
-    private readonly int _spriteHeight;
+    private readonly int _textureWidth;
+    private readonly int _textureHeight;
 
-    private readonly int _spritesPerRow;
-    private readonly int _spriteRows;
+    private readonly int _textureColumns;
+    private readonly int _textureRows;
     private readonly int _asciiOffset;
 
     private readonly IntPtr _renderer;
@@ -32,21 +32,22 @@ public class TextureSheet : IDisposable {
         _renderer = renderer;
         
         var configText = File.ReadAllText($"{AssetsFolder}/textures/{id}.json");
-        var config = JsonSerializer.Deserialize<SpriteSheetConfig>(configText)
+        var config = JsonSerializer.Deserialize<TextureSheetConfig>(configText)
             ?? throw new InvalidOperationException($"Couldn't load sprite sheet config for {id}");
         
-        _spritesPerRow = config.SpritesPerRow;
-        _spriteRows = config.SpriteRows;
+        _textureColumns = config.TextureColumns;
+        _textureRows = config.TextureRows;
         _asciiOffset = config.AsciiOffset;
         
         
         _texture = LoadTextureFromFile($"{AssetsFolder}/textures/{id}.png");
         
         var textureProps = SDL.GetTextureProperties(_texture);
-        _spriteWidth = (int)SDL.GetNumberProperty(textureProps,"SDL_PROP_TEXTURE_WIDTH_NUMBER", -1);
-        _spriteHeight = (int)SDL.GetNumberProperty(textureProps,"SDL_PROP_TEXTURE_HEIGHT_NUMBER", -1);
-
-        var a = 0;
+        var sheetWidth = SDL.GetNumberProperty(textureProps,SDL.Props.TextureWidthNumber, -1);
+        var sheetHeight = SDL.GetNumberProperty(textureProps,SDL.Props.TextureHeightNumber, -1);
+        
+        _textureWidth = (int)(sheetWidth / _textureColumns);
+        _textureHeight = (int)(sheetHeight / _textureRows);
     }
 
     
@@ -61,15 +62,16 @@ public class TextureSheet : IDisposable {
     }
 
     public SDL.FRect GetRect(byte index) {
-        int column = index % _spritesPerRow;
-        int row = index / _spritesPerRow;
+        int column = index % _textureColumns;
+        int row = index / _textureRows;
         var frect = new SDL.FRect {
-            X = _spriteWidth * column,
-            Y = _spriteHeight * row,
-            W = _spriteWidth,
-            H = _spriteHeight
+            X = _textureWidth * column,
+            Y = _textureHeight * row,
+            W = _textureWidth,
+            H = _textureHeight
         };
-        var rectString = $"X: {frect.X}, Y: {frect.Y}, W: {frect.W}, H: {frect.H}";
+        var bytearray = new byte[1]{index};
+        var rectString = $"X: {frect.X}, Y: {frect.Y}, W: {frect.W}, H: {frect.H}, ASCII:{System.Text.Encoding.ASCII.GetString(bytearray)}";
         return frect;
     }
 
@@ -80,9 +82,9 @@ public class TextureSheet : IDisposable {
 }
 
 
-public class SpriteSheetConfig {
-    public int SpritesPerRow { get; set; } = 32;
-    public int SpriteRows { get; set; } = 6;
+public class TextureSheetConfig {
+    public int TextureColumns { get; set; } = 32;
+    public int TextureRows { get; set; } = 6;
     public int AsciiOffset { get; set; } = 32; // default to ASCII offset
 
 }

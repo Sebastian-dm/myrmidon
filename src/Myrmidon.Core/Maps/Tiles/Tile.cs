@@ -37,7 +37,7 @@ namespace Myrmidon.Core.Maps.Tiles {
         // IsBlockingMove and IsBlockingLOS are optional parameters, set to false by default
         public Tile(Color foreground, Color background, byte glyph, bool walkable = true, bool blockingLOS = false, string name = "") {
 
-            Glyph = glyph;
+            Glyph = 0;
             ForegroundColor = foreground;
             BackgroundColor = background;
 

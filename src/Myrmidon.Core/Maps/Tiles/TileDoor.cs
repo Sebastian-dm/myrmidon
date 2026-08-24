@@ -12,11 +12,9 @@ namespace Myrmidon.Core.Maps.Tiles {
 
         //Default constructor
         //A TileDoor can be set locked/unlocked/open/closed using the constructor.
-        public TileDoor(bool locked, bool open) : base(new Color(100, 60, 20), new Color(20, 10, 0), (byte)'+') {
-            //+ is the closed glyph
-            //closed by default
-            Glyph = (byte)'#';
-            Name = "standard door";
+        public TileDoor(bool locked, bool open) : base(new Color(100, 60, 20), new Color(20, 10, 0), 254) {
+            
+            
 
             //Update door fields
             Locked = locked;
@@ -27,6 +25,10 @@ namespace Myrmidon.Core.Maps.Tiles {
                 Open();
             else if (Locked || !IsOpen)
                 Close();
+            
+            //Hidden by default
+            Glyph = 0;
+            Name = "standard door";
         }
 
         //closes a door
@@ -34,7 +36,7 @@ namespace Myrmidon.Core.Maps.Tiles {
             IsOpen = false;
             IsBlockingLOS = true;
             IsWalkable = false;
-            Glyph = (byte)254;
+            Glyph = 254;
         }
 
         //opens a door
@@ -42,7 +44,7 @@ namespace Myrmidon.Core.Maps.Tiles {
             IsOpen = true;
             IsBlockingLOS = false;
             IsWalkable = true;
-            Glyph = 239;
+            Glyph = (byte)'+';
         }
     }
 }

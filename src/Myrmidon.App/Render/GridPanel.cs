@@ -4,12 +4,12 @@ using SDL3;
 
 namespace Myrmidon.App.Render;
 
-public class Panel : IPanel {
+public class GridPanel : IPanel {
     
     public Rect PanelRect;
     public readonly Terminal Terminal;
 
-    public Panel(Terminal terminal, Rect uiArea) {
+    public GridPanel(Terminal terminal, Rect uiArea) {
         PanelRect = uiArea;
         Terminal = terminal;
     }

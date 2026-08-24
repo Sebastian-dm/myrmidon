@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Myrmidon.App.Render;
 
 
-internal class ScenePanel : Panel {
+internal class ScenePanel : GridPanel {
     
     private GameState _gameState;
 
@@ -37,10 +37,9 @@ internal class ScenePanel : Panel {
     public void RenderHectare(Hectare hectare) {
 
         var map = hectare.Map;
-        if (map == null) return;
 
-        Vec center = new Vec(hectare.Player.Position.X, hectare.Player.Position.Y);
-        Rect viewBounds = new Rect(center.X-PanelRect.X, center.Y-PanelRect.Y, PanelRect.Size.X, PanelRect.Size.Y);
+        Vec mapCenter = new Vec(hectare.Player.Position.X, hectare.Player.Position.Y);
+        Rect viewBounds = new Rect(mapCenter.X-PanelRect.Size.X/2, mapCenter.Y-PanelRect.Size.Y/2, PanelRect.Size.X, PanelRect.Size.Y);
 
         // Paint tiles
         for (int y = viewBounds.Top; y < viewBounds.Bottom; y++) {
@@ -50,9 +49,7 @@ internal class ScenePanel : Panel {
                 var tile = map.GetTileAt<Tile>(x, y);
 
                 var screenPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                Terminal.SetRenderDrawColor("r");
-                Terminal.DrawGlyph(screenPos, tile.Glyph);
-                //terminal[screenPos.X, screenPos.Y][TerminalColor.Gray, backgroundColor].Write(tile.Glyph);
+                Terminal.DrawGlyph(screenPos, tile.Glyph, "K");
 
             }
         }
@@ -64,18 +61,18 @@ internal class ScenePanel : Panel {
                 if (!IsInMapBounds(actor.Position.X, actor.Position.Y, map)) continue;
                 if (!IsInViewBounds(actor.Position.X, actor.Position.Y, viewBounds)) continue;
                 Vec gridPos = new Vec(actor.Position.X - viewBounds.Left, actor.Position.Y - viewBounds.Top);
-                Terminal.SetRenderDrawColor("r");
-                Terminal.DrawGlyph(gridPos, actor.Glyph);
-                //terminal[screenX, screenY][TerminalColor.ToSystemColor("LightRed"), backgroundColor].Write(actor.Glyph);
+                string color = "W";
+                if (actor is Monster monster) {
+                    color = "g";
+                }
+                Terminal.DrawGlyph(gridPos, actor.Glyph, color);
             }
         }
 
         // Paint player
         if (hectare.Player != null) {
             var playerPos = new Vec(hectare.Player.Position.X - viewBounds.Left, hectare.Player.Position.Y - viewBounds.Top);
-            Terminal.SetRenderDrawColor("r");
-            Terminal.DrawGlyph(playerPos, hectare.Player.Glyph);
-            //terminal[playerPos.X, playerPos.Y][TerminalColor.LightGreen, backgroundColor].Write(hectare.Player.Glyph);
+            Terminal.DrawGlyph(playerPos, hectare.Player.Glyph, "o");
         }
     }
 

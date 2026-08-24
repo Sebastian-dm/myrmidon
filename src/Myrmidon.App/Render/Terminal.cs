@@ -75,13 +75,13 @@ public class Terminal : IDisposable {
         SDL.RenderPresent(_renderer);
     }
 
-    public void RegisterPanel(Panel panel) {
+    public void RegisterPanel(GridPanel panel) {
         _panels.Add(panel);
     }
     
 
     public void SetRenderDrawColor(string color, byte? alpha = null) {
-        Color c = TerminalColor.ToSystemColor(color);
+        Color c = TerminalColor.ColFromString(color);
         SDL.SetRenderDrawColor(_renderer, c.R, c.G, c.B, alpha ?? c.A);
     }
 
@@ -103,24 +103,26 @@ public class Terminal : IDisposable {
     }
 
 
-    public void DrawText(Vec location, string text) {
+    public void DrawText(Vec location, string text, string color) {
         for (int i = 0; i < text.Length; i++) {
-            char c = text[i];
-            DrawGlyph(location.OffsetX(i), c);
+            char ch = text[i];
+            DrawGlyph(location.OffsetX(i), ch, color);
         }
     }
 
-    public void DrawGlyph(Vec location, byte asciiIndex) {
+    public void DrawGlyph(Vec location, byte asciiIndex, string color) {
         if (asciiIndex == 0)
             return;
-        var textTextureSheet = _textureSheetManager.GetTextureSheet("text/default", Renderer);
+        TextureSheet textTextureSheet = _textureSheetManager.GetTextureSheet("text/default", Renderer);
         var srcFRect = textTextureSheet.GetRect(asciiIndex);
         var dstFRect = GetPixelFRect(new SDL.FRect { X = location.X, Y = location.Y, W = 1, H = 1 });
+        Color col = TerminalColor.ColFromString(color);
+        SDL.SetTextureColorMod(textTextureSheet.Texture, col.R, col.G, col.B);
         SDL.RenderTexture(_renderer, textTextureSheet.Texture, srcFRect, dstFRect);
     }
 
-    public void DrawGlyph(Vec location, char character) {
-        DrawGlyph(location, (byte)character);
+    public void DrawGlyph(Vec location, char character, string color) {
+        DrawGlyph(location, (byte)character, color);
     }
 
 
