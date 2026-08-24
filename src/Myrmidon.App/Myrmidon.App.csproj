@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Assets\**" />
+    <EmbeddedResource Remove="Assets\**" />
+    <None Remove="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Images\Default.png" />
   </ItemGroup>
 
@@ -20,12 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bramble.Core\Bramble.Core.csproj" />
-    <ProjectReference Include="..\Malison.Core\Malison.Core.csproj" />
     <ProjectReference Include="..\Myrmidon.Core\Myrmidon.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Assets\Default.png" />
   </ItemGroup>
 
 </Project>

@@ -36,8 +36,6 @@ namespace Myrmidon.Core.Game {
                 _world.IsEntityGenRequested = false;
                 _fov.Recompute(_context, _world.Player.Position);
             }
-
-            //_ui.Refresh();
         }
 
         private void GenerateMap() {

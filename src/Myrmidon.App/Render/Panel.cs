@@ -6,21 +6,21 @@ namespace Myrmidon.App.Render;
 
 public class Panel : IPanel {
     
-    public Rect UiArea;
+    public Rect PanelRect;
     public readonly Terminal Terminal;
 
     public Panel(Terminal terminal, Rect uiArea) {
-        UiArea = uiArea;
+        PanelRect = uiArea;
         Terminal = terminal;
     }
     
     public virtual void Render() {
-        Terminal.SetPanelArea(UiArea);
+        //Terminal.SetPanelArea(PanelRect);
     }
 
 
     public void RenderFillRect(Rect fillRect) {
-        Terminal.RenderFillRect(UiArea, fillRect);
+        Terminal.RenderFillRect(PanelRect, fillRect);
     }
     
     

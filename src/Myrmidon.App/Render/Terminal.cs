@@ -14,7 +14,9 @@ public class Terminal : IDisposable {
     
     public IntPtr Window => _window;
     public IntPtr Renderer => _renderer;
-    
+
+    private readonly TextureSheetManager _textureSheetManager = new TextureSheetManager();
+
     private static IntPtr _window;
     private static IntPtr _renderer;
     private FpsCounter _fpsCounter;
@@ -84,28 +86,61 @@ public class Terminal : IDisposable {
     }
 
     public void SetPanelArea(Rect panelRect) {
-        SDL.SetRenderViewport(_renderer, GetPixelRect(panelRect));
+        var rect = GetPixelRect(panelRect);
+        SDL.SetRenderViewport(_renderer, rect);
     }
 
     public void RenderFillRect(Rect panelRect, Rect fillRect) {
         
-        var rect = new SDL.Rect {
+        var rect = new SDL.FRect {
             X = (panelRect.X + fillRect.X),
             Y = (panelRect.Y + fillRect.Y),
             W = fillRect.Width,
             H = fillRect.Height
         };
-        SDL.RectToFRect(GetPixelRect(rect), out var frect);
+        var frect = GetPixelFRect(rect);
         SDL.RenderFillRect(Renderer, frect);
     }
-    
-    
-    private SDL.Rect GetPixelRect(SDL.Rect rect) {
-        return new SDL.Rect {
+
+
+    public void DrawText(Vec location, string text) {
+        for (int i = 0; i < text.Length; i++) {
+            char c = text[i];
+            DrawGlyph(location.OffsetX(i), c);
+        }
+    }
+
+    public void DrawGlyph(Vec location, byte asciiIndex) {
+        if (asciiIndex == 0)
+            return;
+        var textTextureSheet = _textureSheetManager.GetTextureSheet("text/default", Renderer);
+        var srcFRect = textTextureSheet.GetRect(asciiIndex);
+        var dstFRect = GetPixelFRect(new SDL.FRect { X = location.X, Y = location.Y, W = 1, H = 1 });
+        SDL.RenderTexture(_renderer, textTextureSheet.Texture, srcFRect, dstFRect);
+    }
+
+    public void DrawGlyph(Vec location, char character) {
+        DrawGlyph(location, (byte)character);
+    }
+
+
+
+
+    private SDL.FRect GetPixelFRect(SDL.FRect rect) {
+        return new SDL.FRect {
             X = rect.X * _tileWidth,
             Y = rect.Y * _tileHeight,
             W = rect.W * _tileWidth,
-            H = rect.W * _tileHeight
+            H = rect.H * _tileHeight
+        };
+    }
+
+    private SDL.FRect GetPixelFRect(Rect rect) {
+        return new SDL.FRect {
+            X = rect.X * _tileWidth,
+            Y = rect.Y * _tileHeight,
+            W = rect.Width * _tileWidth,
+            H = rect.Height * _tileHeight
         };
     }
 

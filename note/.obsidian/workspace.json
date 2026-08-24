@@ -188,15 +188,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "2301e5fa56cee972",
+  "active": "95a98c5846ce3711",
   "lastOpenFiles": [
+    "Untitled.canvas",
+    "Project organization.md",
     "Map generation.md",
     "inspiration/Bucklew ECS event architecture notes/Part2 img2 Object component event structure example - TakeDamage.png",
     "inspiration",
     "inspiration/Bucklew ECS event architecture notes/Part2 img6 Blueprint for object factory example - FireSword.png",
     "inspiration/Bucklew ECS event architecture notes/Part2 img4 Object component event structure example - MeleeAttackHit weapon.png",
     "inspiration/Bucklew ECS event architecture notes/Part2 img1 Object behavior event structure.png",
-    "Project organization.md",
     "Todo.md",
     "screenshot.png"
   ]

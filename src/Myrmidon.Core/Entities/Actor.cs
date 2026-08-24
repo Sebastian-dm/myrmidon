@@ -24,7 +24,7 @@ namespace Myrmidon.Core.Entities {
 
         public List<Item> Inventory = new List<Item>(); // the player's collection of items
 
-        protected Actor(Color foreground, Color background, int glyph, int width = 1, int height = 1) : base(foreground, background, glyph, width, height) {
+        protected Actor(Color foreground, Color background, byte glyph, int width = 1, int height = 1) : base(foreground, background, glyph, width, height) {
             
         }
 

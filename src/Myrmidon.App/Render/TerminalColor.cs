@@ -7,12 +7,14 @@ public static class TerminalColor {
     public static Color ToSystemColor(string color) {
         color = color.ToLower();
         return color switch {
+            "r" => Color.FromArgb(0xa6, 0x4a, 0x2e),
             "black" => Color.Black,
             "white" => Color.White,
             "lightgray" => Color.FromArgb(192, 192, 192),
             "gray" => Color.FromArgb(128, 128, 128),
             "darkgray" => Color.FromArgb(48, 48, 48),
             "pink" => Color.FromArgb(255, 160, 160),
+            "red" => Color.FromArgb(255, 0, 0),
             "darkred" => Color.FromArgb(100, 0, 0),
             "flesh" => Color.FromArgb(255, 200, 170),
             "orange" => Color.FromArgb(255, 128, 0),

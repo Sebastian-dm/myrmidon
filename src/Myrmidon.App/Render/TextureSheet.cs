@@ -2,14 +2,17 @@ using System.Drawing;
 using System.Text.Json;
 
 using SDL3;
-using Malison.Core;
 
 
 namespace Myrmidon.App.Render;
 
-public class SpriteSheet : IDisposable {
+public class TextureSheet : IDisposable {
 
     public string Id { get; private set; }
+    private readonly IntPtr _texture;
+
+
+    public IntPtr Texture => _texture;
 
     private readonly int _spriteWidth;
     private readonly int _spriteHeight;
@@ -19,14 +22,16 @@ public class SpriteSheet : IDisposable {
     private readonly int _asciiOffset;
 
     private readonly IntPtr _renderer;
-    private readonly IntPtr _texture;
     
     
-    public SpriteSheet(string id, IntPtr renderer) {
+    public TextureSheet(string id, IntPtr renderer) {
+
+        string AssetsFolder = "../../../../../assets/";
+
         Id = id;
         _renderer = renderer;
         
-        var configText = File.ReadAllText($"images/{id}.json");
+        var configText = File.ReadAllText($"{AssetsFolder}/textures/{id}.json");
         var config = JsonSerializer.Deserialize<SpriteSheetConfig>(configText)
             ?? throw new InvalidOperationException($"Couldn't load sprite sheet config for {id}");
         
@@ -35,11 +40,13 @@ public class SpriteSheet : IDisposable {
         _asciiOffset = config.AsciiOffset;
         
         
-        _texture = LoadTextureFromFile($"images/{id}.png");
+        _texture = LoadTextureFromFile($"{AssetsFolder}/textures/{id}.png");
         
         var textureProps = SDL.GetTextureProperties(_texture);
         _spriteWidth = (int)SDL.GetNumberProperty(textureProps,"SDL_PROP_TEXTURE_WIDTH_NUMBER", -1);
         _spriteHeight = (int)SDL.GetNumberProperty(textureProps,"SDL_PROP_TEXTURE_HEIGHT_NUMBER", -1);
+
+        var a = 0;
     }
 
     
@@ -53,34 +60,17 @@ public class SpriteSheet : IDisposable {
         return texture;
     }
 
-    
-    public void Draw(IntPtr renderer, int x, int y, Character character) {
-        // don't draw if it's a blank Sprite
-        if (character.Glyph == Glyph.Space) return;
-        
-        byte glyph = (byte)character.Glyph;
-        int column = glyph % _spritesPerRow;
-        int row = glyph / _spritesPerRow;
-        var srcRect = new SDL.FRect {
-            X = _spriteWidth*column,
-            Y =_spriteHeight*row,
-            W = column,
-            H = row
-        };
-        
-        //Remap colors
-        // SDL.Surface frame = SDL.PointerToStructure<SDL.Surface>(_sheetSurface) ?? default;
-        // SDL.SetSurfaceColorKey(_sheetSurface, true, SDL.MapRGB(SDL.GetPixelFormatDetails(frame.Format), IntPtr.Zero, 255, 0, 255));
-        // Todo: Implement color remapping based on character.ForeColor and character.BackColor
-        
-        var destRect = new SDL.FRect {
-            X = x,
-            Y = y,
+    public SDL.FRect GetRect(byte index) {
+        int column = index % _spritesPerRow;
+        int row = index / _spritesPerRow;
+        var frect = new SDL.FRect {
+            X = _spriteWidth * column,
+            Y = _spriteHeight * row,
             W = _spriteWidth,
             H = _spriteHeight
         };
-
-        SDL.RenderTexture(renderer, _texture, srcRect, destRect);
+        var rectString = $"X: {frect.X}, Y: {frect.Y}, W: {frect.W}, H: {frect.H}";
+        return frect;
     }
 
     public void Dispose() {

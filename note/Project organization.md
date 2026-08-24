@@ -1,13 +1,9 @@
 
-Myrmidon.Core
-- Game simulation
+# Responsibilities
 
-Myrmidon.Terminal
-- SDL3-CS
-- Terminal buffer
-- Rendering
-- Input
-- Basic widgets and drawing primitives
+Core
+- World state
+- Simulation (systems)
 
 Myrmidon.App
 - Screens
@@ -16,3 +12,24 @@ Myrmidon.App
 - Inventory UI
 - Game loop
 - State transitions
+
+
+App.Input
+- Input
+
+App.Render
+- SDL3-CS
+- Terminal buffer
+- Rendering
+
+- Basic widgets and drawing primitives
+
+
+
+```mermaid  
+flowchart TD
+    A(App.Program) --> B(Input)
+    A --> C(Terminal)
+    A --> D(Simulation)
+```
+

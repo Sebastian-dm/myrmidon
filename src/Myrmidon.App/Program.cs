@@ -43,8 +43,8 @@ public static class Program {
         _inputController.Quit += (sender, e) => _running = false;
         
         // Initialize terminal
-        _terminal = new Terminal(_fpsCounter, 120, 50);
-        var sceneRect = new Rect(0, 0, 100, 45);
+        _terminal = new Terminal(_fpsCounter, 80, 30);
+        var sceneRect = new Rect(0, 0, 80, 25);
         var scenePanel = new ScenePanel(_terminal, sceneRect, _gameState);
         _terminal.RegisterPanel(scenePanel);
 
@@ -79,12 +79,12 @@ public static class Program {
         
         // Recalculate FOV if needed (not time-bound)
         _gameState.FovSystem.Recompute(_gameState, _gameState.Hectare.Player.Position);
+
+        _hectareManager.Update();
     }
 
     private static void Render() {
-        if (!_gameState.Hectare.IsMapGenInProgress)
-            _terminal.Render();
-        
+        _terminal.Render();
     }
     
     
