@@ -68,10 +68,11 @@ public static class Program {
     }
 
     private static void PollInput() {
+        
         _inputController.PollInput();
         
         // Collect AI actions if it's not the player's turn
-        if (!_actionController.IsPlayersTurn)
+        if (!_actionController.CanAcceptInput)
             _actionController.CollectEntityActions();
     }
 

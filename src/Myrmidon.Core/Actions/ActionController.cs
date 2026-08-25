@@ -53,8 +53,9 @@ namespace Myrmidon.Core.Actions {
 
         public void AddFromPlayerInput(InputAction inputAction) {
             var action = CreateActionFromInput(inputAction);
-            if (action != null) {
+            if (action != null && CanAcceptInput) {
                 Add(action);
+                IsPlayersTurn = false;
             }
             else if (inputAction == InputAction.None) {
                 // No action to add
@@ -66,12 +67,10 @@ namespace Myrmidon.Core.Actions {
         }
 
         public void Add(IAction action) {
-            if (CanAcceptInput) {
-                if (action.IsImmediate)
-                    _reactionQueue.Enqueue(action);
-                else
-                    _actionQueue.Enqueue(action);
-            }
+            if (action.IsImmediate)
+                _reactionQueue.Enqueue(action);
+            else
+                _actionQueue.Enqueue(action);
         }
 
         public void ResolveAllActions() {
@@ -80,8 +79,9 @@ namespace Myrmidon.Core.Actions {
             }
 
             // After resolving all actions, switch turns
+            IsPlayersTurn = true;
+            
             // and update the FOV if needed
-            IsPlayersTurn = !IsPlayersTurn;
             if (!IsPlayersTurn) {
                 _fov.Recompute(_gameState, _gameState.Hectare.Player.Position);
             }
