@@ -19,10 +19,13 @@ public class GridPanel : IPanel {
     }
 
 
-    public void RenderFillRect(Rect fillRect) {
-        Terminal.RenderFillRect(PanelRect, fillRect);
+
+    public void DrawGlyph(Vec gridLocation, byte asciiIndex, string color) {
+        Terminal.DrawGlyph(new Vec(PanelRect.X + gridLocation.X, PanelRect.Y + gridLocation.Y), asciiIndex, color);
     }
-    
-    
-    
+
+    public void DrawText(Vec gridLocation, string text, string color) {
+        Terminal.DrawText(new Vec(PanelRect.X + gridLocation.X, PanelRect.Y + gridLocation.Y), text, color);
+    }
+
 }

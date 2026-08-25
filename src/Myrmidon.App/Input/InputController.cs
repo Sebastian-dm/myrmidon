@@ -23,31 +23,6 @@ public class InputController {
         _actionController = actionController;
     }
 
-    public void HandleInput() {
-        // This method can be used to handle input in a loop or during the main game loop
-        // For example, you might check for key presses or mouse clicks here
-
-        var action = InputAction.None;
-        
-        //NativeKeyboard.
-
-        // if (NativeKeyboard.IsKeyDown())          action = InputAction.MovePlayerUp;
-        // else if (NativeKeyboard.IsKeyDown(Keys.Down))   action = InputAction.MovePlayerDown;
-        // else if (NativeKeyboard.IsKeyDown(Keys.Left))   action = InputAction.MovePlayerLeft;
-        //  else if (NativeKeyboard.IsKeyDown(Keys.Right))  action = InputAction.MovePlayerRight;
-        //  else if (NativeKeyboard.IsKeyDown(Keys.Space))  action = InputAction.SkipPlayerTurn;
-        //
-        //  if (action != InputAction.None) {
-        //      _actionController.AddFromPlayerInput(action);
-        //      return;
-        //  }
-        //
-        //  if (NativeKeyboard.IsKeyDown(Keys.Escape)) {
-        //      _uiController.Quit();
-        //      return;
-        //  }
-
-    }
     
     public void PollInput() {
         // Handle input events
@@ -57,23 +32,50 @@ public class InputController {
                     Quit?.Invoke(this, EventArgs.Empty);
                     break;
                 case (uint)SDL.EventType.KeyDown:
+                    //SDL.Log($"A key was pressed: {e.Key.Key}");
                     PollKeyboard();
-                    SDL.Log($"A key was pressed: {e.Key.Key}");
                     break;
             }
         }
     }
 
     private void PollKeyboard() {
+        var action = InputAction.None;
         var keys = SDL.GetKeyboardState(out var numKeys);
+
 
         if (keys[(int)SDL.Scancode.Escape])
             Quit?.Invoke(this, EventArgs.Empty);
-        if (keys[(int)SDL.Scancode.L] && keys[(int)SDL.Scancode.K]) {
-            SDL.Log("L+K was pressed");
+
+        // Player directions
+        if (keys[(int)SDL.Scancode.Kp8] || keys[(int)SDL.Scancode.Up])
+            action = InputAction.MovePlayerN;
+        if (keys[(int)SDL.Scancode.Kp9])
+            action = InputAction.MovePlayerNE;
+        if (keys[(int)SDL.Scancode.Kp6] || keys[(int)SDL.Scancode.Right])
+            action = InputAction.MovePlayerE;
+        if (keys[(int)SDL.Scancode.Kp3])
+            action = InputAction.MovePlayerSE;
+        if (keys[(int)SDL.Scancode.Kp2] || keys[(int)SDL.Scancode.Down])
+            action = InputAction.MovePlayerS;
+        if (keys[(int)SDL.Scancode.Kp1])
+            action = InputAction.MovePlayerSW;
+        if (keys[(int)SDL.Scancode.Kp4] || keys[(int)SDL.Scancode.Left])
+            action = InputAction.MovePlayerW;
+        if (keys[(int)SDL.Scancode.Kp7])
+            action = InputAction.MovePlayerNW;
+
+        // Other player actions
+        if (keys[(int)SDL.Scancode.Kp5] || keys[(int)SDL.Scancode.Space])
+            action = InputAction.SkipPlayerTurn;
+
+
+        if (action != InputAction.None) {
+            _actionController.AddFromPlayerInput(action);
+            //SDL.Log($"The key press resulted in action: {action}");
         }
         else {
-            SDL.Log($"An unknown key was pressed");
+            //SDL.Log($"The key press resulted in no action.");
         }
     }
 

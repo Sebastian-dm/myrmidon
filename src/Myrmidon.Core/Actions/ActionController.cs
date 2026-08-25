@@ -111,10 +111,14 @@ namespace Myrmidon.Core.Actions {
 
         private IAction? CreateActionFromInput(InputAction command) {
             return command switch {
-                InputAction.MovePlayerUp => new WalkAction(_gameState.Hectare.Player, new Vec(0, -1)),
-                InputAction.MovePlayerDown => new WalkAction(_gameState.Hectare.Player, new Vec(0, 1)),
-                InputAction.MovePlayerLeft => new WalkAction(_gameState.Hectare.Player, new Vec(-1, 0)),
-                InputAction.MovePlayerRight => new WalkAction(_gameState.Hectare.Player, new Vec(1, 0)),
+                InputAction.MovePlayerN => new WalkAction(_gameState.Hectare.Player, new Vec(0, -1)),
+                InputAction.MovePlayerNE => new WalkAction(_gameState.Hectare.Player, new Vec(1, -1)),
+                InputAction.MovePlayerS => new WalkAction(_gameState.Hectare.Player, new Vec(0, 1)),
+                InputAction.MovePlayerSE => new WalkAction(_gameState.Hectare.Player, new Vec(1, 1)),
+                InputAction.MovePlayerW => new WalkAction(_gameState.Hectare.Player, new Vec(-1, 0)),
+                InputAction.MovePlayerSW => new WalkAction(_gameState.Hectare.Player, new Vec(-1, 1)),
+                InputAction.MovePlayerE => new WalkAction(_gameState.Hectare.Player, new Vec(1, 0)),
+                InputAction.MovePlayerNW => new WalkAction(_gameState.Hectare.Player, new Vec(-1, -1)),
                 InputAction.SkipPlayerTurn => new SkipAction(_gameState.Hectare.Player),
                 _ => null
             };

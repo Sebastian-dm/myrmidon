@@ -44,9 +44,10 @@ public static class Program {
         
         // Initialize terminal
         _terminal = new Terminal(_fpsCounter, 80, 30);
-        var sceneRect = new Rect(0, 0, 80, 25);
-        var scenePanel = new ScenePanel(_terminal, sceneRect, _gameState);
+        var scenePanel = new ScenePanel(_terminal, new Rect(0, 0, 80, 25), _gameState);
+        var statusPanel = new StatusPanel(_terminal, new Rect(0, 25, 80, 5), _gameState);
         _terminal.RegisterPanel(scenePanel);
+        _terminal.RegisterPanel(statusPanel);
 
         MainLoop();
     }

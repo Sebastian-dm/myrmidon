@@ -24,14 +24,8 @@ internal class ScenePanel : GridPanel {
 
     public override void Render() {
         base.Render();
-        if (!_gameState.Hectare.IsMapGenInProgress) {
-
+        if (!_gameState.Hectare.IsMapGenInProgress)
             RenderHectare(_gameState.Hectare);
-        }
-        else {
-            Terminal.SetRenderDrawColor("r");
-            RenderFillRect(PanelRect);
-        }
     }
 
     public void RenderHectare(Hectare hectare) {
@@ -48,8 +42,8 @@ internal class ScenePanel : GridPanel {
 
                 var tile = map.GetTileAt<Tile>(x, y);
 
-                var screenPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                Terminal.DrawGlyph(screenPos, tile.Glyph, "K");
+                Vec gridPod = new Vec(x - viewBounds.Left, y - viewBounds.Top);
+                DrawGlyph(gridPod, tile.Glyph, "darkyellow");
 
             }
         }
@@ -65,14 +59,14 @@ internal class ScenePanel : GridPanel {
                 if (actor is Monster monster) {
                     color = "g";
                 }
-                Terminal.DrawGlyph(gridPos, actor.Glyph, color);
+                DrawGlyph(gridPos, actor.Glyph, color);
             }
         }
 
         // Paint player
         if (hectare.Player != null) {
-            var playerPos = new Vec(hectare.Player.Position.X - viewBounds.Left, hectare.Player.Position.Y - viewBounds.Top);
-            Terminal.DrawGlyph(playerPos, hectare.Player.Glyph, "o");
+            var gridPos = new Vec(hectare.Player.Position.X - viewBounds.Left, hectare.Player.Position.Y - viewBounds.Top);
+            DrawGlyph(gridPos, hectare.Player.Glyph, "o");
         }
     }
 
