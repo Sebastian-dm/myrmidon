@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Game;
+using Myrmidon.Core.Signals;
 
 namespace Myrmidon.Core.Actions {
     internal class OpenDoorAction : IAction {
@@ -22,7 +23,14 @@ namespace Myrmidon.Core.Actions {
 
         public ActionResult Perform(IGameState context) {
             try {
-                OpenDoor(Door);
+                if (Door.IsLocked) {
+                    // TODO: Add a way to open a locked door.
+                    context.SignalQueue.Enqueue(new LogSignal(($"{Performer.Name} opened {Door.Name}")));
+                }
+                else if (!Door.IsLocked && !Door.IsOpen) {
+                    Door.Open();
+                    context.SignalQueue.Enqueue(new LogSignal(($"{Performer.Name} opened {Door.Name}")));
+                }
                 return new ActionResult(succeeded: true);
             }
             catch (Exception) {
@@ -30,18 +38,6 @@ namespace Myrmidon.Core.Actions {
                 alternative: new SkipAction(Performer)
                 );
                 throw;
-            }
-        }
-
-        public void OpenDoor(TileDoor door) {
-            // Handle a locked door
-            if (door.Locked) {
-                // We have no way of opening a locked door for the time being.
-            }
-            // Handled an unlocked door that is closed
-            else if (!door.Locked && !door.IsOpen) {
-                door.Open();
-                //Program.UIManager.MessageLog.Add($"{Performer.Name} opened {door.Name}");
             }
         }
     }

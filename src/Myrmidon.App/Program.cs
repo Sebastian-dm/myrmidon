@@ -1,5 +1,6 @@
 ﻿using System;
 using Bramble.Core;
+using Myrmidon.App.Events;
 using Myrmidon.App.Input;
 using Myrmidon.App.Render;
 
@@ -25,6 +26,7 @@ public static class Program {
     private static GameState _gameState;
     private static Terminal _terminal;
     private static InputController _inputController;
+    private static SignalDispatcher _signalDispatcher;
 
     [STAThread]
     public static void Main() {
@@ -33,12 +35,10 @@ public static class Program {
         _fovSystem = new FovSystem();      // Field of View system
         _gameState = new GameState(_fovSystem); // Holds game state and context
         _hectareManager = new HectareManager(_gameState, _fovSystem); // Manages the game world and entities
+        _hectareManager.Update(); // Initial update to set up the world
 
         // Initialize controllers
-        _hectareManager = new HectareManager(_gameState, _fovSystem); // Handles game state and logic
         _actionController = new ActionController(_gameState, _fovSystem); // Handles actions and commands
-        _hectareManager.Update(); // Initial update to set up the world
-        
         _inputController = new InputController(_actionController); // Handles user input;
         _inputController.Quit += (sender, e) => _running = false;
         
@@ -46,8 +46,14 @@ public static class Program {
         _terminal = new Terminal(_fpsCounter, 80, 30);
         var scenePanel = new ScenePanel(_terminal, new Rect(0, 0, 80, 25), _gameState);
         var statusPanel = new StatusPanel(_terminal, new Rect(0, 25, 80, 5), _gameState);
+        var logPanel = new LogPanel(_terminal, new Rect(0, 0, 80, 25));
         _terminal.RegisterPanel(scenePanel);
         _terminal.RegisterPanel(statusPanel);
+        _terminal.RegisterPanel(logPanel);
+        
+        // Signalling
+        var signalHandlers = new SignalHandlers(logPanel);
+        _signalDispatcher = new SignalDispatcher(_gameState.SignalQueue, signalHandlers.HandleLogMessage);
 
         MainLoop();
     }
@@ -57,7 +63,7 @@ public static class Program {
             Tick();
             _fpsCounter.Update();
             var remainder = (uint)(_fpsCounter.GetTickRemainderMs());
-            SDL.Delay(16);
+            SDL.Delay(remainder);
         }
     }
 
@@ -78,6 +84,8 @@ public static class Program {
 
     private static void UpdateGameState() {
         _actionController.ResolveAllActions();
+        
+        _signalDispatcher.ProcessSignals();
         
         // Recalculate FOV if needed (not time-bound)
         _gameState.FovSystem.Recompute(_gameState, _gameState.Hectare.Player.Position);

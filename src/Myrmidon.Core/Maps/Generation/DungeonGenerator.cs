@@ -294,10 +294,10 @@ namespace Myrmidon.Core.Maps.Generation {
 
         private void LinkRegions(Vec pos) {
             if (rng.OneIn(4)) {
-                _map[pos] = rng.OneIn(3) ? new TileDoor(locked: false, open: true) : new TileFloor();
+                _map[pos] = rng.OneIn(3) ? new TileDoor(isLocked: false, open: true) : new TileFloor();
             }
             else {
-                _map[pos] = new TileDoor(locked: false, open: false);
+                _map[pos] = new TileDoor(isLocked: false, open: false);
             }
         }
 
