@@ -117,12 +117,62 @@ public class Terminal : IDisposable {
         var srcFRect = textTextureSheet.GetRect(asciiIndex);
         var dstFRect = GetPixelFRect(new SDL.FRect { X = location.X, Y = location.Y, W = 1, H = 1 });
         Color col = TerminalColor.ColFromString(color);
-        SDL.SetTextureColorMod(textTextureSheet.Texture, col.R, col.G, col.B);
-        SDL.RenderTexture(_renderer, textTextureSheet.Texture, srcFRect, dstFRect);
+        SDL.SetTextureColorMod(textTextureSheet.ForegroundTexture, col.R, col.G, col.B);
+        SDL.RenderTexture(_renderer, textTextureSheet.ForegroundTexture, srcFRect, dstFRect);
     }
 
     public void DrawGlyph(Vec location, char character, string color) {
         DrawGlyph(location, (byte)character, color);
+    }
+
+    public void DrawTile(Vec location, string textureSheetName, byte textureIndex,
+    string foregroundColor, string accentColor, string? backgroundColor = null) {
+
+        TextureSheet textureSheet = _textureSheetManager.GetTextureSheet(textureSheetName, Renderer);
+        var srcFRect = textureSheet.GetRect(textureIndex);
+        var dstFRect = GetPixelFRect(new SDL.FRect { X = location.X, Y = location.Y, W = 1, H = 1 });
+
+
+        // 1. Background
+        if (backgroundColor != null) {
+            Color background = TerminalColor.ColFromString(backgroundColor);
+            SDL.SetRenderDrawColor(
+                Renderer,
+                background.R,
+                background.G,
+                background.B,
+                background.A);
+            SDL.RenderFillRect(Renderer, dstFRect);
+        }
+
+        // 2. Foreground
+        Color foreground = TerminalColor.ColFromString(foregroundColor);
+        SDL.SetTextureColorMod(
+            textureSheet.ForegroundTexture,
+            foreground.R,
+            foreground.G,
+            foreground.B);
+
+        SDL.RenderTexture(
+            Renderer,
+            textureSheet.ForegroundTexture,
+            srcFRect,
+            dstFRect);
+
+        // 3. Accent
+        Color accent = TerminalColor.ColFromString(accentColor);
+        SDL.SetTextureColorMod(
+            textureSheet.AccentTexture,
+            accent.R,
+            accent.G,
+            accent.B);
+
+        SDL.RenderTexture(
+            Renderer,
+            textureSheet.AccentTexture,
+            srcFRect,
+            dstFRect);
+
     }
 
 

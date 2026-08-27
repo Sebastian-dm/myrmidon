@@ -14,11 +14,11 @@ namespace Myrmidon.App.Render {
 
         public TextureSheetManager() { }
 
-        public TextureSheet LoadTextureSheet(string id, IntPtr renderer) {
+        public TextureSheet LoadTextureSheet(string id, nint renderer) {
             return new TextureSheet(id, renderer);
         }
 
-        public TextureSheet GetTextureSheet(string id, IntPtr renderer) {
+        public TextureSheet GetTextureSheet(string id, nint renderer) {
             // Check if the texture sheet is already loaded
             if (_textureSheets.ContainsKey(id)) {
                 return _textureSheets[id];

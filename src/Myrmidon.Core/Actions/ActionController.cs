@@ -62,7 +62,8 @@ namespace Myrmidon.Core.Actions {
                 return;
             }
             else {
-                throw new ArgumentException($"Unknown input action: {inputAction}");
+                //throw new ArgumentException($"Unknown input action: {inputAction}");
+                return;
             }
         }
 

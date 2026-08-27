@@ -1,15 +1,15 @@
 ﻿using Bramble.Core;
+using Myrmidon.Core.Entities;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Entities;
-
 using SDL3;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace Myrmidon.App.Render;
 
@@ -40,10 +40,11 @@ internal class ScenePanel : GridPanel {
             for (int x = viewBounds.Left; x < viewBounds.Right; x++) {
                 if (!IsInMapBounds(x, y, map)) continue;
 
-                var tile = map.GetTileAt<Tile>(x, y);
-
-                Vec gridPod = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                DrawGlyph(gridPod, tile.Glyph, "darkyellow");
+                Tile? tile = map.GetTileAt<Tile>(x, y);
+                if (tile == null) continue;
+                    
+                Vec gridPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
+                DrawTile(gridPos, "text/default", tile.Glyph, "K", "w");
 
             }
         }
@@ -59,14 +60,14 @@ internal class ScenePanel : GridPanel {
                 if (actor is Monster monster) {
                     color = "g";
                 }
-                DrawGlyph(gridPos, actor.Glyph, color);
+                DrawTile(gridPos, "text/default", actor.Glyph, color, "black");
             }
         }
 
         // Paint player
         if (hectare.Player != null) {
             var gridPos = new Vec(hectare.Player.Position.X - viewBounds.Left, hectare.Player.Position.Y - viewBounds.Top);
-            DrawGlyph(gridPos, hectare.Player.Glyph, "o");
+            DrawTile(gridPos, "text/default", hectare.Player.Glyph, "o", "blue");
         }
     }
 
