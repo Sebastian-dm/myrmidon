@@ -3,7 +3,7 @@ using Bramble.Core;
 using Myrmidon.App.Events;
 using Myrmidon.App.Input;
 using Myrmidon.App.Render;
-
+using Myrmidon.App.UI;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Rules;
@@ -18,47 +18,48 @@ public static class Program {
     
     private static bool _running = true;
     public static double FPS {  get { return _fpsCounter.Fps; }}
-
-    private static FovSystem _fovSystem;
-    private static HectareManager _hectareManager;
+    
+    public static WorldManager WorldManager { get; private set; }
+    public static UiManager? UiManager { get; private set; }
+    
     private static ActionController _actionController;
     private static FpsCounter _fpsCounter = new FpsCounter(60);
-    private static GameState _gameState;
     private static Terminal _terminal;
     private static InputController _inputController;
     private static SignalDispatcher _signalDispatcher;
 
-    [STAThread]
-    public static void Main() {
-
+    static Program() {
         // Initialize world
-        _fovSystem = new FovSystem();      // Field of View system
-        _gameState = new GameState(_fovSystem); // Holds game state and context
-        _hectareManager = new HectareManager(_gameState, _fovSystem); // Manages the game world and entities
-        _hectareManager.Update(); // Initial update to set up the world
-
+        var fovSystem = new FovSystem();      // Field of View system
+        var gameState = new GameState(fovSystem); // Holds game state and context
+        WorldManager = new WorldManager(gameState, fovSystem); // Manages the game world and entities
+        WorldManager.Update(); // Initial update to set up the world
+        
         // Initialize controllers
-        _actionController = new ActionController(_gameState, _fovSystem); // Handles actions and commands
+        _actionController = new ActionController(gameState, fovSystem); // Handles actions and commands
         _inputController = new InputController(_actionController); // Handles user input;
         _inputController.Quit += (sender, e) => _running = false;
         
         // Initialize terminal
+        UiManager = new UiManager();
         _terminal = new Terminal(_fpsCounter, 80, 30);
-        var scenePanel = new ScenePanel(_terminal, new Rect(0, 0, 80, 25), _gameState);
-        var statusPanel = new StatusPanel(_terminal, new Rect(0, 25, 80, 5), _gameState);
+        
+        var scenePanel = new ScenePanel(_terminal, new Rect(0, 0, 80, 25), gameState);
+        var statusPanel = new StatusPanel(_terminal, new Rect(0, 25, 80, 5), gameState);
         var logPanel = new LogPanel(_terminal, new Rect(0, 0, 80, 25));
+        var profilingPanel = new ProfilingPanel(_terminal, new Vec(10, 10)) {FpsCounter =  _fpsCounter};
         _terminal.RegisterPanel(scenePanel);
         _terminal.RegisterPanel(statusPanel);
         _terminal.RegisterPanel(logPanel);
+        _terminal.RegisterPanel(profilingPanel);
         
         // Signalling
         var signalHandlers = new SignalHandlers(logPanel);
-        _signalDispatcher = new SignalDispatcher(_gameState.SignalQueue, signalHandlers.HandleLogMessage);
-
-        MainLoop();
+        _signalDispatcher = new SignalDispatcher(gameState.SignalQueue, signalHandlers.HandleLogMessage);
     }
     
-    private static void MainLoop() {
+    [STAThread]
+    private static void Main() {
         while (_running) {
             Tick();
             _fpsCounter.Update();
@@ -88,9 +89,9 @@ public static class Program {
         _signalDispatcher.ProcessSignals();
         
         // Recalculate FOV if needed (not time-bound)
-        _gameState.FovSystem.Recompute(_gameState, _gameState.Hectare.Player.Position);
+        WorldManager.GameState.FovSystem.Recompute(_gameState, _gameState.Hectare.Player.Position);
 
-        _hectareManager.Update();
+        WorldManager.Update();
     }
 
     private static void Render() {

@@ -1,8 +1,9 @@
 using Myrmidon.Core.Game;
 using Bramble.Core;
+using Myrmidon.App.Render;
 using SDL3;
 
-namespace Myrmidon.App.Render;
+namespace Myrmidon.App.UI;
 
 public class GridPanel : IPanel {
     
@@ -14,7 +15,7 @@ public class GridPanel : IPanel {
         Terminal = terminal;
     }
     
-    public virtual void Render() {
+    public virtual void Draw() {
         //Terminal.SetPanelArea(PanelRect);
     }
 

@@ -9,9 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Myrmidon.App.Render;
 using static System.Net.WebRequestMethods;
 
-namespace Myrmidon.App.Render;
+namespace Myrmidon.App.UI;
 
 
 internal class ScenePanel : GridPanel {
@@ -22,13 +23,13 @@ internal class ScenePanel : GridPanel {
         _gameState = gameState;
     }
 
-    public override void Render() {
-        base.Render();
+    public override void Draw() {
+        base.Draw();
         if (!_gameState.Hectare.IsMapGenInProgress)
-            RenderHectare(_gameState.Hectare);
+            DrawHectare(_gameState.Hectare);
     }
 
-    public void RenderHectare(Hectare hectare) {
+    private void DrawHectare(Hectare hectare) {
 
         var map = hectare.Map;
 

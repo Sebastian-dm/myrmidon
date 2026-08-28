@@ -1,0 +1,43 @@
+using Myrmidon.Core.Game;
+
+using Bramble.Core;
+using Myrmidon.App.Render;
+using Myrmidon.App.UI;
+using SDL3;
+
+namespace Myrmidon.App.UI;
+
+public class ProfilingPanel : IPanel {
+    
+    private readonly Terminal _terminal;
+    public FpsCounter? FpsCounter;
+    public Vec Location;
+
+    private readonly int _padding;
+
+    public ProfilingPanel(Terminal terminal, Vec location) {
+        _terminal = terminal;
+        Location = location;
+    }
+
+    public void Draw() {
+        if (FpsCounter == null)
+            return;
+        DrawFpsText();
+    }
+
+
+    private void DrawFpsText() {
+        string fpsText = $"FPS: {FpsCounter.Fps:F1}";
+        _terminal.SetRenderDrawColor("Black", 0x55);
+        var rect = new SDL.FRect {
+            X = Location.X,
+            Y = Location.Y,
+            W = 2*_padding+fpsText.Length*8-1,
+            H = 2*_padding+7
+        };
+        SDL.RenderFillRect(_terminal.Renderer, rect);
+        _terminal.SetRenderDrawColor("White");
+        SDL.RenderDebugText(_terminal.Renderer, Location.X+_padding, Location.Y+_padding, fpsText);
+    }
+}

@@ -3,6 +3,7 @@
 using SDL3;
 
 using Bramble.Core;
+using Myrmidon.App.UI;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
@@ -67,15 +68,12 @@ public class Terminal : IDisposable {
         SDL.RenderClear(_renderer);
 
         foreach (var panel in _panels) {
-            panel.Render();
+            panel.Draw();
         }
-        
-        DrawFpsText(1f, 1f, 2);
-        
         SDL.RenderPresent(_renderer);
     }
 
-    public void RegisterPanel(GridPanel panel) {
+    public void RegisterPanel(IPanel panel) {
         _panels.Add(panel);
     }
     

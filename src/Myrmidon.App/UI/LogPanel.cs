@@ -1,7 +1,8 @@
 using Bramble.Core;
+using Myrmidon.App.Render;
 using Myrmidon.Core;
 
-namespace Myrmidon.App.Render;
+namespace Myrmidon.App.UI;
 
 public class LogPanel : GridPanel {
 
@@ -9,19 +10,20 @@ public class LogPanel : GridPanel {
 
 
     public LogPanel(Terminal terminal, Rect rect) : base(terminal, rect) {
+        
     }
     
     public void AddEntry(string message) {
         _messages.Add(message);
     }
 
-    public override void Render() {
-        base.Render();
+    public override void Draw() {
+        base.Draw();
         if (_messages.Count > 0)
             RenderLog();
     }
 
-    public void RenderLog() {
+    private void RenderLog() {
         for (int i = 0; i < _messages.Count; i++) {
             DrawText(new Vec(1, i), $"{_messages[i]}", "w");
         }

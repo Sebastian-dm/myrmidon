@@ -10,8 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Myrmidon.App.Render;
 
-namespace Myrmidon.App.Render;
+namespace Myrmidon.App.UI;
 
 
 internal class StatusPanel : GridPanel {
@@ -22,8 +23,8 @@ internal class StatusPanel : GridPanel {
         _gameState = gameState;
     }
 
-    public override void Render() {
-        base.Render();
+    public override void Draw() {
+        base.Draw();
         if (!_gameState.Hectare.IsMapGenInProgress)
             RenderStatus(_gameState.Hectare.Player);
     }

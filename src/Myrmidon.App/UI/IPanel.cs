@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Myrmidon.App.Render;
+namespace Myrmidon.App.UI;
 
-internal interface IPanel {
+public interface IPanel {
     
     
-    void Render();
+    void Draw();
 
 }
