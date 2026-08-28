@@ -28,4 +28,10 @@ public class GridPanel : IPanel {
         Terminal.DrawText(new Vec(PanelRect.X + gridLocation.X, PanelRect.Y + gridLocation.Y), text, color);
     }
 
+    public void DrawTile(Vec gridLocation, string textureSheetName, byte textureIndex,
+    string foregroundColor, string accentColor, string? backgroundColor = null) {
+        Terminal.DrawTile(new Vec(PanelRect.X + gridLocation.X, PanelRect.Y + gridLocation.Y), textureSheetName, textureIndex,
+        foregroundColor, accentColor, backgroundColor);
+    }
+
 }
