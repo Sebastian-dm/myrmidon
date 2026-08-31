@@ -45,7 +45,7 @@ internal class ScenePanel : GridPanel {
                 if (tile == null) continue;
                     
                 Vec gridPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                DrawTile(gridPos, "text/default", tile.Glyph, "K", "w");
+                DrawTile(gridPos, "text/default", tile.Glyph, "g", "M");
 
             }
         }
@@ -61,14 +61,14 @@ internal class ScenePanel : GridPanel {
                 if (actor is Monster monster) {
                     color = "g";
                 }
-                DrawTile(gridPos, "text/default", actor.Glyph, color, "black");
+                DrawTile(gridPos, "text/default", actor.Glyph, color, "M");
             }
         }
 
         // Paint player
         if (hectare.Player != null) {
             var gridPos = new Vec(hectare.Player.Position.X - viewBounds.Left, hectare.Player.Position.Y - viewBounds.Top);
-            DrawTile(gridPos, "text/default", hectare.Player.Glyph, "o", "blue");
+            DrawTile(gridPos, "text/default", hectare.Player.Glyph, "o", "M");
         }
     }
 
