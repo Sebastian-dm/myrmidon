@@ -6,58 +6,63 @@ using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Utilities.Graphics;
 using Myrmidon.Core.Maps.Generation;
 using GoRogue;
+using Myrmidon.Core.Actions;
 using Myrmidon.Core.Game;
 
 namespace Myrmidon.Core.Game {
     public class WorldManager {
 
-        private readonly IGameState _context;
-        public readonly IFovSystem _fov;
-        private readonly Hectare _world;
-        private readonly Random _rng = new();
+        public IGameState GameState { get; private set; }
+        public IFovSystem FovSystem { get; private set; }
+        public ActionController ActionController;
+        
+        private Hectare _zone;
+        private Random _rng = new();
 
-        public WorldManager(IGameState context, IFovSystem fov) {
-            _context = context;
-            _world = context.Hectare;
-            _fov = fov;
+        public WorldManager(IGameState gamestate, IFovSystem fov, ActionController actionController) {
+            GameState = gamestate;
+            _zone = gamestate.Hectare;
+            FovSystem = fov;
+            
+            ActionController =  actionController;
         }
 
         public void Update() {
-            if (_world.IsMapGenRequested) {
-                _world.IsMapGenRequested = false;
-                _world.IsMapGenInProgress = true;
+            if (_zone.IsMapGenRequested) {
+                _zone.IsMapGenRequested = false;
+                _zone.IsMapGenInProgress = true;
                 GenerateMap();
             }
 
-            if (_world.IsEntityGenRequested) {
+            if (_zone.IsEntityGenRequested) {
                 CreatePlayer();
                 CreateMonsters();
                 CreateLoot();
-                _world.IsEntityGenRequested = false;
-                _fov.Recompute(_context, _world.Player.Position);
+                _zone.IsEntityGenRequested = false;
+                FovSystem.Recompute(GameState, _zone.Player.Position);
             }
         }
 
         private void GenerateMap() {
             var mapGen = new DungeonGenerator();
-            mapGen.Generate(_world.Map);
-            _world.IsMapGenInProgress = false;
-            _world.IsEntityGenRequested = true;
+            mapGen.Generate(_zone.Map);
+            _zone.IsMapGenInProgress = false;
+            _zone.IsEntityGenRequested = true;
         }
 
         private void CreatePlayer() {
             var player = new Player(new Color(20, 255, 255), Color.Transparent);
 
-            if (_world.Map.Rooms.Count > 0) {
-                int index = _rng.Next(_world.Map.Rooms.Count);
-                player.Position = _world.Map.Rooms[index].Center;
+            if (_zone.Map.Rooms.Count > 0) {
+                int index = _rng.Next(_zone.Map.Rooms.Count);
+                player.Position = _zone.Map.Rooms[index].Center;
             }
             else {
                 player.Position = new Vec(10, 10);
             }
 
-            _world.Player = player;
-            _world.Map.Add(player);
+            _zone.Player = player;
+            _zone.Map.Add(player);
         }
 
         private void CreateMonsters() {
@@ -85,13 +90,13 @@ namespace Myrmidon.Core.Game {
             int pos;
             bool valid;
             do {
-                pos = _rng.Next(0, _world.Map.Width * _world.Map.Height);
-                valid = _world.Map.Tiles[pos].IsWalkable;
+                pos = _rng.Next(0, _zone.Map.Width * _zone.Map.Height);
+                valid = _zone.Map.Tiles[pos].IsWalkable;
             }
             while (!valid);
 
-            entity.Position = new Vec(pos % _world.Map.Width, pos / _world.Map.Width);
-            _world.Map.Entities.Add(entity, new Coord(entity.Position.X, entity.Position.Y));
+            entity.Position = new Vec(pos % _zone.Map.Width, pos / _zone.Map.Width);
+            _zone.Map.Entities.Add(entity, new Coord(entity.Position.X, entity.Position.Y));
         }
     }
 }

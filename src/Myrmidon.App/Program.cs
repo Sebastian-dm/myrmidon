@@ -17,28 +17,26 @@ namespace Myrmidon.App;
 public static class Program {
     
     private static bool _running = true;
-    public static double FPS {  get { return _fpsCounter.Fps; }}
     
     public static WorldManager WorldManager { get; private set; }
-    public static UiManager? UiManager { get; private set; }
+    public static UiManager UiManager { get; private set; }
+    public static InputController InputController { get; private set; }
     
-    private static ActionController _actionController;
     private static FpsCounter _fpsCounter = new FpsCounter(60);
     private static Terminal _terminal;
-    private static InputController _inputController;
     private static SignalDispatcher _signalDispatcher;
 
     static Program() {
         // Initialize world
         var fovSystem = new FovSystem();      // Field of View system
         var gameState = new GameState(fovSystem); // Holds game state and context
-        WorldManager = new WorldManager(gameState, fovSystem); // Manages the game world and entities
+        var actionController = new ActionController(gameState, fovSystem); // Handles actions and command
+        WorldManager = new WorldManager(gameState, fovSystem, actionController); // Manages the game world and entities
         WorldManager.Update(); // Initial update to set up the world
         
         // Initialize controllers
-        _actionController = new ActionController(gameState, fovSystem); // Handles actions and commands
-        _inputController = new InputController(_actionController); // Handles user input;
-        _inputController.Quit += (sender, e) => _running = false;
+        InputController = new InputController(actionController); // Handles user input;
+        InputController.Quit += (sender, e) => _running = false;
         
         // Initialize terminal
         UiManager = new UiManager();
@@ -76,20 +74,20 @@ public static class Program {
 
     private static void PollInput() {
         
-        _inputController.PollInput();
+        InputController.PollInput();
         
         // Collect AI actions if it's not the player's turn
-        if (!_actionController.CanAcceptInput)
-            _actionController.CollectEntityActions();
+        if (!WorldManager.ActionController.CanAcceptInput)
+            WorldManager.ActionController.CollectEntityActions();
     }
 
     private static void UpdateGameState() {
-        _actionController.ResolveAllActions();
+        WorldManager.ActionController.ResolveAllActions();
         
         _signalDispatcher.ProcessSignals();
         
         // Recalculate FOV if needed (not time-bound)
-        WorldManager.GameState.FovSystem.Recompute(_gameState, _gameState.Hectare.Player.Position);
+        WorldManager.GameState.FovSystem.Recompute(WorldManager.GameState, WorldManager.GameState.Hectare.Player.Position);
 
         WorldManager.Update();
     }
