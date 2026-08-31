@@ -1,8 +1,19 @@
 ﻿using System.Drawing;
+using System.Text.Json;
 
 namespace Myrmidon.App.Render;
 
 public static class TerminalColor {
+
+
+    public static void LoadColorsFromFile(string id) {
+        string AssetsFolder = "../../../../../assets/";
+        
+        var configText = File.ReadAllText($"{AssetsFolder}/colors/{id}.json");
+        var config = JsonSerializer.Deserialize<TextureSheetConfig>(configText)
+                     ?? throw new InvalidOperationException($"Couldn't load sprite sheet config for {id}");
+    }
+    
     
     public static Color ColFromString(string color) {
         color = color.ToLower();
