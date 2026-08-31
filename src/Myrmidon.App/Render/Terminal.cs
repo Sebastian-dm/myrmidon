@@ -64,7 +64,7 @@ public class Terminal : IDisposable {
 
     public void Render() {
         // Clear
-        SetRenderDrawColor("DarkGray");
+        SetRenderDrawColor("k");
         SDL.RenderClear(_renderer);
 
         foreach (var panel in _panels) {
@@ -82,6 +82,7 @@ public class Terminal : IDisposable {
         Color c = TerminalColor.ColFromString(color);
         SDL.SetRenderDrawColor(_renderer, c.R, c.G, c.B, alpha ?? c.A);
     }
+
 
     public void SetPanelArea(Rect panelRect) {
         var rect = GetPixelRect(panelRect);
@@ -207,10 +208,10 @@ public class Terminal : IDisposable {
 
     private void DrawFpsText(float x, float y, int pad) {
         string fpsText = $"FPS: {_fpsCounter.Fps:F1}";
-        SetRenderDrawColor("Black", 0x55);
+        SetRenderDrawColor("k", 0x55);
         var rect = new SDL.FRect { X = x, Y = y, W = 2*pad+fpsText.Length*8-1, H = 2*pad+7 };
         SDL.RenderFillRect(_renderer, rect);
-        SetRenderDrawColor("White");
+        SetRenderDrawColor("Y");
         SDL.RenderDebugText(_renderer, x+pad, y+pad, fpsText);
     }
 
