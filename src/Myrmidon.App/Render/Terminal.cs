@@ -58,7 +58,10 @@ public class Terminal : IDisposable {
         
         SDL.SetRenderLogicalPresentation(_renderer, _windowWidth, _windowHeight, SDL.RendererLogicalPresentation.Letterbox);
         SDL.SetRenderVSync(_renderer, 1);
-        
+
+
+        TerminalColor.LoadColorsFromFile("qud");
+
         _panels = new List<IPanel>();
     }
 

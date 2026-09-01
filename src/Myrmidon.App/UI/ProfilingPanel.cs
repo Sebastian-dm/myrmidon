@@ -29,7 +29,7 @@ public class ProfilingPanel : IPanel {
 
     private void DrawFpsText() {
         string fpsText = $"FPS: {FpsCounter.Fps:F1}";
-        _terminal.SetRenderDrawColor("Black", 0x55);
+        _terminal.SetRenderDrawColor("black", 0x55);
         var rect = new SDL.FRect {
             X = Location.X,
             Y = Location.Y,
@@ -37,7 +37,7 @@ public class ProfilingPanel : IPanel {
             H = 2*_padding+7
         };
         SDL.RenderFillRect(_terminal.Renderer, rect);
-        _terminal.SetRenderDrawColor("White");
+        _terminal.SetRenderDrawColor("white");
         SDL.RenderDebugText(_terminal.Renderer, Location.X+_padding, Location.Y+_padding, fpsText);
     }
 }
