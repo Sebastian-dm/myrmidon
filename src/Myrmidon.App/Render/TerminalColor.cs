@@ -22,7 +22,6 @@ public static class TerminalColor {
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
             ?? throw new InvalidOperationException(
                 $"Couldn't load color palette: {id}");
-        var a = "";
     }
 
 

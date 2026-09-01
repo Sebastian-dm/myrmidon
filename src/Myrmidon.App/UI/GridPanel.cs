@@ -8,9 +8,9 @@ namespace Myrmidon.App.UI;
 public class GridPanel : IPanel {
     
     public Rect PanelRect;
-    public readonly Terminal Terminal;
+    public readonly TerminalRenderer Terminal;
 
-    public GridPanel(Terminal terminal, Rect uiArea) {
+    public GridPanel(TerminalRenderer terminal, Rect uiArea) {
         PanelRect = uiArea;
         Terminal = terminal;
     }
@@ -19,7 +19,9 @@ public class GridPanel : IPanel {
         //Terminal.SetPanelArea(PanelRect);
     }
 
-
+    public void FillBackground(string color) {
+        Terminal.FillRect(PanelRect, color);
+    }
 
     public void DrawGlyph(Vec gridLocation, byte asciiIndex, string color) {
         Terminal.DrawGlyph(new Vec(PanelRect.X + gridLocation.X, PanelRect.Y + gridLocation.Y), asciiIndex, color);

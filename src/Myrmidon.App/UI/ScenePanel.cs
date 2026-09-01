@@ -15,11 +15,11 @@ using static System.Net.WebRequestMethods;
 namespace Myrmidon.App.UI;
 
 
-internal class ScenePanel : GridPanel {
+public class ScenePanel : GridPanel {
     
-    private GameState _gameState;
+    private IGameState _gameState;
 
-    public ScenePanel(Terminal terminal, Rect rect, GameState gameState) : base(terminal, rect) {
+    public ScenePanel(TerminalRenderer terminal, Rect rect, IGameState gameState) : base(terminal, rect) {
         _gameState = gameState;
     }
 
@@ -43,7 +43,9 @@ internal class ScenePanel : GridPanel {
 
                 Tile? tile = map.GetTileAt<Tile>(x, y);
                 if (tile == null) continue;
-                    
+
+                // Todo: Handle visibility and explored state for tiles
+
                 Vec gridPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
                 DrawTile(gridPos, "text/default", tile.Glyph, "g", "M");
 
