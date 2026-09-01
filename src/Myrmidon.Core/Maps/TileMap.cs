@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Bramble.Core;
-
+using Myrmidon.Core.Components;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
 //using Myrmidon.Core.Utilities.Geometry;
@@ -12,11 +12,10 @@ namespace Myrmidon.Core.Maps {
     // Stores, manipulates and queries Tile data
     public class TileMap {
 
+        public RenderComponent[] RenderComponents { get; private set; }
         private Tile[] _tiles; // contain all tile objects
         private int _width;
         private int _height;
-
-
         
         public Tile[] Tiles { get { return _tiles; } set { _tiles = value; } }
         public Tile this[int x, int y] {
@@ -48,13 +47,29 @@ namespace Myrmidon.Core.Maps {
             }
         }
 
+        public RenderComponent GetRenderComponent(Vec location) {
+            return RenderComponents[location.Y * Width + location.X];
+        }
+
+        public void SetRenderComponent(Vec location, RenderComponent renderComponent) {
+            RenderComponents[location.Y * Width + location.X] = renderComponent;
+        }
+        public void SetRenderComponent(int i, RenderComponent renderComponent) {
+            RenderComponents[i] = renderComponent;
+        }
+
 
         // Build a new map with a specified width and height
         public TileMap(int width, int height) {
             _width = width;
             _height = height;
+            RenderComponents = new RenderComponent[width * height];
             Tiles = new Tile[width * height];
-            for (int i = 0; i < width * height; i++) Tiles[i] = new TileEmpty();
+            for (int i = 0; i < width * height; i++) {
+                RenderComponents[i] = new RenderComponent();
+                Tiles[i] = new TileEmpty(RenderComponents[i]);
+            }
+
             Rooms = new List<Rect>();
             Entities = new GoRogue.MultiSpatialMap<Entity>();
         }

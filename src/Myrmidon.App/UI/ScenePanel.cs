@@ -40,19 +40,18 @@ internal class ScenePanel : GridPanel {
         for (int y = viewBounds.Top; y < viewBounds.Bottom; y++) {
             for (int x = viewBounds.Left; x < viewBounds.Right; x++) {
                 if (!IsInMapBounds(x, y, map)) continue;
+                if (!IsInViewBounds(x, y, viewBounds)) continue;
 
                 Tile? tile = map.GetTileAt<Tile>(x, y);
                 if (tile == null) continue;
                     
                 Vec gridPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                DrawTile(gridPos, "text/default", tile.Glyph, "g", "M");
-
+                DrawTile(gridPos, tile.RenderComponent);
             }
         }
 
         //Paint entities
         foreach (var entity in map.Entities.Items) {
-
             if (entity is Actor actor) {
                 if (!IsInMapBounds(actor.Position.X, actor.Position.Y, map)) continue;
                 if (!IsInViewBounds(actor.Position.X, actor.Position.Y, viewBounds)) continue;

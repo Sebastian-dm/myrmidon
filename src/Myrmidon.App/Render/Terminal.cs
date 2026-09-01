@@ -128,7 +128,7 @@ public class Terminal : IDisposable {
     }
 
     public void DrawTile(Vec location, string textureSheetName, byte textureIndex,
-    string foregroundColor, string accentColor, string? backgroundColor = null) {
+    string foregroundColor, string accentColor, string backgroundColor = "") {
 
         TextureSheet textureSheet = _textureSheetManager.GetTextureSheet(textureSheetName, Renderer);
         var srcFRect = textureSheet.GetRect(textureIndex);
@@ -136,7 +136,7 @@ public class Terminal : IDisposable {
 
 
         // 1. Background
-        if (backgroundColor != null) {
+        if (backgroundColor != "") {
             Color background = TerminalColor.ColFromString(backgroundColor);
             SDL.SetRenderDrawColor(
                 Renderer,

@@ -45,6 +45,7 @@ public static class TerminalColor {
     }
 
     public static Color ColFromString(string color) {
+        if (color == "") color = "k";
         ArgumentException.ThrowIfNullOrEmpty(color);
         if (!_colors.TryGetValue(color, out RgbColor? rgb))
             throw new ArgumentOutOfRangeException(nameof(color),color, $"Color '{color}' is not defined in the current palette.");

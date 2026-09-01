@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Myrmidon.Core.Components;
 using Myrmidon.Core.Utilities.Graphics;
 
 
@@ -12,7 +12,8 @@ namespace Myrmidon.Core.Maps.Tiles {
 
         //Default constructor
         //A TileDoor can be set locked/unlocked/open/closed using the constructor.
-        public TileDoor(bool isLocked, bool open) : base(new Color(100, 60, 20), new Color(20, 10, 0), 254) {
+        public TileDoor(RenderComponent renderComponent, bool isLocked, bool open) :
+            base(renderComponent, open, open) {
             //Update door fields
             IsLocked = isLocked;
             IsOpen = open;
@@ -24,24 +25,24 @@ namespace Myrmidon.Core.Maps.Tiles {
                 Close();
             
             //Hidden by default
-            Glyph = 0;
+            RenderComponent.TextureIndex = 0;
             Name = "standard door";
         }
 
         //closes a door
         public void Close() {
+            RenderComponent.TextureIndex = (byte)'D';
             IsOpen = false;
-            IsBlockingLOS = true;
+            IsBlockingLos = true;
             IsWalkable = false;
-            Glyph = 254;
         }
 
         //opens a door
         public void Open() {
             IsOpen = true;
-            IsBlockingLOS = false;
+            IsBlockingLos = false;
             IsWalkable = true;
-            Glyph = (byte)'+';
+            RenderComponent.TextureIndex = (byte)'D';
         }
     }
 }

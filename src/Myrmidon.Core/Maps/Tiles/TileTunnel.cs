@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Myrmidon.Core.Components;
 using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Maps.Tiles {
@@ -10,8 +10,8 @@ namespace Myrmidon.Core.Maps.Tiles {
         // Floors are set to allow movement and line of sight by default
         // and have a dark gray foreground and a transparent background
         // represented by the . symbol
-        public TileTunnel(bool walkable = true, bool blocksLOS = false) :
-            base(foreground: Color.DarkGray, background: Color.Transparent, glyph: 0, walkable, blocksLOS) {
+        public TileTunnel(RenderComponent renderComponent, bool walkable = true, bool blocksLOS = false) :
+            base(renderComponent, walkable, blocksLOS) {
             Name = "Floor";
         }
     }

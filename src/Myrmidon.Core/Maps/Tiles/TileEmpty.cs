@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Myrmidon.Core.Components;
 using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Maps.Tiles {
@@ -7,8 +7,8 @@ namespace Myrmidon.Core.Maps.Tiles {
     // Floor tiles to be used in maps.
     public class TileEmpty : Tile {
 
-        public TileEmpty(bool blocksMovement = true, bool blocksLOS = true) :
-            base(foreground: Color.DarkGray, background: Color.Transparent, glyph: 0, blocksMovement, blocksLOS) {
+        public TileEmpty(RenderComponent renderComponent, bool blocksMovement = true, bool blocksLOS = true) :
+            base(renderComponent, blocksMovement, blocksLOS) {
             Name = "Empty";
         }
     }
