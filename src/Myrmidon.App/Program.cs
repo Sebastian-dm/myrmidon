@@ -87,7 +87,7 @@ public static class Program {
         _signalDispatcher.ProcessSignals();
         
         // Recalculate FOV if needed (not time-bound)
-        WorldManager.GameState.FovSystem.Recompute(WorldManager.GameState, WorldManager.GameState.Hectare.Player.Position);
+        WorldManager.GameState.FovSystem.Recompute(WorldManager.GameState, WorldManager.GameState.Player.Position);
 
         WorldManager.Update();
     }

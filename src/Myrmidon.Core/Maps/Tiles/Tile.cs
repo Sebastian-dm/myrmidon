@@ -12,8 +12,6 @@ namespace Myrmidon.Core.Maps.Tiles {
         public string Name;
         public bool IsWalkable;
         public bool IsBlockingLos;
-        
-        public RenderComponent RenderComponent { get; set; }
 
         public bool IsVisible {
             get { return _isVisible; }
@@ -29,11 +27,9 @@ namespace Myrmidon.Core.Maps.Tiles {
 
         // TileBase is an abstract base class representing the most basic form of all Tiles used. Every TileBase has a Foreground Colour, Background Colour, and Glyph
         // IsBlockingMove and IsBlockingLOS are optional parameters, set to false by default
-        public Tile(RenderComponent renderComponent, bool walkable = true, bool isBlockingLos = false, string name = "") {
+        public Tile(bool walkable = true, bool isBlockingLos = false, string name = "") {
 
             Name = name;
-            
-            RenderComponent = renderComponent;
             
             IsWalkable = walkable;
             IsBlockingLos = isBlockingLos;

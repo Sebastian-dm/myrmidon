@@ -12,8 +12,9 @@ namespace Myrmidon.Core.Maps {
     // Stores, manipulates and queries Tile data
     public class TileMap {
 
-        public RenderComponent[] RenderComponents { get; private set; }
         private Tile[] _tiles; // contain all tile objects
+        public RenderComponent[] RenderComponents { get; private set; }
+
         private int _width;
         private int _height;
         
@@ -67,7 +68,7 @@ namespace Myrmidon.Core.Maps {
             Tiles = new Tile[width * height];
             for (int i = 0; i < width * height; i++) {
                 RenderComponents[i] = new RenderComponent();
-                Tiles[i] = new TileEmpty(RenderComponents[i]);
+                Tiles[i] = new TileEmpty();
             }
 
             Rooms = new List<Rect>();

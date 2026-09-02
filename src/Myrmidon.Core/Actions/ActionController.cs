@@ -84,7 +84,7 @@ namespace Myrmidon.Core.Actions {
             
             // and update the FOV if needed
             if (!IsPlayersTurn) {
-                _fov.Recompute(_gameState, _gameState.Hectare.Player.Position);
+                _fov.Recompute(_gameState, _gameState.Player.Position);
             }
         }
 
@@ -112,22 +112,22 @@ namespace Myrmidon.Core.Actions {
 
         private IAction? CreateActionFromInput(InputAction command) {
             return command switch {
-                InputAction.MovePlayerN => new WalkAction(_gameState.Hectare.Player, new Vec(0, -1)),
-                InputAction.MovePlayerNE => new WalkAction(_gameState.Hectare.Player, new Vec(1, -1)),
-                InputAction.MovePlayerS => new WalkAction(_gameState.Hectare.Player, new Vec(0, 1)),
-                InputAction.MovePlayerSE => new WalkAction(_gameState.Hectare.Player, new Vec(1, 1)),
-                InputAction.MovePlayerW => new WalkAction(_gameState.Hectare.Player, new Vec(-1, 0)),
-                InputAction.MovePlayerSW => new WalkAction(_gameState.Hectare.Player, new Vec(-1, 1)),
-                InputAction.MovePlayerE => new WalkAction(_gameState.Hectare.Player, new Vec(1, 0)),
-                InputAction.MovePlayerNW => new WalkAction(_gameState.Hectare.Player, new Vec(-1, -1)),
-                InputAction.SkipPlayerTurn => new SkipAction(_gameState.Hectare.Player),
+                InputAction.MovePlayerN => new WalkAction(_gameState.Player, new Vec(0, -1)),
+                InputAction.MovePlayerNE => new WalkAction(_gameState.Player, new Vec(1, -1)),
+                InputAction.MovePlayerS => new WalkAction(_gameState.Player, new Vec(0, 1)),
+                InputAction.MovePlayerSE => new WalkAction(_gameState.Player, new Vec(1, 1)),
+                InputAction.MovePlayerW => new WalkAction(_gameState.Player, new Vec(-1, 0)),
+                InputAction.MovePlayerSW => new WalkAction(_gameState.Player, new Vec(-1, 1)),
+                InputAction.MovePlayerE => new WalkAction(_gameState.Player, new Vec(1, 0)),
+                InputAction.MovePlayerNW => new WalkAction(_gameState.Player, new Vec(-1, -1)),
+                InputAction.SkipPlayerTurn => new SkipAction(_gameState.Player),
                 _ => null
             };
         }
 
 
         public void CollectEntityActions() {
-            foreach (Actor actor in _gameState.Hectare.Entities.Items) {
+            foreach (Actor actor in _gameState.Zone.Entities.Items) {
                 _actionQueue.Enqueue(actor.GetAction());
             }
         }

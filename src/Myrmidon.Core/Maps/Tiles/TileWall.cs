@@ -36,11 +36,9 @@ namespace Myrmidon.Core.Maps.Tiles {
         }
 
         // Walls are set to block movement and line of sight by default
-        public TileWall(RenderComponent renderComponent, bool walkable = false, bool blocksLOS = true) :
-            base(renderComponent, walkable, blocksLOS) {
+        public TileWall(bool walkable = false, bool blocksLOS = true) :
+            base(walkable, blocksLOS) {
             Name = "Wall";
-            // Todo: Figure out if this needs a deep copy
-            RenderComponent.TextureIndexOriginal = renderComponent.TextureIndex;
         }
 
 
@@ -125,7 +123,7 @@ namespace Myrmidon.Core.Maps.Tiles {
             //         break;
             // }
             // Todo: Check if this bitwise operator works as intended
-            RenderComponent.TextureIndex = (byte)(RenderComponent.TextureIndexOriginal << n);
+            //RenderComponent.TextureIndex = (byte)(RenderComponent.TextureIndexOriginal << n);
         }
         
 

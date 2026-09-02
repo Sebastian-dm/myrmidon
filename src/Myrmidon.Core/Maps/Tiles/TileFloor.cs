@@ -10,8 +10,8 @@ namespace Myrmidon.Core.Maps.Tiles {
         // Floors are set to allow movement and line of sight by default
         // and have a dark gray foreground and a transparent background
         // represented by the . symbol
-        public TileFloor(RenderComponent renderComponent, bool walkable = true, bool blocksLOS = false) : 
-            base(renderComponent, walkable, blocksLOS) {
+        public TileFloor(bool walkable = true, bool blocksLOS = false) : 
+            base(walkable, blocksLOS) {
             Name = "Floor";
         }
     }

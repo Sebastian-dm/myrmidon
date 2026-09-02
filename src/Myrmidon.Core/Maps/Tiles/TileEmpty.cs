@@ -7,8 +7,8 @@ namespace Myrmidon.Core.Maps.Tiles {
     // Floor tiles to be used in maps.
     public class TileEmpty : Tile {
 
-        public TileEmpty(RenderComponent renderComponent, bool blocksMovement = true, bool blocksLOS = true) :
-            base(renderComponent, blocksMovement, blocksLOS) {
+        public TileEmpty(bool blocksMovement = true, bool blocksLOS = true) :
+            base(blocksMovement, blocksLOS) {
             Name = "Empty";
         }
     }

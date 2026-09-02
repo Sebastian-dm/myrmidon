@@ -9,18 +9,25 @@ using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Game {
-    public class Hectare {
-        public TileMap Map { get; set; }
-        public Player Player { get; set; }
+    public class Zone {
 
-        public bool IsMapGenRequested { get; set; } = true;
-        public bool IsMapGenInProgress { get; set; } = false;
-        public bool IsEntityGenRequested { get; set; } = false;
+        public TileMap Map { get; set; }
+        //public Player Player { get; set; }
+
 
         public GoRogue.MultiSpatialMap<Entity> Entities => Map.Entities;
 
-        public Hectare(int width, int height) {
+        public Zone(int width, int height) {
             Map = new TileMap(width, height);
+        }
+
+
+        public ZoneGenState GenerationState { get; set; } = ZoneGenState.NotStarted;
+        public enum ZoneGenState {
+            NotStarted,
+            GeneratingTerrain,
+            Populating,
+            Ready
         }
     }
 }

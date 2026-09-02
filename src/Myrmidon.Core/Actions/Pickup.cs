@@ -26,7 +26,7 @@ namespace Myrmidon.Core.Actions {
             if (Performer.Position.IsAdjacentTo(Item.Position)) {
                 Performer.Inventory.Add(Item);
                 //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
-                context.Hectare.Map.Remove(Item);
+                context.Zone.Map.Remove(Item);
                 return new ActionResult(succeeded: true);
             }
             else {

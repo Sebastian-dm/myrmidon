@@ -25,8 +25,8 @@ internal class StatusPanel : GridPanel {
 
     public override void Draw() {
         base.Draw();
-        if (!_gameState.Hectare.IsMapGenInProgress)
-            RenderStatus(_gameState.Hectare.Player);
+        if (_gameState.Zone.GenerationState == Zone.ZoneGenState.Ready)
+            RenderStatus(_gameState.Player);
     }
 
     public void RenderStatus(Player player) {

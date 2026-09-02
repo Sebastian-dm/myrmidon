@@ -101,9 +101,8 @@ namespace Myrmidon.Core.Maps.Generation {
 
         public void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
-                var rcomp = new RenderComponent();
-                _map.SetRenderComponent(i, rcomp);
-                _map.Tiles[i] = new TileWall(rcomp);
+                _map.SetRenderComponent(i, new RenderComponent());
+                _map.Tiles[i] = new TileWall();
             }
         }
 
@@ -300,18 +299,18 @@ namespace Myrmidon.Core.Maps.Generation {
                 if (rng.OneIn(3)) {
                     var rcomp = new RenderComponent("text/default",(byte)'D',"r");
                     _map.SetRenderComponent(pos, rcomp);
-                    _map[pos] = new TileDoor(rcomp, isLocked: false, open: true);
+                    _map[pos] = new TileDoor(isLocked: false, open: true);
                 }
                 else {
                     var rcomp = new RenderComponent("text/default",(byte)'F',"k");
                     _map.SetRenderComponent(pos, rcomp);
-                    _map[pos] = new TileFloor(rcomp);
+                    _map[pos] = new TileFloor();
                 }
             }
             else {
                 var rcomp = new RenderComponent("text/default",(byte)'D',"r");
                 _map.SetRenderComponent(pos, rcomp);
-                _map[pos] = new TileDoor(rcomp, isLocked: false, open: false);
+                _map[pos] = new TileDoor(isLocked: false, open: false);
             }
         }
 
@@ -338,7 +337,7 @@ namespace Myrmidon.Core.Maps.Generation {
                         //var rcomp = new RenderComponent("text/default",(byte)'#',"k");
                         var rcomp = new RenderComponent();
                         _map.SetRenderComponent(pos, rcomp);
-                        _map[pos] = new TileWall(rcomp);
+                        _map[pos] = new TileWall();
 
                         Thread.Sleep(_tileStepWaitMs / 5);
                     }
@@ -366,9 +365,8 @@ namespace Myrmidon.Core.Maps.Generation {
         }
 
         private void Carve(Vec pos) {
-            var rcomp = new RenderComponent();
-            _map.SetRenderComponent(pos, rcomp);
-            _map[pos] = new TileFloor(rcomp);
+            _map.SetRenderComponent(pos, new RenderComponent());
+            _map[pos] = new TileFloor();
             int locationIndex = pos.Y * _map.Width + pos.X;
             _regions[locationIndex] = _currentRegion;
         }

@@ -25,15 +25,15 @@ internal class ScenePanel : GridPanel {
 
     public override void Draw() {
         base.Draw();
-        if (!_gameState.Hectare.IsMapGenInProgress)
-            DrawHectare(_gameState.Hectare);
+        if (_gameState.Zone.GenerationState == Zone.ZoneGenState.Ready)
+            DrawZone(_gameState.Zone, _gameState.Player);
     }
 
-    private void DrawHectare(Hectare hectare) {
+    private void DrawZone(Zone zone, Player player) {
 
-        var map = hectare.Map;
+        var map = zone.Map;
 
-        Vec mapCenter = new Vec(hectare.Player.Position.X, hectare.Player.Position.Y);
+        Vec mapCenter = new Vec(player.Position.X, player.Position.Y);
         Rect viewBounds = new Rect(mapCenter.X-PanelRect.Size.X/2, mapCenter.Y-PanelRect.Size.Y/2, PanelRect.Size.X, PanelRect.Size.Y);
 
         // Paint tiles
@@ -65,9 +65,9 @@ internal class ScenePanel : GridPanel {
         }
 
         // Paint player
-        if (hectare.Player != null) {
-            var gridPos = new Vec(hectare.Player.Position.X - viewBounds.Left, hectare.Player.Position.Y - viewBounds.Top);
-            DrawTile(gridPos, "text/default", hectare.Player.Glyph, "o", "M");
+        if (player != null) {
+            var gridPos = new Vec(player.Position.X - viewBounds.Left, player.Position.Y - viewBounds.Top);
+            DrawTile(gridPos, "text/default", player.Glyph, "o", "M");
         }
     }
 
