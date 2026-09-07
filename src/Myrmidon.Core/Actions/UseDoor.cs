@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Game;
 using Myrmidon.Core.Signals;
 
 namespace Myrmidon.Core.Actions {
@@ -25,7 +24,7 @@ namespace Myrmidon.Core.Actions {
             try {
                 if (Door.IsLocked) {
                     // TODO: Add a way to open a locked door.
-                    context.SignalQueue.Enqueue(new LogSignal(($"{Performer.Name} opened {Door.Name}")));
+                    context.SignalQueue.Enqueue(new LogSignal(($"{Performer.Name} could not open locked door {Door.Name}")));
                 }
                 else if (!Door.IsLocked && !Door.IsOpen) {
                     Door.Open();

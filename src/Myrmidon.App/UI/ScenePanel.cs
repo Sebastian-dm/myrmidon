@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Myrmidon.App.Render;
 using static System.Net.WebRequestMethods;
+using Myrmidon.Core;
+using Myrmidon.Core.Components;
 
 namespace Myrmidon.App.UI;
 
@@ -47,8 +49,9 @@ public class ScenePanel : GridPanel {
 
                 // Todo: Handle visibility and explored state for tiles
 
-                Vec gridPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                DrawTile(gridPos, tile.RenderComponent);
+                Vec viewGridPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
+                RenderComponent renderComponent = map.GetRenderComponent(new Vec(x, y));
+                DrawTile(viewGridPos, renderComponent);
             }
         }
 

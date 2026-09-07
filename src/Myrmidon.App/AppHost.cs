@@ -2,6 +2,8 @@
 using Myrmidon.App.Input;
 using Myrmidon.App.Render;
 using Myrmidon.App.UI;
+
+using Myrmidon.Core;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Game;
 using Myrmidon.Core.Rules;
@@ -22,12 +24,10 @@ public sealed class AppHost : IDisposable {
     public static AppHost Create() {
         var terminal = new TerminalRenderer(80, 30);
 
-        var fovSystem = new FovSystem();
-        var gameState = new GameState(fovSystem);
-        var actionController = new ActionController(gameState, fovSystem);
+        var gameState = new GameState();
+        var actionController = new ActionController(gameState);
         var worldManager = new WorldManager(
             gameState,
-            fovSystem,
             actionController);
 
         worldManager.Update();

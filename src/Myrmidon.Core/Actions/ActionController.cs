@@ -1,6 +1,5 @@
 ﻿using Bramble.Core;
 using Myrmidon.Core.Entities;
-using Myrmidon.Core.Game;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Rules;
 
@@ -38,14 +37,12 @@ namespace Myrmidon.Core.Actions {
         private readonly Queue<IAction> _actionsHistory = new Queue<IAction>(100);
 
         private readonly IGameState _gameState;
-        private readonly IFovSystem _fov;
 
 
 
 
-        public ActionController(IGameState gameState, IFovSystem fov) {
+        public ActionController(IGameState gameState) {
             _gameState = gameState;
-            _fov = fov;
         }
 
 
@@ -81,11 +78,6 @@ namespace Myrmidon.Core.Actions {
 
             // After resolving all actions, switch turns
             IsPlayersTurn = true;
-            
-            // and update the FOV if needed
-            if (!IsPlayersTurn) {
-                _fov.Recompute(_gameState, _gameState.Player.Position);
-            }
         }
 
         public void ResolveNextAction() {

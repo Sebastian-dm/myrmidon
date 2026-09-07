@@ -1,5 +1,4 @@
 ﻿using Bramble.Core;
-using Myrmidon.Core.Game;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Entities;
@@ -11,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Myrmidon.App.Render;
+using Myrmidon.Core;
+using Myrmidon.Core.Game;
 
 namespace Myrmidon.App.UI;
 
@@ -26,8 +27,8 @@ public class StatusPanel : GridPanel {
     public override void Draw() {
         base.Draw();
         FillBackground("black");
-        if (!_gameState.Hectare.IsMapGenInProgress)
-            RenderStatus(_gameState.Hectare.Player);
+        if (_gameState.Zone.GenerationState == Zone.ZoneGenState.Ready)
+            RenderStatus(_gameState.Player);
     }
 
     public void RenderStatus(Player player) {

@@ -1,6 +1,5 @@
 ﻿using Bramble.Core;
 using Myrmidon.Core.Entities;
-using Myrmidon.Core.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -151,7 +150,7 @@ namespace Myrmidon.Core.Actions {
                     item.Position = defender.Position;
 
                     // Now let the MultiSpatialMap know that the Item is visible
-                    _context?.Zone.Map.Add(item);
+                    _context?.Zone.Map.AddEntity(item);
 
                     // Append the item to the deathMessage
                     deathMessage.Append(", " + item.Name);

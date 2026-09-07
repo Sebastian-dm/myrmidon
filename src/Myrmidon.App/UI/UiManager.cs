@@ -1,6 +1,6 @@
 using Bramble.Core;
 using Myrmidon.App.Render;
-using Myrmidon.Core.Game;
+using Myrmidon.Core;
 using Myrmidon.Core.Signals;
 
 namespace Myrmidon.App.UI;

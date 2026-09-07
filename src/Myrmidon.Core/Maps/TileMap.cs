@@ -148,7 +148,7 @@ namespace Myrmidon.Core.Maps {
 
 
         // Adds an Entity to the MultiSpatialMap
-        public void Add(Actor entity) {
+        public void AddEntity(Actor entity) {
             //if (!Entities.Add(entity, entity.Position))
             //    throw new Exception("Failed to add entity to map");
 

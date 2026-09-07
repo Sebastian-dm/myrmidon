@@ -25,7 +25,8 @@ namespace Myrmidon.Core.Game {
         public ZoneGenState GenerationState { get; set; } = ZoneGenState.NotStarted;
         public enum ZoneGenState {
             NotStarted,
-            GeneratingTerrain,
+            Terraforming,
+            Unpopulated,
             Populating,
             Ready
         }

@@ -29,7 +29,6 @@ namespace Myrmidon.Core.Maps.Tiles {
 
         //closes a door
         public void Close() {
-            //RenderComponent.TextureIndex = (byte)'D';
             IsOpen = false;
             IsBlockingLos = true;
             IsWalkable = false;
@@ -40,7 +39,6 @@ namespace Myrmidon.Core.Maps.Tiles {
             IsOpen = true;
             IsBlockingLos = false;
             IsWalkable = true;
-            //RenderComponent.TextureIndex = (byte)'D';
         }
     }
 }

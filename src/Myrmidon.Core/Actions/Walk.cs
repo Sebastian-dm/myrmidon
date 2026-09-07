@@ -8,7 +8,6 @@ using Bramble.Core;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Game;
 
 namespace Myrmidon.Core.Actions {
     public class WalkAction : IAction {
