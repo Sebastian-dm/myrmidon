@@ -9,20 +9,19 @@ namespace Myrmidon.App.UI;
 
 public class ProfilingPanel : IPanel {
     
-    private readonly Terminal _terminal;
-    public FpsCounter? FpsCounter;
+    private readonly TerminalRenderer _terminal;
+    public FpsCounter FpsCounter;
     public Vec Location;
 
-    private readonly int _padding;
+    private readonly int _padding = 4;
 
-    public ProfilingPanel(Terminal terminal, Vec location) {
+    public ProfilingPanel(TerminalRenderer terminal, Vec location, FpsCounter fpsCounter) {
         _terminal = terminal;
         Location = location;
+        FpsCounter = fpsCounter;
     }
 
     public void Draw() {
-        if (FpsCounter == null)
-            return;
         DrawFpsText();
     }
 

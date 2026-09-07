@@ -10,7 +10,7 @@ using Myrmidon.Core.Maps.Tiles;
 
 namespace Myrmidon.App.Render;
 
-public class Terminal : IDisposable {
+public class TerminalRenderer : IDisposable {
     
     
     public IntPtr Window => _window;
@@ -20,26 +20,25 @@ public class Terminal : IDisposable {
 
     private static IntPtr _window;
     private static IntPtr _renderer;
-    private FpsCounter _fpsCounter;
 
     private int _tileWidth = 16;
     private int _tileHeight = 24;
-    private int _windowWidth;
-    private int _windowHeight;
+
+    public int WindowWidtPix { get; private set;  }
+    public int WindowHeightPix { get; private set;  }
+
+    public int WindowWidthTiles => WindowWidtPix / _tileWidth;
+    public int WindowHeightTiles => WindowHeightPix / _tileHeight;
 
 
-    private List<IPanel> _panels;
-    
-    
-    public Terminal(FpsCounter fpsCounter,  int widthTiles, int heightTiles) {
-        _fpsCounter = fpsCounter;
+    public TerminalRenderer(int widthTiles, int heightTiles) {
         if (!SDL.Init(SDL.InitFlags.Video))
             throw new InvalidOperationException("Failed to initialize SDL.");
         
-        _windowWidth = widthTiles*_tileWidth;
-        _windowHeight = heightTiles*_tileHeight;
+        WindowWidtPix = widthTiles*_tileWidth;
+        WindowHeightPix = heightTiles*_tileHeight;
 
-        _window = SDL.CreateWindow("Myrmidon", _windowWidth, _windowHeight, SDL.WindowFlags.Resizable);
+        _window = SDL.CreateWindow("Myrmidon", WindowWidtPix, WindowHeightPix, SDL.WindowFlags.Resizable);
 
         //Check renderers available
         var renderDrivers = new List<string>();
@@ -50,40 +49,46 @@ public class Terminal : IDisposable {
         }
 
         // Create renderer with Direct3D if available, otherwise use default
-        _renderer = SDL.CreateRenderer(_window, renderDrivers.Contains("opengl") ? "opengl" : null);
+        _renderer = SDL.CreateRenderer(_window, null); //renderDrivers.Contains("opengl") ? "opengl" : null);
         if (_renderer == IntPtr.Zero)
             throw new InvalidOperationException("Failed to create SDL renderer.");
         else
             SDL.Log("Chosen renderer: " + SDL.GetRendererName(_renderer));
         
-        SDL.SetRenderLogicalPresentation(_renderer, _windowWidth, _windowHeight, SDL.RendererLogicalPresentation.Letterbox);
+        SDL.SetRenderLogicalPresentation(_renderer, WindowWidtPix, WindowHeightPix, SDL.RendererLogicalPresentation.Letterbox);
         SDL.SetRenderVSync(_renderer, 1);
 
 
         TerminalColor.LoadColorsFromFile("qud");
-
-        _panels = new List<IPanel>();
     }
 
-    public void Render() {
-        // Clear
+    public void BeginFrame() {
         SetRenderDrawColor("k");
         SDL.RenderClear(_renderer);
+    }
 
-        foreach (var panel in _panels) {
-            panel.Draw();
-        }
+    public void Present() {
         SDL.RenderPresent(_renderer);
     }
-
-    public void RegisterPanel(IPanel panel) {
-        _panels.Add(panel);
-    }
-    
 
     public void SetRenderDrawColor(string color, byte? alpha = null) {
         Color c = TerminalColor.ColFromString(color);
         SDL.SetRenderDrawColor(_renderer, c.R, c.G, c.B, alpha ?? c.A);
+    }
+
+    public void FillRect(Rect rect, string color) {
+        var background = TerminalColor.ColFromString(color);
+
+        SDL.SetRenderDrawColor(
+            Renderer,
+            background.R,
+            background.G,
+            background.B,
+            background.A);
+
+        SDL.RenderFillRect(
+            Renderer,
+            GetPixelFRect(rect));
     }
 
 
@@ -205,17 +210,6 @@ public class Terminal : IDisposable {
             W = rect.Width * _tileWidth,
             H = rect.Height * _tileHeight
         };
-    }
-    
-    
-
-    private void DrawFpsText(float x, float y, int pad) {
-        string fpsText = $"FPS: {_fpsCounter.Fps:F1}";
-        SetRenderDrawColor("k", 0x55);
-        var rect = new SDL.FRect { X = x, Y = y, W = 2*pad+fpsText.Length*8-1, H = 2*pad+7 };
-        SDL.RenderFillRect(_renderer, rect);
-        SetRenderDrawColor("Y");
-        SDL.RenderDebugText(_renderer, x+pad, y+pad, fpsText);
     }
 
 

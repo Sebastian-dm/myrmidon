@@ -15,18 +15,19 @@ using Myrmidon.App.Render;
 namespace Myrmidon.App.UI;
 
 
-internal class StatusPanel : GridPanel {
+public class StatusPanel : GridPanel {
     
-    private GameState _gameState;
+    private IGameState _gameState;
 
-    public StatusPanel(Terminal terminal, Rect rect, GameState gameState) : base(terminal, rect) {
+    public StatusPanel(TerminalRenderer terminal, Rect rect, IGameState gameState) : base(terminal, rect) {
         _gameState = gameState;
     }
 
     public override void Draw() {
         base.Draw();
-        if (_gameState.Zone.GenerationState == Zone.ZoneGenState.Ready)
-            RenderStatus(_gameState.Player);
+        FillBackground("black");
+        if (!_gameState.Hectare.IsMapGenInProgress)
+            RenderStatus(_gameState.Hectare.Player);
     }
 
     public void RenderStatus(Player player) {

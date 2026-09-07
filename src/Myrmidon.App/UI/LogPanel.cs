@@ -9,7 +9,7 @@ public class LogPanel : GridPanel {
     private List<string> _messages = new List<string>();
 
 
-    public LogPanel(Terminal terminal, Rect rect) : base(terminal, rect) {
+    public LogPanel(TerminalRenderer terminal, Rect rect) : base(terminal, rect) {
         
     }
     
@@ -19,6 +19,7 @@ public class LogPanel : GridPanel {
 
     public override void Draw() {
         base.Draw();
+        FillBackground("black");
         if (_messages.Count > 0)
             RenderLog();
     }

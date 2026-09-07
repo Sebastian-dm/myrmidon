@@ -138,7 +138,7 @@ public class TextureSheet : IDisposable {
         SDL.DestroySurface(foregroundSrf);
         SDL.DestroySurface(accentSrf);
 
-        if (foregroundTexture == null || accentTexture == null)
+        if (foregroundTexture == IntPtr.Zero || accentTexture == IntPtr.Zero)
             throw new Exception(SDL.GetError());
 
         return ((nint)foregroundTexture, (nint)accentTexture);
