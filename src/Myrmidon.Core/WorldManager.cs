@@ -1,7 +1,7 @@
 ﻿using Bramble.Core;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
-using Myrmidon.Core.Rules;
+using Myrmidon.Core.Systems;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Utilities.Graphics;
 using Myrmidon.Core.Maps.Generation;
@@ -32,7 +32,7 @@ namespace Myrmidon.Core {
                 return;
             }
 
-            FovSystem.Recompute(GameState, GameState.Player.Position);
+            FovSystem.Recompute(GameState.Zone.Map, GameState.Player.Position);
 
         }
 

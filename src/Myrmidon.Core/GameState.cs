@@ -1,7 +1,7 @@
 ﻿using Myrmidon.Core.Actions;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Game;
-using Myrmidon.Core.Rules;
+using Myrmidon.Core.Systems;
 using Myrmidon.Core.Signals;
 using System;
 using System.Collections.Generic;

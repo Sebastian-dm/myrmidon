@@ -133,7 +133,7 @@ public class TerminalRenderer : IDisposable {
     }
 
     public void DrawTile(Vec location, string textureSheetName, byte textureIndex,
-    string foregroundColor, string accentColor, string backgroundColor = "") {
+    string foregroundColor, string accentColor, string backgroundColor = "", float alpha = 1f) {
 
         TextureSheet textureSheet = _textureSheetManager.GetTextureSheet(textureSheetName, Renderer);
         var srcFRect = textureSheet.GetRect(textureIndex);
@@ -148,7 +148,7 @@ public class TerminalRenderer : IDisposable {
                 background.R,
                 background.G,
                 background.B,
-                background.A);
+                (byte)alpha);
             SDL.RenderFillRect(Renderer, dstFRect);
         }
 
@@ -159,13 +159,16 @@ public class TerminalRenderer : IDisposable {
             foreground.R,
             foreground.G,
             foreground.B);
-
+        if (alpha < 1f)
+            SDL.SetTextureAlphaModFloat(textureSheet.ForegroundTexture,  alpha);
         SDL.RenderTexture(
             Renderer,
             textureSheet.ForegroundTexture,
             srcFRect,
             dstFRect);
-
+        if (alpha < 1f)
+            SDL.SetTextureAlphaModFloat(textureSheet.ForegroundTexture,  1f);
+        
         // 3. Accent
         Color accent = TerminalColor.ColFromString(accentColor);
         SDL.SetTextureColorMod(
@@ -173,13 +176,15 @@ public class TerminalRenderer : IDisposable {
             accent.R,
             accent.G,
             accent.B);
-
+        if (alpha < 1f)
+            SDL.SetTextureAlphaModFloat(textureSheet.AccentTexture,  alpha);
         SDL.RenderTexture(
             Renderer,
             textureSheet.AccentTexture,
             srcFRect,
             dstFRect);
-
+        if (alpha < 1f)
+            SDL.SetTextureAlphaModFloat(textureSheet.ForegroundTexture,  1f);
     }
 
 

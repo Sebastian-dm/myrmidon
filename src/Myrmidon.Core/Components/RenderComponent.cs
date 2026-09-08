@@ -18,7 +18,7 @@ public class RenderComponent {
     
 
     public int Layer { get; set; } = 0;
-    public bool Visible { get; set; } = true;
+    public float Dimfactor { get; set; } = 0f;
     public bool Explored { get; set; } = false;
     public bool Dirty { get; set; } = false;
 
@@ -44,7 +44,6 @@ public class RenderComponent {
     public void SetVariant(byte n) {
         VariantOffset = n;
         TextureIndex = (byte)(_textureIndex + n);
-        var a = 1;
     }
 
 

@@ -35,23 +35,27 @@ public class ScenePanel : GridPanel {
 
         var map = zone.Map;
 
-        Vec mapCenter = new Vec(player.Position.X, player.Position.Y);
-        Rect viewBounds = new Rect(mapCenter.X-PanelRect.Size.X/2, mapCenter.Y-PanelRect.Size.Y/2, PanelRect.Size.X, PanelRect.Size.Y);
+        Vec drawCenter = new Vec(player.Position.X, player.Position.Y);
+        Rect viewBounds = new Rect(
+            drawCenter.X - PanelRect.Size.X/2,
+            drawCenter.Y - PanelRect.Size.Y/2,
+            PanelRect.Size.X,
+            PanelRect.Size.Y
+        );
 
         // Paint tiles
         for (int y = viewBounds.Top; y < viewBounds.Bottom; y++) {
             for (int x = viewBounds.Left; x < viewBounds.Right; x++) {
                 if (!IsInMapBounds(x, y, map)) continue;
                 if (!IsInViewBounds(x, y, viewBounds)) continue;
-
-                Tile? tile = map.GetTileAt<Tile>(x, y);
-                if (tile == null) continue;
-
-                // Todo: Handle visibility and explored state for tiles
-
-                Vec viewGridPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                RenderComponent renderComponent = map.GetRenderComponent(new Vec(x, y));
-                DrawTile(viewGridPos, renderComponent);
+                
+                Vec mapPos = new Vec(x, y);
+                Vec panelPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
+                RenderComponent renderComp = map.GetRenderComponent(mapPos);
+                
+                if (renderComp == null || !renderComp.Explored) continue;
+                
+                DrawTile(panelPos, renderComp);
             }
         }
 
