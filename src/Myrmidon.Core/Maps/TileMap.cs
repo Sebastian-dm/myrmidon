@@ -51,6 +51,9 @@ namespace Myrmidon.Core.Maps {
         public RenderComponent GetRenderComponent(Vec location) {
             return RenderComponents[location.Y * Width + location.X];
         }
+        public RenderComponent GetRenderComponent(int x, int y) {
+            return RenderComponents[y * Width + x];
+        }
 
         public void SetRenderComponent(Vec location, RenderComponent renderComponent) {
             RenderComponents[location.Y * Width + location.X] = renderComponent;
@@ -107,6 +110,21 @@ namespace Myrmidon.Core.Maps {
             return GetTileAt<T>(location.X, location.Y);
         }
 
+        public T?[] GetOrthoAdjacentTiles<T>(Vec loc) where T : Tile {
+            int w = Width;
+            int h = Height;
+
+            T[] result = [
+                (               loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X  , loc.Y-1),
+                (loc.X >= w-1               ) ? null : GetTileAt<T>(loc.X+1, loc.Y  ),
+                (               loc.Y >= h-1) ? null : GetTileAt<T>(loc.X  , loc.Y+1),
+                (loc.X <= 0                 ) ? null : GetTileAt<T>(loc.X-1, loc.Y  ),
+            ];
+            return result;
+        }
+        public T?[] GetOrthoAdjacentTiles<T>(int x, int y) where T : Tile {
+            return GetOrthoAdjacentTiles<T>(new Vec(x, y));
+        }
 
         // Checks if a specific type of tile at a specified location is on the map. If it exists, returns that Tile.
         public T?[] GetAdjacentTiles<T>(Vec loc) where T : Tile {

@@ -8,6 +8,7 @@ public class RenderComponent {
     public string TextureSheetName { get; set; } = "text/default";
     
     public byte TextureIndex { get; set; } = (byte)'.';
+    private byte _textureIndex { get; set; } = (byte)'.';
     public int VariantOffset { get; set; } = 0;
     public int AnimationOffset { get; set; } = 0;
 
@@ -29,9 +30,22 @@ public class RenderComponent {
         string textureSheetName, byte textureIndex,  string colorBase, string colorAccent = "", string colorBackground = "") {
         TextureSheetName = textureSheetName;
         TextureIndex = textureIndex;
+        _textureIndex = textureIndex;
         ColorBase = colorBase;
         ColorAccent = colorAccent;
         ColorBackground = colorBackground;
     }
-    
+
+    public void ResetVariant() {
+        VariantOffset = 0;
+        TextureIndex = _textureIndex;
+    }
+
+    public void SetVariant(byte n) {
+        VariantOffset = n;
+        TextureIndex = (byte)(_textureIndex + n);
+        var a = 1;
+    }
+
+
 }
