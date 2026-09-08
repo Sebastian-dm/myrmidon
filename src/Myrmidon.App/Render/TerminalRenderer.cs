@@ -59,7 +59,7 @@ public class TerminalRenderer : IDisposable {
         SDL.SetRenderVSync(_renderer, 1);
 
 
-        TerminalColor.LoadColorsFromFile("qud");
+        TerminalColor.LoadColorsFromFile("lostCentury");
     }
 
     public void BeginFrame() {

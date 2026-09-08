@@ -322,8 +322,8 @@ namespace Myrmidon.Core.Maps.Generation {
                         if (exits != 1) continue;
 
                         done = false;
-                        var rcomp = new RenderComponent("text/default",(byte)'#',"K");
-                        _map.SetRenderComponent(pos, rcomp);
+                        
+                        _map.SetRenderComponent(pos, new RenderComponent("tile/wall", (byte)0, "K"));
                         _map[pos] = new TileWall();
 
                         Thread.Sleep(_tileStepWaitMs / 5);
