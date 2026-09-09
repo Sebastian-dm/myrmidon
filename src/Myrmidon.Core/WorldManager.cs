@@ -21,7 +21,7 @@ namespace Myrmidon.Core {
 
         public WorldManager(IGameState gamestate, ActionController actionController) {
             GameState = gamestate;
-            FovSystem = new FovSystem();
+            FovSystem = new FovSystemOctant();
             
             ActionController =  actionController;
         }
@@ -31,7 +31,9 @@ namespace Myrmidon.Core {
                 GenerateZone(GameState.Zone);
                 return;
             }
-
+            
+            
+            
             FovSystem.Recompute(GameState.Zone.Map, GameState.Player.Position);
 
         }

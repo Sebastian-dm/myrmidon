@@ -18,12 +18,12 @@ namespace Myrmidon.Core.Systems {
     }
 
 
-    public class FovSystem : IFovSystem {
+    public class FovSystemRadial : IFovSystem {
 
         private int _range;
         private float _rangeSqrt;
 
-        public FovSystem(int range = 8) {
+        public FovSystemRadial(int range = 8) {
             _range = range;
             _rangeSqrt = _range * _range;
         }
@@ -31,7 +31,13 @@ namespace Myrmidon.Core.Systems {
 
         // Recompute the visible area based on a given location.
         public void Recompute(TileMap map, Vec origin) {
-
+            ComputeRadialFov(map, origin);
+        }
+        
+        
+        // Computes the visibility and dimness values based on a simple radius
+        private void ComputeRadialFov(TileMap map, Vec origin) {
+            
             int margin = 1;
             int left = Math.Max(0, origin.X - _range - margin);
             int top = Math.Max(0, origin.Y - _range  - margin);
@@ -41,15 +47,7 @@ namespace Myrmidon.Core.Systems {
             // Update tile visiblity
             for (int x = left; x < right; x++) {
                 for (int y = top; y < bottom; y++) {
-                    Vec loc = new Vec(x, y);
-                    var renderComp = map.GetRenderComponent(loc);
-                    
-                    int distSqrt = (loc - origin).LengthSquared;
-                    if (distSqrt <= _rangeSqrt)
-                        renderComp.Explored = true;
-
-                    float dim = 1f - (float)Math.Pow(distSqrt / _rangeSqrt, 1.0f);
-                    renderComp.Dimfactor = Math.Clamp(dim, 0.1f, 1);
+                    SetRenderDimFromDistance(map, origin, new Vec(x, y));
                 }
             }
 
@@ -62,6 +60,18 @@ namespace Myrmidon.Core.Systems {
                     entity.isVisible = false;
                 }
             }
+        }
+
+        private void SetRenderDimFromDistance(TileMap map, Vec origin, Vec target) {
+            var renderComp = map.GetRenderComponent(target);
+                    
+            int distSqrt = (target - origin).LengthSquared;
+            if (distSqrt <= _rangeSqrt)
+                renderComp.Explored = true;
+
+            float dim = 1f - (float)Math.Pow(distSqrt / _rangeSqrt, 1.0f);
+            renderComp.Dimfactor = Math.Clamp(dim, 0.1f, 1);
+            
         }
     }
 }
