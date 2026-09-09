@@ -10,7 +10,7 @@ using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Geometry;
 
-namespace Myrmidon.Core.Rules {
+namespace Myrmidon.Core.Systems {
 
     internal struct Path {
         public readonly Vec startDirection; // Direction of first step along this path.

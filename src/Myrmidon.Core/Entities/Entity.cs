@@ -17,7 +17,7 @@ namespace Myrmidon.Core.Entities {
         public uint ID { get; private set; } // stores the entity's unique identification number
         public string Name { get; set; } // stores the entity's name
 
-        public int Glyph { get; set; } // the tile's glyph
+        public byte Glyph { get; set; } // the tile's glyph
         public Color Foreground { get; set; } // the tile's foreground colour
         public Color Background { get; set; } // the tile's background colour
         public bool IsDirty { get; set; } // indicates if the entity needs to be redrawn
@@ -42,12 +42,12 @@ namespace Myrmidon.Core.Entities {
         internal bool _isVisible = false;
         internal Color _foregroundVisible;
         internal Color _backgroundVisible;
-        internal int _glyphVisible;
+        internal byte _glyphVisible;
         internal Color _foregroundHidden;
         internal Color _backgroundHidden;
-        internal int _glyphHidden;
+        internal byte _glyphHidden;
 
-        protected Entity(Color foreground, Color background, int glyph, int width, int height) {
+        protected Entity(Color foreground, Color background, byte glyph, int width, int height) {
 
             // Set local variables
             _foregroundVisible = foreground;

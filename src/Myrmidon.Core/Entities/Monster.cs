@@ -9,7 +9,7 @@ namespace Myrmidon.Core.Entities {
 
         private Random Rng = new Random();
 
-        public Monster(Color foreground, Color background, int glyph) : base(foreground, background, glyph) {
+        public Monster(Color foreground, Color background, byte glyph) : base(foreground, background, glyph) {
             Rng = new Random();
 
             //number of loot to spawn for monster

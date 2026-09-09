@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Bramble.Core;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Actions;
-using Myrmidon.Core.Game;
 
 namespace Myrmidon.Core.Actions {
     internal class PickupAction : IAction {
@@ -26,7 +25,7 @@ namespace Myrmidon.Core.Actions {
             if (Performer.Position.IsAdjacentTo(Item.Position)) {
                 Performer.Inventory.Add(Item);
                 //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
-                context.World.Map.Remove(Item);
+                context.Zone.Map.Remove(Item);
                 return new ActionResult(succeeded: true);
             }
             else {

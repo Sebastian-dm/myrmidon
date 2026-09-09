@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Myrmidon.Core.Components;
 using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Maps.Tiles {
@@ -11,7 +11,7 @@ namespace Myrmidon.Core.Maps.Tiles {
         // and have a dark gray foreground and a transparent background
         // represented by the . symbol
         public TileTunnel(bool walkable = true, bool blocksLOS = false) :
-            base(foreground: Color.DarkGray, background: Color.Transparent, glyph: 0, walkable, blocksLOS) {
+            base(walkable, blocksLOS) {
             Name = "Floor";
         }
     }

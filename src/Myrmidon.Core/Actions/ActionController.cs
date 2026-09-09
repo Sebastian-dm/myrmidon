@@ -1,8 +1,7 @@
 ﻿using Bramble.Core;
 using Myrmidon.Core.Entities;
-using Myrmidon.Core.Game;
 using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Rules;
+using Myrmidon.Core.Systems;
 
 using System;
 using System.Collections.Generic;
@@ -38,14 +37,12 @@ namespace Myrmidon.Core.Actions {
         private readonly Queue<IAction> _actionsHistory = new Queue<IAction>(100);
 
         private readonly IGameState _gameState;
-        private readonly IFovSystem _fov;
 
 
 
 
-        public ActionController(IGameState gameState, IFovSystem fov) {
+        public ActionController(IGameState gameState) {
             _gameState = gameState;
-            _fov = fov;
         }
 
 
@@ -53,25 +50,25 @@ namespace Myrmidon.Core.Actions {
 
         public void AddFromPlayerInput(InputAction inputAction) {
             var action = CreateActionFromInput(inputAction);
-            if (action != null) {
+            if (action != null && CanAcceptInput) {
                 Add(action);
+                IsPlayersTurn = false;
             }
             else if (inputAction == InputAction.None) {
                 // No action to add
                 return;
             }
             else {
-                throw new ArgumentException($"Unknown input action: {inputAction}");
+                //throw new ArgumentException($"Unknown input action: {inputAction}");
+                return;
             }
         }
 
         public void Add(IAction action) {
-            if (CanAcceptInput) {
-                if (action.IsImmediate)
-                    _reactionQueue.Enqueue(action);
-                else
-                    _actionQueue.Enqueue(action);
-            }
+            if (action.IsImmediate)
+                _reactionQueue.Enqueue(action);
+            else
+                _actionQueue.Enqueue(action);
         }
 
         public void ResolveAllActions() {
@@ -80,11 +77,7 @@ namespace Myrmidon.Core.Actions {
             }
 
             // After resolving all actions, switch turns
-            // and update the FOV if needed
-            IsPlayersTurn = !IsPlayersTurn;
-            if (!IsPlayersTurn) {
-                _fov.Recompute(_gameState, _gameState.World.Player.Position);
-            }
+            IsPlayersTurn = true;
         }
 
         public void ResolveNextAction() {
@@ -111,18 +104,22 @@ namespace Myrmidon.Core.Actions {
 
         private IAction? CreateActionFromInput(InputAction command) {
             return command switch {
-                InputAction.MovePlayerUp => new WalkAction(_gameState.World.Player, new Vec(0, -1)),
-                InputAction.MovePlayerDown => new WalkAction(_gameState.World.Player, new Vec(0, 1)),
-                InputAction.MovePlayerLeft => new WalkAction(_gameState.World.Player, new Vec(-1, 0)),
-                InputAction.MovePlayerRight => new WalkAction(_gameState.World.Player, new Vec(1, 0)),
-                InputAction.SkipPlayerTurn => new SkipAction(_gameState.World.Player),
+                InputAction.MovePlayerN => new WalkAction(_gameState.Player, new Vec(0, -1)),
+                InputAction.MovePlayerNE => new WalkAction(_gameState.Player, new Vec(1, -1)),
+                InputAction.MovePlayerS => new WalkAction(_gameState.Player, new Vec(0, 1)),
+                InputAction.MovePlayerSE => new WalkAction(_gameState.Player, new Vec(1, 1)),
+                InputAction.MovePlayerW => new WalkAction(_gameState.Player, new Vec(-1, 0)),
+                InputAction.MovePlayerSW => new WalkAction(_gameState.Player, new Vec(-1, 1)),
+                InputAction.MovePlayerE => new WalkAction(_gameState.Player, new Vec(1, 0)),
+                InputAction.MovePlayerNW => new WalkAction(_gameState.Player, new Vec(-1, -1)),
+                InputAction.SkipPlayerTurn => new SkipAction(_gameState.Player),
                 _ => null
             };
         }
 
 
         public void CollectEntityActions() {
-            foreach (Actor actor in _gameState.World.Entities.Items) {
+            foreach (Actor actor in _gameState.Zone.Entities.Items) {
                 _actionQueue.Enqueue(actor.GetAction());
             }
         }

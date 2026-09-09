@@ -1,45 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\Default.json" />
+    <Compile Remove="Assets\**" />
+    <EmbeddedResource Remove="Assets\**" />
+    <None Remove="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Images\Default.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Images\Default.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Default.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <PackageReference Include="SDL3-CS" Version="3.4.14.1" />
+    <PackageReference Include="SDL3-CS.Linux" Version="3.4.14.1" />
+    <PackageReference Include="SDL3-CS.Windows" Version="3.4.14.1" />
+    <PackageReference Include="System.Text.Json" Version="9.0.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Text.Json" Version="9.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\Bramble.Core\Bramble.Core.csproj" />
     <ProjectReference Include="..\Myrmidon.Core\Myrmidon.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Bramble.Core">
-      <HintPath>..\External\Bramble.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Malison.Core">
-      <HintPath>..\External\Malison.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Malison.WinForms">
-      <HintPath>..\External\Malison.WinForms.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
