@@ -2,7 +2,7 @@
 using Myrmidon.App.Input;
 using Myrmidon.App.Render;
 using Myrmidon.App.UI;
-using Myrmidon.Core.Game;
+using Myrmidon.Core;
 using SDL3;
 
 namespace Myrmidon.App;
@@ -39,11 +39,12 @@ internal sealed class GameLoop {
             var remainder = (uint)_fpsCounter.GetTickRemainderMs();
             SDL.Delay(remainder);
         }
-
         _inputController.Quit -= OnQuit;
     }
 
+
     private void Tick() {
+
         PollInput();
 
         if (!_running)
@@ -53,6 +54,7 @@ internal sealed class GameLoop {
         Render();
     }
 
+
     private void PollInput() {
         _inputController.PollInput();
 
@@ -61,23 +63,20 @@ internal sealed class GameLoop {
         }
     }
 
+
     private void UpdateGameState() {
         _worldManager.ActionController.ResolveAllActions();
 
-        _signalDispatcher.ProcessSignals();
-
-        var gameState = _worldManager.GameState;
-
-        gameState.FovSystem.Recompute(
-            gameState,
-            gameState.Hectare.Player.Position);
+        _signalDispatcher.DispatchAllQueuedSignals();
 
         _worldManager.Update();
     }
 
+
     private void Render() {
         _uiManager.Render();
     }
+
 
     private void OnQuit(object? sender, EventArgs e) {
         _running = false;

@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Myrmidon.App.Render;
 using static System.Net.WebRequestMethods;
+using Myrmidon.Core;
+using Myrmidon.Core.Components;
 
 namespace Myrmidon.App.UI;
 
@@ -25,36 +27,40 @@ public class ScenePanel : GridPanel {
 
     public override void Draw() {
         base.Draw();
-        if (!_gameState.Hectare.IsMapGenInProgress)
-            DrawHectare(_gameState.Hectare);
+        if (_gameState.Zone.GenerationState == Zone.ZoneGenState.Ready)
+            DrawZone(_gameState.Zone, _gameState.Player);
     }
 
-    private void DrawHectare(Hectare hectare) {
+    private void DrawZone(Zone zone, Player player) {
 
-        var map = hectare.Map;
+        var map = zone.Map;
 
-        Vec mapCenter = new Vec(hectare.Player.Position.X, hectare.Player.Position.Y);
-        Rect viewBounds = new Rect(mapCenter.X-PanelRect.Size.X/2, mapCenter.Y-PanelRect.Size.Y/2, PanelRect.Size.X, PanelRect.Size.Y);
+        Vec drawCenter = new Vec(player.Position.X, player.Position.Y);
+        Rect viewBounds = new Rect(
+            drawCenter.X - PanelRect.Size.X/2,
+            drawCenter.Y - PanelRect.Size.Y/2,
+            PanelRect.Size.X,
+            PanelRect.Size.Y
+        );
 
         // Paint tiles
         for (int y = viewBounds.Top; y < viewBounds.Bottom; y++) {
             for (int x = viewBounds.Left; x < viewBounds.Right; x++) {
                 if (!IsInMapBounds(x, y, map)) continue;
-
-                Tile? tile = map.GetTileAt<Tile>(x, y);
-                if (tile == null) continue;
-
-                // Todo: Handle visibility and explored state for tiles
-
-                Vec gridPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                DrawTile(gridPos, "text/default", tile.Glyph, "g", "M");
-
+                if (!IsInViewBounds(x, y, viewBounds)) continue;
+                
+                Vec mapPos = new Vec(x, y);
+                Vec panelPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
+                RenderComponent renderComp = map.GetRenderComponent(mapPos);
+                
+                if (renderComp == null || !renderComp.Explored) continue;
+                
+                DrawTile(panelPos, renderComp);
             }
         }
 
         //Paint entities
         foreach (var entity in map.Entities.Items) {
-
             if (entity is Actor actor) {
                 if (!IsInMapBounds(actor.Position.X, actor.Position.Y, map)) continue;
                 if (!IsInViewBounds(actor.Position.X, actor.Position.Y, viewBounds)) continue;
@@ -68,9 +74,9 @@ public class ScenePanel : GridPanel {
         }
 
         // Paint player
-        if (hectare.Player != null) {
-            var gridPos = new Vec(hectare.Player.Position.X - viewBounds.Left, hectare.Player.Position.Y - viewBounds.Top);
-            DrawTile(gridPos, "text/default", hectare.Player.Glyph, "o", "M");
+        if (player != null) {
+            var gridPos = new Vec(player.Position.X - viewBounds.Left, player.Position.Y - viewBounds.Top);
+            DrawTile(gridPos, "text/default", player.Glyph, "o", "M");
         }
     }
 

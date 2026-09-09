@@ -13,7 +13,7 @@ public class SignalDispatcher
         _handlers = handlers;
     }
 
-    public void ProcessSignals()
+    public void DispatchAllQueuedSignals()
     {
         while (_messageQueue.TryDequeue(out var message))
         {

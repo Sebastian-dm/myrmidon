@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Myrmidon.Core.Game;
-
 namespace Myrmidon.Core.Actions {
     public interface IAction {
 

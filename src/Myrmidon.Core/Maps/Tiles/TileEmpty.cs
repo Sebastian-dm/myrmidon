@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Myrmidon.Core.Components;
 using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Maps.Tiles {
@@ -8,7 +8,7 @@ namespace Myrmidon.Core.Maps.Tiles {
     public class TileEmpty : Tile {
 
         public TileEmpty(bool blocksMovement = true, bool blocksLOS = true) :
-            base(foreground: Color.DarkGray, background: Color.Transparent, glyph: 0, blocksMovement, blocksLOS) {
+            base(blocksMovement, blocksLOS) {
             Name = "Empty";
         }
     }

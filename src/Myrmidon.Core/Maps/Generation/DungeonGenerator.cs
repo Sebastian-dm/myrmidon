@@ -5,8 +5,10 @@ using System.Reflection;
 using System.Linq;
 
 using Bramble.Core;
+using Myrmidon.Core.Components;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Random;
+using Myrmidon.Core.Systems;
 
 /// The random dungeon generator.
 /// This dungeon generator is an implementation of the Hauberk dungeon Generator made by Robert Nystrom
@@ -74,7 +76,7 @@ namespace Myrmidon.Core.Maps.Generation {
             FillSpacesWithMazes();
             ConnectRegions();
             RemoveDeadEnds();
-            RefineWallGlyphs();
+            TextureVariationSystem.RefineTileAdjacencyConnections<TileWall>(map);
             //_map.Rooms.ForEach(onDecorateRoom);
 
             return _map;
@@ -85,21 +87,9 @@ namespace Myrmidon.Core.Maps.Generation {
         private void onDecorateRoom(Rect room) { }
 
 
-        public void RefineWallGlyphs() {
-            for (int y = 0; y < _map.Height; y++) {
-                for (int x = 0; x < _map.Width; x++) {
-                    Tile tileAtLocation = _map.GetTileAt<Tile>(x,y);
-                    if (tileAtLocation is TileWall) {
-                        Tile[] neighborTiles = _map.GetAdjacentTiles<Tile>(x,y);
-                        ((TileWall)tileAtLocation).RefineTileGlyph(neighborTiles);
-                    }
-                }
-            }
-        }
-
-
         public void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
+                _map.SetRenderComponent(i, new RenderComponent("tile/wall",(byte)0,"K"));
                 _map.Tiles[i] = new TileWall();
             }
         }
@@ -294,9 +284,20 @@ namespace Myrmidon.Core.Maps.Generation {
 
         private void LinkRegions(Vec pos) {
             if (rng.OneIn(4)) {
-                _map[pos] = rng.OneIn(3) ? new TileDoor(isLocked: false, open: true) : new TileFloor();
+                if (rng.OneIn(3)) {
+                    var rcomp = new RenderComponent("text/default",(byte)'D',"K");
+                    _map.SetRenderComponent(pos, rcomp);
+                    _map[pos] = new TileDoor(isLocked: false, open: true);
+                }
+                else {
+                    var rcomp = new RenderComponent("text/default",(byte)' ',"K");
+                    _map.SetRenderComponent(pos, rcomp);
+                    _map[pos] = new TileFloor();
+                }
             }
             else {
+                var rcomp = new RenderComponent("text/default",(byte)'D',"B");
+                _map.SetRenderComponent(pos, rcomp);
                 _map[pos] = new TileDoor(isLocked: false, open: false);
             }
         }
@@ -321,6 +322,8 @@ namespace Myrmidon.Core.Maps.Generation {
                         if (exits != 1) continue;
 
                         done = false;
+                        
+                        _map.SetRenderComponent(pos, new RenderComponent("tile/wall", (byte)0, "K"));
                         _map[pos] = new TileWall();
 
                         Thread.Sleep(_tileStepWaitMs / 5);
@@ -348,9 +351,10 @@ namespace Myrmidon.Core.Maps.Generation {
             _currentRegion++;
         }
 
-        private void Carve(Vec location) {
-            _map[location] = new TileFloor();
-            int locationIndex = location.Y * _map.Width + location.X;
+        private void Carve(Vec pos) {
+            _map.SetRenderComponent(pos, new RenderComponent("text/default",(byte)' ',"K"));
+            _map[pos] = new TileFloor();
+            int locationIndex = pos.Y * _map.Width + pos.X;
             _regions[locationIndex] = _currentRegion;
         }
     }

@@ -1,4 +1,5 @@
 {
+	"format": "rgb",
 	"r": {"red": 166, "green":  74, "blue":  46},
 	"R": {"red": 215, "green":  66, "blue":   0},
 	"g": {"red":   0, "green": 148, "blue":   3},

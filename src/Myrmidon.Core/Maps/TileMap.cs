@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Bramble.Core;
-
+using Myrmidon.Core.Components;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
 //using Myrmidon.Core.Utilities.Geometry;
@@ -13,10 +13,10 @@ namespace Myrmidon.Core.Maps {
     public class TileMap {
 
         private Tile[] _tiles; // contain all tile objects
+        public RenderComponent[] RenderComponents { get; private set; }
+
         private int _width;
         private int _height;
-
-
         
         public Tile[] Tiles { get { return _tiles; } set { _tiles = value; } }
         public Tile this[int x, int y] {
@@ -48,13 +48,32 @@ namespace Myrmidon.Core.Maps {
             }
         }
 
+        public RenderComponent GetRenderComponent(Vec location) {
+            return RenderComponents[location.Y * Width + location.X];
+        }
+        public RenderComponent GetRenderComponent(int x, int y) {
+            return RenderComponents[y * Width + x];
+        }
+
+        public void SetRenderComponent(Vec location, RenderComponent renderComponent) {
+            RenderComponents[location.Y * Width + location.X] = renderComponent;
+        }
+        public void SetRenderComponent(int i, RenderComponent renderComponent) {
+            RenderComponents[i] = renderComponent;
+        }
+
 
         // Build a new map with a specified width and height
         public TileMap(int width, int height) {
             _width = width;
             _height = height;
+            RenderComponents = new RenderComponent[width * height];
             Tiles = new Tile[width * height];
-            for (int i = 0; i < width * height; i++) Tiles[i] = new TileEmpty();
+            for (int i = 0; i < width * height; i++) {
+                RenderComponents[i] = new RenderComponent();
+                Tiles[i] = new TileEmpty();
+            }
+
             Rooms = new List<Rect>();
             Entities = new GoRogue.MultiSpatialMap<Entity>();
         }
@@ -91,6 +110,21 @@ namespace Myrmidon.Core.Maps {
             return GetTileAt<T>(location.X, location.Y);
         }
 
+        public T?[] GetOrthoAdjacentTiles<T>(Vec loc) where T : Tile {
+            int w = Width;
+            int h = Height;
+
+            T[] result = [
+                (               loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X  , loc.Y-1),
+                (loc.X >= w-1               ) ? null : GetTileAt<T>(loc.X+1, loc.Y  ),
+                (               loc.Y >= h-1) ? null : GetTileAt<T>(loc.X  , loc.Y+1),
+                (loc.X <= 0                 ) ? null : GetTileAt<T>(loc.X-1, loc.Y  ),
+            ];
+            return result;
+        }
+        public T?[] GetOrthoAdjacentTiles<T>(int x, int y) where T : Tile {
+            return GetOrthoAdjacentTiles<T>(new Vec(x, y));
+        }
 
         // Checks if a specific type of tile at a specified location is on the map. If it exists, returns that Tile.
         public T?[] GetAdjacentTiles<T>(Vec loc) where T : Tile {
@@ -132,7 +166,7 @@ namespace Myrmidon.Core.Maps {
 
 
         // Adds an Entity to the MultiSpatialMap
-        public void Add(Actor entity) {
+        public void AddEntity(Actor entity) {
             //if (!Entities.Add(entity, entity.Position))
             //    throw new Exception("Failed to add entity to map");
 
