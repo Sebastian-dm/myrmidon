@@ -7,7 +7,11 @@ using SDL3;
 
 namespace Myrmidon.App;
 
-internal sealed class GameLoop {
+public interface IGameLoop {
+    void Run();
+}
+
+internal sealed class GameLoop : IGameLoop {
     private readonly WorldManager _worldManager;
     private readonly InputController _inputController;
     private readonly SignalDispatcher _signalDispatcher;
@@ -16,30 +20,39 @@ internal sealed class GameLoop {
 
     private bool _running = true;
 
+    public bool UseStepMode { get; set; } = true;
+
     public GameLoop(
         WorldManager worldManager,
         InputController inputController,
         SignalDispatcher signalDispatcher,
         UiManager uiManager) {
+        
         _worldManager = worldManager;
         _inputController = inputController;
         _signalDispatcher = signalDispatcher;
         _uiManager = uiManager;
         _fpsCounter = new FpsCounter(60);
 
-        _inputController.Quit += OnQuit;
+        // Register event handlers
+        _inputController.CommandRequested += OnCommandRequested;
     }
 
     public void Run() {
+
+        UpdateGameState();
+        Render();
+
         while (_running) {
             Tick();
 
             _fpsCounter.Update();
 
             var remainder = (uint)_fpsCounter.GetTickRemainderMs();
-            SDL.Delay(remainder);
+            if (!UseStepMode)
+                SDL.Delay(remainder);
         }
-        _inputController.Quit -= OnQuit;
+        _inputController.CommandRequested -= OnCommandRequested;
     }
 
 
@@ -50,8 +63,10 @@ internal sealed class GameLoop {
         if (!_running)
             return;
 
-        UpdateGameState();
-        Render();
+        if (!UseStepMode || !_worldManager.ActionController.CanAcceptInput) {
+            UpdateGameState();
+            Render();
+        }
     }
 
 
@@ -75,6 +90,20 @@ internal sealed class GameLoop {
 
     private void Render() {
         _uiManager.Render();
+    }
+
+    private void OnCommandRequested(
+        object? sender,
+        AppCommandEventArgs e) {
+        switch (e.Command) {
+            
+            case AppCommand.ToggleStepMode:
+                UseStepMode = !UseStepMode;
+                break;
+            case AppCommand.Quit:
+                _running = false;
+                break;
+        }
     }
 
 

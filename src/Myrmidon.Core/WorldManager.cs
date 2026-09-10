@@ -21,28 +21,25 @@ namespace Myrmidon.Core {
 
         public WorldManager(IGameState gamestate, ActionController actionController) {
             GameState = gamestate;
-            FovSystem = new FovSystemOctant();
+            FovSystem = new FovSystemRadial();
             
             ActionController =  actionController;
         }
 
         public void Update() {
             if (GameState.Zone.GenerationState != Zone.ZoneGenState.Ready) {
-                GenerateZone(GameState.Zone);
+                GenerateZone(GameState.Zone, new DungeonGenerator());
                 return;
             }
-            
-            
             
             FovSystem.Recompute(GameState.Zone.Map, GameState.Player.Position);
 
         }
 
-        private void GenerateZone(Zone zone)
+        private void GenerateZone(Zone zone, IMapGenerator mapGen)
         {
             if (zone.GenerationState == Zone.ZoneGenState.NotStarted) {
                 zone.GenerationState = Zone.ZoneGenState.Terraforming;
-                var mapGen = new DungeonGenerator();
                 mapGen.Generate(zone.Map);
                 zone.GenerationState = Zone.ZoneGenState.Unpopulated;
             }

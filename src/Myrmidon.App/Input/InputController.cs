@@ -15,7 +15,7 @@ namespace Myrmidon.App.Input;
 
 public class InputController {
     
-    public event EventHandler Quit;
+    public event EventHandler<AppCommandEventArgs>? CommandRequested;
     private IActionController _actionController;
 
 
@@ -29,7 +29,7 @@ public class InputController {
         while (SDL.PollEvent(out SDL.Event e)) {
             switch (e.Type) {
                 case (uint)SDL.EventType.Quit:
-                    Quit?.Invoke(this, EventArgs.Empty);
+                    RaiseAppCommand(AppCommand.Quit);
                     break;
                 case (uint)SDL.EventType.KeyDown:
                     //SDL.Log($"A key was pressed: {e.Key.Key}");
@@ -40,13 +40,30 @@ public class InputController {
     }
 
     private void PollKeyboard() {
-        var action = InputAction.None;
+        
         var keys = SDL.GetKeyboardState(out var numKeys);
 
+        // Application commands
+        if (keys[(int)SDL.Scancode.Escape]) {
+            RaiseAppCommand(AppCommand.Quit);
+            return;
+        }
+        if (keys[(int)SDL.Scancode.S]) {
+            RaiseAppCommand(AppCommand.ToggleStepMode);
+            return;
+        }
+        if (keys[(int)SDL.Scancode.F2]) {
+            RaiseAppCommand(AppCommand.Pause);
+            return;
+        }
+        if (keys[(int)SDL.Scancode.F3]) {
+            RaiseAppCommand(AppCommand.Resume);
+            return;
+        }
 
-        if (keys[(int)SDL.Scancode.Escape])
-            Quit?.Invoke(this, EventArgs.Empty);
 
+        // Game commands
+        var action = InputAction.None;
         // Player directions
         if (keys[(int)SDL.Scancode.Kp8] || keys[(int)SDL.Scancode.Up])
             action = InputAction.MovePlayerN;
@@ -77,6 +94,10 @@ public class InputController {
         else {
             //SDL.Log($"The key press resulted in no action.");
         }
+    }
+
+    private void RaiseAppCommand(AppCommand command) {
+        CommandRequested?.Invoke(this, new AppCommandEventArgs(command));
     }
 
 

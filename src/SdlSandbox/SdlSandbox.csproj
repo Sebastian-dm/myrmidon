@@ -14,9 +14,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SDL3-CS" Version="3.4.14" />
-    <PackageReference Include="SDL3-CS.Linux" Version="3.4.14" />
-    <PackageReference Include="SDL3-CS.Windows" Version="3.4.14" />
+    <PackageReference Include="SDL3-CS" Version="3.4.16" />
+    <PackageReference Include="SDL3-CS.Linux" Version="3.4.16" />
+    <PackageReference Include="SDL3-CS.Windows" Version="3.4.16" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bramble.Core\Bramble.Core.csproj" />
+    <ProjectReference Include="..\Myrmidon.App\Myrmidon.App.csproj" />
+    <ProjectReference Include="..\Myrmidon.Core\Myrmidon.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,11 +11,11 @@ using Myrmidon.Core.Systems;
 namespace Myrmidon.App;
 
 public sealed class AppHost : IDisposable {
-    private readonly GameLoop _gameLoop;
+    private readonly IGameLoop _gameLoop;
     private readonly TerminalRenderer _terminal;
 
     private AppHost(
-        GameLoop gameLoop,
+        IGameLoop gameLoop,
         TerminalRenderer terminal) {
         _gameLoop = gameLoop;
         _terminal = terminal;

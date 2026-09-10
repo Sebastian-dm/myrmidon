@@ -48,6 +48,10 @@ namespace Myrmidon.Core.Maps {
             }
         }
 
+
+        public RenderComponent GetRenderComponent(int i) {
+            return RenderComponents[i];
+        }
         public RenderComponent GetRenderComponent(Vec location) {
             return RenderComponents[location.Y * Width + location.X];
         }

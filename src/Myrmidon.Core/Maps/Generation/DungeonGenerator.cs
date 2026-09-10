@@ -39,7 +39,7 @@ using Myrmidon.Core.Systems;
 
 namespace Myrmidon.Core.Maps.Generation {
 
-    public class DungeonGenerator {
+    public class DungeonGenerator : IMapGenerator {
 
         private TileMap _map;
         private int _maxRooms = 1000; // Number of attempts to create rooms
@@ -87,7 +87,7 @@ namespace Myrmidon.Core.Maps.Generation {
         private void onDecorateRoom(Rect room) { }
 
 
-        public void FillWithWalls() {
+        private void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
                 _map.SetRenderComponent(i, new RenderComponent("tile/wall",(byte)0,"K"));
                 _map.Tiles[i] = new TileWall();
@@ -290,7 +290,7 @@ namespace Myrmidon.Core.Maps.Generation {
                     _map[pos] = new TileDoor(isLocked: false, open: true);
                 }
                 else {
-                    var rcomp = new RenderComponent("text/default",(byte)' ',"K");
+                    var rcomp = new RenderComponent("text/default",(byte)' ',"y");
                     _map.SetRenderComponent(pos, rcomp);
                     _map[pos] = new TileFloor();
                 }
@@ -352,7 +352,7 @@ namespace Myrmidon.Core.Maps.Generation {
         }
 
         private void Carve(Vec pos) {
-            _map.SetRenderComponent(pos, new RenderComponent("text/default",(byte)' ',"K"));
+            _map.SetRenderComponent(pos, new RenderComponent("text/default",(byte)' ',"y"));
             _map[pos] = new TileFloor();
             int locationIndex = pos.Y * _map.Width + pos.X;
             _regions[locationIndex] = _currentRegion;

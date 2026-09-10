@@ -18,7 +18,7 @@ public class FovSystemOctant : IFovSystem {
     private int _range;
     private int _rangeSqrt;
 
-    public FovSystemOctant(int range = 8) {
+    public FovSystemOctant(int range = 10) {
         _range = range;
         _rangeSqrt = _range * _range;
     }
@@ -26,6 +26,11 @@ public class FovSystemOctant : IFovSystem {
 
     // Recompute the visible area based on a given location.
     public void Recompute(TileMap map, Vec origin) {
+        for (int i = 0; i < map.Tiles.Length; i++) {
+            if (map[i] is TileFloor)
+                map.GetRenderComponent(i).ColorBase = "black";
+        }
+
         for (var octant = 0; octant < 8; octant++) {
             RefreshOctant(map, octant, origin);
         }
@@ -55,24 +60,29 @@ public class FovSystemOctant : IFovSystem {
                 // If we know the entire row is in shadow, we don't need to be more
                 // specific.
                 if (fullShadow) {
-                    var renderComp = map.GetRenderComponent(pos);
-                    renderComp.Dimfactor = 0.0f;
-                    renderComp.Explored = false;
+                    continue;
+                    //var renderComp = map.GetRenderComponent(pos);
+                    //renderComp.ColorBase = "black";
+                    //renderComp.Dimfactor = 0.0f;
+                    //renderComp.Explored = false;
                 }
                 else {
                     var projection = _projectTile(row, col);
 
                     // Set the visibility of this tile.
                     var visible = !line.IsInShadow(projection);
-                    var renderComp = map.GetRenderComponent(pos);
-                    renderComp.Dimfactor = 1.0f;
-                    renderComp.Explored = true;
-                    
+
+                    //renderComp.Explored = true;
+
                     // Add any opaque tiles to the shadow map.
                     var tile = map[pos];
                     if (visible && tile.IsBlockingLos) {
                         line.Add(projection);
                         fullShadow = line.IsFullShadow;
+                    }
+                    else if (visible) {
+                        var renderComp = map.GetRenderComponent(pos);
+                        renderComp.ColorBase = "white";
                     }
                 }
             }
