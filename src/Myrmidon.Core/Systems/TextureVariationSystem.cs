@@ -29,7 +29,7 @@ namespace Myrmidon.Core.Systems {
                     for (int i = 0; i < orthoNeighborTiles.Length; i++)
                         n |= (byte)(((orthoNeighborTiles[i] is T) ? 1: 0) << i);
 
-                    RenderComponent renderComponent = map.GetRenderComponent(x, y);
+                    Renderable renderComponent = map.GetRenderComponent(x, y);
                     if (renderComponent != null)
                         renderComponent.SetVariant(n);
                 }

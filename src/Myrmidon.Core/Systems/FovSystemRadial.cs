@@ -47,7 +47,7 @@ namespace Myrmidon.Core.Systems {
             // Update tile visiblity
             for (int x = left; x < right; x++) {
                 for (int y = top; y < bottom; y++) {
-                    SetRenderDimFromDistance(map, origin, new Vec(x, y));
+                    SetRenderLightFromDistance(map, origin, new Vec(x, y));
                 }
             }
 
@@ -62,16 +62,16 @@ namespace Myrmidon.Core.Systems {
             }
         }
 
-        private void SetRenderDimFromDistance(TileMap map, Vec origin, Vec target) {
-            var renderComp = map.GetRenderComponent(target);
-                    
+        private void SetRenderLightFromDistance(TileMap map, Vec origin, Vec target) {
+            var prcpt = map.GetPerceptibleComponent(target);
+
             int distSqrt = (target - origin).LengthSquared;
             if (distSqrt <= _rangeSqrt)
-                renderComp.Explored = true;
+                prcpt.Explored = true;
 
-            float dim = 1f - (float)Math.Pow(distSqrt / _rangeSqrt, 1.0f);
-            renderComp.Dimfactor = Math.Clamp(dim, 0.1f, 1);
-            
+            float light = (float)Math.Pow(distSqrt / _rangeSqrt, 1.0f);
+            prcpt.LightLevel = Math.Clamp(light, 0.0f, 1.0f);
+
         }
     }
 }

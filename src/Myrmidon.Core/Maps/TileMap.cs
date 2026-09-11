@@ -13,7 +13,8 @@ namespace Myrmidon.Core.Maps {
     public class TileMap {
 
         private Tile[] _tiles; // contain all tile objects
-        public RenderComponent[] RenderComponents { get; private set; }
+        public Renderable[] RenderComponents { get; private set; }
+        public Perceptible[] PerceptibleComponents { get; private set; }
 
         private int _width;
         private int _height;
@@ -49,20 +50,38 @@ namespace Myrmidon.Core.Maps {
         }
 
 
-        public RenderComponent GetRenderComponent(int i) {
+        public Perceptible GetPerceptibleComponent(int i) {
+            return PerceptibleComponents[i];
+        }
+        public Perceptible GetPerceptibleComponent(Vec location) {
+            return PerceptibleComponents[location.Y * Width + location.X];
+        }
+        public Perceptible GetPerceptibleComponent(int x, int y) {
+            return PerceptibleComponents[y * Width + x];
+        }
+
+        public void SetPerceptibleComponent(Vec location, Perceptible perceptibleComponent) {
+            PerceptibleComponents[location.Y * Width + location.X] = perceptibleComponent;
+        }
+        public void SetPerceptibleComponent(int i, Perceptible perceptibleComponent) {
+            PerceptibleComponents[i] = perceptibleComponent;
+        }
+
+
+        public Renderable GetRenderComponent(int i) {
             return RenderComponents[i];
         }
-        public RenderComponent GetRenderComponent(Vec location) {
+        public Renderable GetRenderComponent(Vec location) {
             return RenderComponents[location.Y * Width + location.X];
         }
-        public RenderComponent GetRenderComponent(int x, int y) {
+        public Renderable GetRenderComponent(int x, int y) {
             return RenderComponents[y * Width + x];
         }
 
-        public void SetRenderComponent(Vec location, RenderComponent renderComponent) {
+        public void SetRenderComponent(Vec location, Renderable renderComponent) {
             RenderComponents[location.Y * Width + location.X] = renderComponent;
         }
-        public void SetRenderComponent(int i, RenderComponent renderComponent) {
+        public void SetRenderComponent(int i, Renderable renderComponent) {
             RenderComponents[i] = renderComponent;
         }
 
@@ -71,10 +90,11 @@ namespace Myrmidon.Core.Maps {
         public TileMap(int width, int height) {
             _width = width;
             _height = height;
-            RenderComponents = new RenderComponent[width * height];
+            RenderComponents = new Renderable[width * height];
+            PerceptibleComponents = new Perceptible[width * height];
             Tiles = new Tile[width * height];
             for (int i = 0; i < width * height; i++) {
-                RenderComponents[i] = new RenderComponent();
+                RenderComponents[i] = new Renderable();
                 Tiles[i] = new TileEmpty();
             }
 

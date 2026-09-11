@@ -128,15 +128,15 @@ public class FovSystemOctant : IFovSystem {
         return shadow;
     }
 
-    private void SetRenderDimFromDistance(TileMap map, Vec origin, Vec target) {
-        var renderComp = map.GetRenderComponent(target);
-                    
+    private void SetRenderLightFromDistance(TileMap map, Vec origin, Vec target) {
+        var prcpt = map.GetPerceptibleComponent(target);
+
         int distSqrt = (target - origin).LengthSquared;
         if (distSqrt <= _rangeSqrt)
-            renderComp.Explored = true;
+            prcpt.Explored = true;
 
-        float dim = 1f - (float)Math.Pow(distSqrt / _rangeSqrt, 1.0f);
-        renderComp.Dimfactor = Math.Clamp(dim, 0.1f, 1);
+        float light = (float)Math.Pow(distSqrt / _rangeSqrt, 1.0f);
+        prcpt.LightLevel = Math.Clamp(light, 0.0f, 1.0f);
             
     }
 }

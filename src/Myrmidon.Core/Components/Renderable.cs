@@ -2,7 +2,7 @@ using Myrmidon.Core.Entities;
 
 namespace Myrmidon.Core.Components;
 
-public class RenderComponent {
+public class Renderable : Component {
 
     public string SpriteId { get; set; } = "default.floor";
     public string TextureSheetName { get; set; } = "text/default";
@@ -15,18 +15,12 @@ public class RenderComponent {
     public string ColorBase { get; set; } = "W";
     public string ColorAccent { get; set; } = "R";
     public string ColorBackground { get; set; } = string.Empty;
-    
-
-    public int Layer { get; set; } = 0;
-    public float Dimfactor { get; set; } = 0f;
-    public bool Explored { get; set; } = false;
-    public bool Dirty { get; set; } = false;
 
 
-    public RenderComponent() {
+    public Renderable() {
     }
     
-    public RenderComponent(
+    public Renderable(
         string textureSheetName, byte textureIndex,  string colorBase, string colorAccent = "", string colorBackground = "") {
         TextureSheetName = textureSheetName;
         TextureIndex = textureIndex;

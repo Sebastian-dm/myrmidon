@@ -29,10 +29,8 @@ namespace Myrmidon.Core.Maps.Generation {
 
         private void PlacePillarWall(TileMap map, Vec position) {
             if (map.Bounds.Contains(position)) {
-                var rc = new RenderComponent("text/default", (byte)'#', "R");
-                rc.Explored = true;
-                rc.Dimfactor = 1;
-                map.SetRenderComponent(position, rc);
+                map.SetRenderComponent(position, new Renderable("text/default", (byte)'#', "R"));
+                map.SetPerceptibleComponent(position, new Perceptible());
                 map[position] = new TileWall();
             }
         }
@@ -40,10 +38,10 @@ namespace Myrmidon.Core.Maps.Generation {
 
         private void FillWithFloor(TileMap map) {
             for (int i = 0; i < map.Tiles.Length; i++) {
-                var rc = new RenderComponent("text/default", 7, "black");
-                rc.Explored = true;
-                rc.Dimfactor = 1;
-                map.SetRenderComponent(i, rc);
+                var render = new Renderable("text/default", 7, "black");
+                map.SetRenderComponent(i, render);
+                var percept = new Perceptible();
+                map.SetPerceptibleComponent(i, percept);
                 map[i] = new TileFloor();
             }
         }

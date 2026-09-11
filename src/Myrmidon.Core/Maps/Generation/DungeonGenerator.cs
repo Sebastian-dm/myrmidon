@@ -89,7 +89,8 @@ namespace Myrmidon.Core.Maps.Generation {
 
         private void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
-                _map.SetRenderComponent(i, new RenderComponent("tile/wall",(byte)0,"K"));
+                _map.SetRenderComponent(i, new Renderable("tile/wall",(byte)0,"K"));
+                _map.SetPerceptibleComponent(i, new Perceptible());
                 _map.Tiles[i] = new TileWall();
             }
         }
@@ -285,18 +286,18 @@ namespace Myrmidon.Core.Maps.Generation {
         private void LinkRegions(Vec pos) {
             if (rng.OneIn(4)) {
                 if (rng.OneIn(3)) {
-                    var rcomp = new RenderComponent("text/default",(byte)'D',"K");
+                    var rcomp = new Renderable("text/default",(byte)'D',"K");
                     _map.SetRenderComponent(pos, rcomp);
                     _map[pos] = new TileDoor(isLocked: false, open: true);
                 }
                 else {
-                    var rcomp = new RenderComponent("text/default",(byte)' ',"y");
+                    var rcomp = new Renderable("text/default",(byte)' ',"y");
                     _map.SetRenderComponent(pos, rcomp);
                     _map[pos] = new TileFloor();
                 }
             }
             else {
-                var rcomp = new RenderComponent("text/default",(byte)'D',"B");
+                var rcomp = new Renderable("text/default",(byte)'D',"B");
                 _map.SetRenderComponent(pos, rcomp);
                 _map[pos] = new TileDoor(isLocked: false, open: false);
             }
@@ -323,7 +324,7 @@ namespace Myrmidon.Core.Maps.Generation {
 
                         done = false;
                         
-                        _map.SetRenderComponent(pos, new RenderComponent("tile/wall", (byte)0, "K"));
+                        _map.SetRenderComponent(pos, new Renderable("tile/wall", (byte)0, "K"));
                         _map[pos] = new TileWall();
 
                         Thread.Sleep(_tileStepWaitMs / 5);
@@ -352,7 +353,7 @@ namespace Myrmidon.Core.Maps.Generation {
         }
 
         private void Carve(Vec pos) {
-            _map.SetRenderComponent(pos, new RenderComponent("text/default",(byte)' ',"y"));
+            _map.SetRenderComponent(pos, new Renderable("text/default",(byte)' ',"y"));
             _map[pos] = new TileFloor();
             int locationIndex = pos.Y * _map.Width + pos.X;
             _regions[locationIndex] = _currentRegion;

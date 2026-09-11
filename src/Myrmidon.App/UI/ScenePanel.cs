@@ -51,11 +51,21 @@ public class ScenePanel : GridPanel {
                 
                 Vec mapPos = new Vec(x, y);
                 Vec panelPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
-                RenderComponent renderComp = map.GetRenderComponent(mapPos);
-                
-                if (renderComp == null || !renderComp.Explored) continue;
-                
-                DrawTile(panelPos, renderComp);
+
+                Renderable render = map.GetRenderComponent(mapPos);
+                Perceptible percept = map.GetPerceptibleComponent(mapPos);
+
+                if (render == null || !percept.Explored) continue;
+
+                if (percept.LightLevel > 0.1f) {
+                    // Draw lighted tiles with their respective colors and textures
+                    var alpha = 1f - percept.LightLevel;
+                    DrawTile(panelPos, render.TextureSheetName, render.TextureIndex, render.ColorBase, render.ColorAccent, render.ColorBackground, alpha);
+                }
+                else {
+                    // Draw darkened tiles with their respective colors and textures
+                    DrawTile(panelPos, render.TextureSheetName, render.TextureIndex, "k", "K", alpha:0.5f);
+                }
             }
         }
 
