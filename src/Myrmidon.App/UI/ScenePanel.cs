@@ -57,14 +57,14 @@ public class ScenePanel : GridPanel {
 
                 if (render == null || !percept.Explored) continue;
 
-                if (percept.LightLevel > 0.1f) {
+                if (percept.LightLevel > 0.2f) {
                     // Draw lighted tiles with their respective colors and textures
-                    var alpha = 1f - percept.LightLevel;
+                    var alpha = percept.LightLevel;
                     DrawTile(panelPos, render.TextureSheetName, render.TextureIndex, render.ColorBase, render.ColorAccent, render.ColorBackground, alpha);
                 }
                 else {
                     // Draw darkened tiles with their respective colors and textures
-                    DrawTile(panelPos, render.TextureSheetName, render.TextureIndex, "k", "K", alpha:0.5f);
+                    DrawTile(panelPos, render.TextureSheetName, render.TextureIndex, "K", alpha:0.2f);
                 }
             }
         }

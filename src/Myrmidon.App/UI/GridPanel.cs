@@ -37,7 +37,7 @@ public class GridPanel : IPanel {
         string textureSheetName,
         byte textureIndex,
         string foregroundColor,
-        string accentColor,
+        string accentColor = "",
         string backgroundColor = "",
         float alpha = 1f) {
         

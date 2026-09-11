@@ -89,7 +89,7 @@ namespace Myrmidon.Core.Maps.Generation {
 
         private void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
-                _map.SetRenderComponent(i, new Renderable("tile/wall",(byte)0,"K"));
+                _map.SetRenderComponent(i, new Renderable("tile/wall",(byte)0,"G"));
                 _map.SetPerceptibleComponent(i, new Perceptible());
                 _map.Tiles[i] = new TileWall();
             }
@@ -324,7 +324,7 @@ namespace Myrmidon.Core.Maps.Generation {
 
                         done = false;
                         
-                        _map.SetRenderComponent(pos, new Renderable("tile/wall", (byte)0, "K"));
+                        _map.SetRenderComponent(pos, new Renderable("tile/wall", (byte)0, "G"));
                         _map[pos] = new TileWall();
 
                         Thread.Sleep(_tileStepWaitMs / 5);

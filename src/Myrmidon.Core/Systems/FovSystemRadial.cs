@@ -69,9 +69,8 @@ namespace Myrmidon.Core.Systems {
             if (distSqrt <= _rangeSqrt)
                 prcpt.Explored = true;
 
-            float light = (float)Math.Pow(distSqrt / _rangeSqrt, 1.0f);
-            prcpt.LightLevel = Math.Clamp(light, 0.0f, 1.0f);
-
+            float clampedDist = (float)Math.Clamp(Math.Pow(distSqrt / _rangeSqrt, 2.0f),  0.0f, 1.0f);
+            prcpt.LightLevel = 1f - clampedDist;
         }
     }
 }

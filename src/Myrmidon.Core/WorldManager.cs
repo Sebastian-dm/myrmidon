@@ -21,7 +21,7 @@ namespace Myrmidon.Core {
 
         public WorldManager(IGameState gamestate, ActionController actionController) {
             GameState = gamestate;
-            FovSystem = new FovSystemRadial();
+            FovSystem = new FovSystemOctant();
             
             ActionController =  actionController;
         }
@@ -29,6 +29,7 @@ namespace Myrmidon.Core {
         public void Update() {
             if (GameState.Zone.GenerationState != Zone.ZoneGenState.Ready) {
                 GenerateZone(GameState.Zone, new DungeonGenerator());
+                //GenerateZone(GameState.Zone, new TestMapGenerator());
                 return;
             }
             

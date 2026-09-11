@@ -18,7 +18,7 @@ public class FovSystemOctant : IFovSystem {
     private int _range;
     private int _rangeSqrt;
 
-    public FovSystemOctant(int range = 10) {
+    public FovSystemOctant(int range = 8) {
         _range = range;
         _rangeSqrt = _range * _range;
     }
@@ -26,16 +26,44 @@ public class FovSystemOctant : IFovSystem {
 
     // Recompute the visible area based on a given location.
     public void Recompute(TileMap map, Vec origin) {
-        for (int i = 0; i < map.Tiles.Length; i++) {
-            if (map[i] is TileFloor)
-                map.GetRenderComponent(i).ColorBase = "black";
-        }
-
+        
+        // Todo: Figure out how to include entities in the tile fov update
+        RefreshEntities(map, origin);
+        
+        ResetLightLevelInBoundDist(map, origin);
         for (var octant = 0; octant < 8; octant++) {
             RefreshOctant(map, octant, origin);
         }
         
         // Set origin to be visible
+        UpdatePerceptible(map, origin, origin);
+    }
+
+    private void ResetLightLevelInBoundDist(TileMap map, Vec origin) {
+        int margin = 1;
+        int left = Math.Max(0, origin.X - _range - margin);
+        int top = Math.Max(0, origin.Y - _range  - margin);
+        int right = Math.Min(map.Width, origin.X + _range + margin);
+        int bottom = Math.Min(map.Height, origin.Y + _range + margin);
+
+        // Update tile visiblity
+        for (int x = left; x < right; x++) {
+            for (int y = top; y < bottom; y++) {
+                map.GetPerceptibleComponent(x,y).LightLevel = 0.0f;
+            }
+        }
+    }
+
+    private void RefreshEntities(TileMap map, Vec origin) {
+        // Update entity visibility
+        foreach (Entity entity in map.Entities.Items) {
+            if (Vec.IsDistanceWithin(origin, entity.Position, _range)) {
+                entity.isVisible = true;
+            }
+            else {
+                entity.isVisible = false;
+            }
+        }
     }
     
     
@@ -76,13 +104,14 @@ public class FovSystemOctant : IFovSystem {
 
                     // Add any opaque tiles to the shadow map.
                     var tile = map[pos];
-                    if (visible && tile.IsBlockingLos) {
-                        line.Add(projection);
-                        fullShadow = line.IsFullShadow;
-                    }
-                    else if (visible) {
-                        var renderComp = map.GetRenderComponent(pos);
-                        renderComp.ColorBase = "white";
+                    
+                    if (visible) {
+                        UpdatePerceptible(map, origin, pos);
+                        
+                        if (tile.IsBlockingLos) {
+                            line.Add(projection);
+                            fullShadow = line.IsFullShadow;
+                        }
                     }
                 }
             }
@@ -128,16 +157,15 @@ public class FovSystemOctant : IFovSystem {
         return shadow;
     }
 
-    private void SetRenderLightFromDistance(TileMap map, Vec origin, Vec target) {
+    private void UpdatePerceptible(TileMap map, Vec origin, Vec target) {
         var prcpt = map.GetPerceptibleComponent(target);
 
         int distSqrt = (target - origin).LengthSquared;
         if (distSqrt <= _rangeSqrt)
             prcpt.Explored = true;
 
-        float light = (float)Math.Pow(distSqrt / _rangeSqrt, 1.0f);
-        prcpt.LightLevel = Math.Clamp(light, 0.0f, 1.0f);
-            
+        float clampedDist = (float)Math.Clamp(Math.Pow(distSqrt / _rangeSqrt, 1.0f),  0.0f, 1.0f);
+        prcpt.LightLevel = 1f - clampedDist;
     }
 }
 
