@@ -12,6 +12,7 @@ using Myrmidon.App.Render;
 using static System.Net.WebRequestMethods;
 using Myrmidon.Core;
 using Myrmidon.Core.Components;
+using Myrmidon.Core.Ecs;
 using Myrmidon.Core.Zones;
 
 namespace Myrmidon.App.UI;
@@ -28,13 +29,15 @@ public class ScenePanel : GridPanel {
     public override void Draw() {
         base.Draw();
         if (_worldState.Zone.GenerationState == ZoneGenState.Ready)
-            DrawZone(_worldState.Zone, _worldState.Player);
+            DrawZone(_worldState.Zone, _worldState.Player, _worldState.PlayerEntity);
     }
 
-    private void DrawZone(Zone zone, Player player) {
+    private void DrawZone(Zone zone, Player player, EntityId playerEntity) {
 
         var map = zone.Map;
-
+        
+        // Todo: Adapt draw center to entity based player
+        
         Vec drawCenter = new Vec(player.Position.X, player.Position.Y);
         Rect viewBounds = new Rect(
             drawCenter.X - PanelRect.Size.X/2,
@@ -84,7 +87,7 @@ public class ScenePanel : GridPanel {
         }
 
         foreach(var entityId in zone.SpatialIndex.InBounds(viewBounds)) {
-            if (!_worldState.EcsWorld.TryGet<Position>(entityId, out var position) && position.ZoneId == zone.Id)
+            if (!_worldState.EcsWorld.TryGet<Position>(entityId, out var position) && !(position.ZoneId == zone.Id))
                 continue;
             if (!_worldState.EcsWorld.TryGet<Renderable>(entityId, out var renderable))
                 continue;
@@ -93,12 +96,14 @@ public class ScenePanel : GridPanel {
         }
 
         // Paint player
-        if (player != null) {
-            var gridPos = new Vec(player.Position.X - viewBounds.Left, player.Position.Y - viewBounds.Top);
-            if (_worldState.EcsWorld.TryGet<Renderable>(player.Id, out var renderable)) {
-                DrawTile(gridPos, renderable.TextureSheetName, renderable.TextureIndex, renderable.ColorBase, renderable.ColorAccent, renderable.ColorBackground);
+        if (playerEntity != null) {
+            if ((_worldState.EcsWorld.TryGet<Position>(playerEntity, out var pos) && pos.ZoneId == zone.Id) &&
+            (_worldState.EcsWorld.TryGet<Renderable>(playerEntity, out var ren))) {
+                var gridPosNew = new Vec(pos.Location.X - viewBounds.Left, pos.Location.Y - viewBounds.Top);
+                var gridPos = new Vec(player.Position.X - viewBounds.Left, player.Position.Y - viewBounds.Top);
+                //DrawTile(gridPos, ren.TextureSheetName, ren.TextureIndex, ren.ColorBase, ren.ColorAccent, ren.ColorBackground);
+                DrawTile(gridPos, "text/default", player.Glyph, "o", "M");
             }
-            DrawTile(gridPos, "text/default", player.Glyph, "o", "M");
         }
     }
 

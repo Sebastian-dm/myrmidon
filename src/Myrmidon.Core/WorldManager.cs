@@ -54,6 +54,7 @@ namespace Myrmidon.Core {
             Vec pos = _zoneGen.GetRandomWalkablePosition(zone.Map);
             EntityId playerId = entityFactory.CreatePlayer(zone.Id, pos);
             zone.SpatialIndex.Add(playerId, pos);
+            WorldState.PlayerEntity = playerId;
 
             return player;
         }

@@ -41,7 +41,7 @@ public class EntityFactory {
             DefenseStrength = rng.Next(0, 10)
         });
         _world.Add(entity, new Inventory());
-        _world.Add(entity, new Renderable("text/default", (byte)'@', "W"));
+        _world.Add(entity, new Renderable("text/default", (byte)'@', "B", "Y", "M"));
         _world.Add(entity, new Perceptible());
         return entity;
     }
