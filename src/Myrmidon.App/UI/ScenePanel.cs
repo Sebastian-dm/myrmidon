@@ -1,6 +1,5 @@
 ﻿using Bramble.Core;
 using Myrmidon.Core.Entities;
-using Myrmidon.Core.Game;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Tiles;
 using SDL3;
@@ -13,22 +12,23 @@ using Myrmidon.App.Render;
 using static System.Net.WebRequestMethods;
 using Myrmidon.Core;
 using Myrmidon.Core.Components;
+using Myrmidon.Core.Zones;
 
 namespace Myrmidon.App.UI;
 
 
 public class ScenePanel : GridPanel {
     
-    private IGameState _gameState;
+    private IWorldState _worldState;
 
-    public ScenePanel(TerminalRenderer terminal, Rect rect, IGameState gameState) : base(terminal, rect) {
-        _gameState = gameState;
+    public ScenePanel(TerminalRenderer terminal, Rect rect, IWorldState worldState) : base(terminal, rect) {
+        _worldState = worldState;
     }
 
     public override void Draw() {
         base.Draw();
-        if (_gameState.Zone.GenerationState == Zone.ZoneGenState.Ready)
-            DrawZone(_gameState.Zone, _gameState.Player);
+        if (_worldState.Zone.GenerationState == ZoneGenState.Ready)
+            DrawZone(_worldState.Zone, _worldState.Player);
     }
 
     private void DrawZone(Zone zone, Player player) {
@@ -69,7 +69,7 @@ public class ScenePanel : GridPanel {
             }
         }
 
-        //Paint entities
+        //Paint entities old way
         foreach (var entity in map.Entities.Items) {
             if (entity is Actor actor) {
                 if (!IsInMapBounds(actor.Position.X, actor.Position.Y, map)) continue;
@@ -79,13 +79,25 @@ public class ScenePanel : GridPanel {
                 if (actor is Monster monster) {
                     color = "g";
                 }
-                DrawTile(gridPos, "text/default", actor.Glyph, color, "M");
+                //DrawTile(gridPos, "text/default", actor.Glyph, color, "M");
             }
+        }
+
+        foreach(var entityId in zone.SpatialIndex.InBounds(viewBounds)) {
+            if (!_worldState.EcsWorld.TryGet<Position>(entityId, out var position) && position.ZoneId == zone.Id)
+                continue;
+            if (!_worldState.EcsWorld.TryGet<Renderable>(entityId, out var renderable))
+                continue;
+            Vec gridPos = new Vec(position.Location.X - viewBounds.Left, position.Location.Y - viewBounds.Top);
+            DrawTile(gridPos, renderable.TextureSheetName, renderable.TextureIndex, renderable.ColorBase, renderable.ColorAccent, renderable.ColorBackground);
         }
 
         // Paint player
         if (player != null) {
             var gridPos = new Vec(player.Position.X - viewBounds.Left, player.Position.Y - viewBounds.Top);
+            if (_worldState.EcsWorld.TryGet<Renderable>(player.Id, out var renderable)) {
+                DrawTile(gridPos, renderable.TextureSheetName, renderable.TextureIndex, renderable.ColorBase, renderable.ColorAccent, renderable.ColorBackground);
+            }
             DrawTile(gridPos, "text/default", player.Glyph, "o", "M");
         }
     }

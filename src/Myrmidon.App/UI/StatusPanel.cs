@@ -11,23 +11,23 @@ using System.Text;
 using System.Threading.Tasks;
 using Myrmidon.App.Render;
 using Myrmidon.Core;
-using Myrmidon.Core.Game;
+using Myrmidon.Core.Zones;
 
 namespace Myrmidon.App.UI;
 
 
 public class StatusPanel : GridPanel {
     
-    private IGameState _gameState;
+    private IWorldState _gameState;
 
-    public StatusPanel(TerminalRenderer terminal, Rect rect, IGameState gameState) : base(terminal, rect) {
+    public StatusPanel(TerminalRenderer terminal, Rect rect, IWorldState gameState) : base(terminal, rect) {
         _gameState = gameState;
     }
 
     public override void Draw() {
         base.Draw();
         FillBackground("black");
-        if (_gameState.Zone.GenerationState == Zone.ZoneGenState.Ready)
+        if (_gameState.Zone.GenerationState == ZoneGenState.Ready)
             RenderStatus(_gameState.Player);
     }
 

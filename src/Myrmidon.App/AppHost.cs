@@ -5,7 +5,8 @@ using Myrmidon.App.UI;
 
 using Myrmidon.Core;
 using Myrmidon.Core.Actions;
-using Myrmidon.Core.Game;
+using Myrmidon.Core.Zones;
+using Myrmidon.Core.Maps.Generation;
 using Myrmidon.Core.Systems;
 
 namespace Myrmidon.App;
@@ -24,11 +25,13 @@ public sealed class AppHost : IDisposable {
     public static AppHost Create() {
         var terminal = new TerminalRenderer(80, 30);
 
-        var gameState = new GameState();
+        var gameState = new WorldState();
         var actionController = new ActionController(gameState);
+        var zoneGenerator = new ZoneGenerator(gameState.EcsWorld, new DungeonGenerator());
         var worldManager = new WorldManager(
             gameState,
-            actionController);
+            actionController,
+            zoneGenerator);
 
         worldManager.Update();
 

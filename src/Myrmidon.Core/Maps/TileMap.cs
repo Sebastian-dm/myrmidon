@@ -198,10 +198,7 @@ namespace Myrmidon.Core.Maps {
         }
 
 
-        // When the Entity's .Moved value changes, it triggers this event handler which updates the Entity's current position in the SpatialMap
-        private void OnEntityMoved(object sender) {
-            //if (!Entities.Move(args.Entity as Actor, args.Entity.Position))
-            //    throw new Exception("Failed to move entity on map.");
-        }
+
+
     }
 }

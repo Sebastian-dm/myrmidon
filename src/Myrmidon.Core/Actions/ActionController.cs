@@ -36,12 +36,12 @@ namespace Myrmidon.Core.Actions {
         private readonly Queue<IAction> _reactionQueue = new Queue<IAction>();
         private readonly Queue<IAction> _actionsHistory = new Queue<IAction>(100);
 
-        private readonly IGameState _gameState;
+        private readonly IWorldState _gameState;
 
 
 
 
-        public ActionController(IGameState gameState) {
+        public ActionController(IWorldState gameState) {
             _gameState = gameState;
         }
 
@@ -119,7 +119,7 @@ namespace Myrmidon.Core.Actions {
 
 
         public void CollectEntityActions() {
-            foreach (Actor actor in _gameState.Zone.Entities.Items) {
+            foreach (Actor actor in _gameState.Zone.Map.Entities.Items) {
                 _actionQueue.Enqueue(actor.GetAction());
             }
         }

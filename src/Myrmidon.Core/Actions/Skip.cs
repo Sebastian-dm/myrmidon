@@ -14,7 +14,7 @@ namespace Myrmidon.Core.Actions {
 
         }
 
-        public ActionResult Perform(IGameState context) {
+        public ActionResult Perform(IWorldState context) {
             return new ActionResult();
         }
     }

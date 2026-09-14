@@ -19,7 +19,19 @@ public class Renderable : Component {
 
     public Renderable() {
     }
-    
+
+    public Renderable(Renderable other) {
+        SpriteId = other.SpriteId;
+        TextureSheetName = other.TextureSheetName;
+        TextureIndex = other.TextureIndex;
+        _textureIndex = other._textureIndex;
+        VariantOffset = other.VariantOffset;
+        AnimationOffset = other.AnimationOffset;
+        ColorBase = other.ColorBase;
+        ColorAccent = other.ColorAccent;
+        ColorBackground = other.ColorBackground;
+    }
+
     public Renderable(
         string textureSheetName, byte textureIndex,  string colorBase, string colorAccent = "", string colorBackground = "") {
         TextureSheetName = textureSheetName;

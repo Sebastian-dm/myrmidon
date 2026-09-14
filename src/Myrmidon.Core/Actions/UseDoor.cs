@@ -20,7 +20,7 @@ namespace Myrmidon.Core.Actions {
             Door = door;
         }
 
-        public ActionResult Perform(IGameState context) {
+        public ActionResult Perform(IWorldState context) {
             try {
                 if (Door.IsLocked) {
                     // TODO: Add a way to open a locked door.

@@ -8,7 +8,7 @@ namespace Myrmidon.Core.Actions {
     public interface IAction {
 
         bool IsImmediate { get; }
-        ActionResult Perform(IGameState context);
+        ActionResult Perform(IWorldState context);
     }
 
     public class ActionResult {

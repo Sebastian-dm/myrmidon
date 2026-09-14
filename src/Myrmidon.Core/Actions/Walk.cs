@@ -24,7 +24,7 @@ namespace Myrmidon.Core.Actions {
             _originalPosition = performer.Position;
         }
 
-        public ActionResult Perform(IGameState context) {
+        public ActionResult Perform(IWorldState context) {
 
             // Do nothing if no length given
             if (Direction.X == 0 && Direction.Y == 0) {

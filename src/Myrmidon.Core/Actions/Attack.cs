@@ -13,14 +13,14 @@ namespace Myrmidon.Core.Actions {
         public readonly Actor Performer;
         public readonly Actor Subject;
 
-        private IGameState? _context;
+        private IWorldState? _context;
 
         public AttackAction(Actor performer, Actor subject) {
             Performer = performer;
             Subject = subject;
         }
 
-        public ActionResult Perform(IGameState context) {
+        public ActionResult Perform(IWorldState context) {
             
             if (Performer.Position.IsAdjacentTo(Subject.Position)) {
                 _context = context;

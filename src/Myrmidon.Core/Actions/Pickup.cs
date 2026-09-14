@@ -20,7 +20,7 @@ namespace Myrmidon.Core.Actions {
             Item = item;
         }
 
-        public ActionResult Perform(IGameState context) {
+        public ActionResult Perform(IWorldState context) {
 
             if (Performer.Position.IsAdjacentTo(Item.Position)) {
                 Performer.Inventory.Add(Item);

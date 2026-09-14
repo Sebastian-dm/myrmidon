@@ -47,16 +47,16 @@ namespace Myrmidon.Core.Entities {
         internal Color _backgroundHidden;
         internal byte _glyphHidden;
 
-        protected Entity(Color foreground, Color background, byte glyph, int width, int height) {
+        protected Entity(){//Color foreground, Color background, byte glyph, int width, int height) {
 
             // Set local variables
-            _foregroundVisible = foreground;
-            _backgroundVisible = background;
-            _glyphVisible = glyph;
+            _foregroundVisible = new Color(255, 0, 255); // foreground;
+            _backgroundVisible = new Color(0, 255, 255); // background;
+            _glyphVisible = (byte)'?'; // glyph;
 
             _foregroundHidden = new Color(0, 0, 0);
             _backgroundHidden = new Color(0, 0, 0);
-            _glyphHidden = 0;
+            _glyphHidden = (byte)0;
 
             // Initial values
             Glyph = _glyphHidden;

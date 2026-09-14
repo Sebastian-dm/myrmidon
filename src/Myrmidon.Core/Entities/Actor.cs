@@ -11,9 +11,6 @@ using IAction = Myrmidon.Core.Actions.IAction;
 namespace Myrmidon.Core.Entities {
     public abstract class Actor : Entity {
 
-        //private int _health; //current health
-        //private int _maxHealth; //maximum possible health
-
         public int Health { get; set; } // current health
         public int MaxHealth { get; set; } // maximum health
         public int AttackStrength { get; set; } // attack strength
@@ -24,7 +21,7 @@ namespace Myrmidon.Core.Entities {
 
         public List<Item> Inventory = new List<Item>(); // the player's collection of items
 
-        protected Actor(Color foreground, Color background, byte glyph, int width = 1, int height = 1) : base(foreground, background, glyph, width, height) {
+        protected Actor(Color foreground, Color background, byte glyph, int width = 1, int height = 1) {
             
         }
 
@@ -38,6 +35,8 @@ namespace Myrmidon.Core.Entities {
 
             Position = new Vec(newPosition.X, newPosition.Y);
             map.Entities.Move(this, new GoRogue.Coord(newPosition.X, newPosition.Y));
+
+            //Todo: Make use of new ecs system to handle movement and collision detection, rather than directly setting the position and moving the entity in the map.
 
             return true;
         }
