@@ -52,7 +52,7 @@ namespace Myrmidon.Core.Systems {
             }
 
             // Update entity visibility
-            // Todo: Update entity loop for ecs
+            // TODO: Refactor for ECS
             
             // foreach (Entity entity in map.Entities.Items) {
             //     if (Vec.IsDistanceWithin(origin, entity.Position, _range)) {

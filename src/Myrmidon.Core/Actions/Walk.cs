@@ -55,7 +55,7 @@ namespace Myrmidon.Core.Actions {
                 }
                 
                 // Pick up if entity has no brain
-                // Todo: Figure out a way to check if items can be picked up
+                // TODO: Create a better way to check if something is an item
                 if (!context.EcsWorld.TryGet<Brain>(entityInFront, out var brain)) {
                     return new ActionResult( succeeded: false,
                         alternative: new PickupAction(Performer, entityInFront)

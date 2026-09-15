@@ -27,7 +27,6 @@ public class FovSystemOctant : IFovSystem {
     // Recompute the visible area based on a given location.
     public void Recompute(TileMap map, Vec origin) {
         
-        // Todo: Figure out how to include entities in the tile fov update
         RefreshEntities(map, origin);
         
         ResetLightLevelInBoundDist(map, origin);
@@ -55,6 +54,7 @@ public class FovSystemOctant : IFovSystem {
     }
 
     private void RefreshEntities(TileMap map, Vec origin) {
+        // TODO: Refactor for ECS
         // // Update entity visibility
         // foreach (Entity entity in map.Entities.Items) {
         //     if (Vec.IsDistanceWithin(origin, entity.Position, _range)) {

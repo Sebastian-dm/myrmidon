@@ -30,7 +30,7 @@ internal class PickupAction : IAction {
         context.EcsWorld.TryGet<Identity>(Performer, out var subjectIdentity);
         context.SignalQueue.Enqueue(new LogSignal(($"{performerIdentity.Name} wants to pickup {subjectIdentity.Name} but this function is not implemented.")));
         
-        // Todo: pickup in ECS
+        // TODO: Refactor for ECS
         //if (Performer.Position.IsAdjacentTo(Item.Position)) {
         //    Performer.Inventory.Add(Item);
         //    //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
