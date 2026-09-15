@@ -38,8 +38,7 @@ namespace Myrmidon.Core.Maps {
         public List<Rect> Rooms { get; set; }
         public int Width { get { return _width; } set { _width = value; } }
         public int Height { get { return _height; } set { _height = value; } }
-
-        public GoRogue.MultiSpatialMap<Entity> Entities; // Keeps track of all the Entities on the map
+        
         public static GoRogue.IDGenerator IDGenerator = new GoRogue.IDGenerator(); // A static IDGenerator that all Entities can access
 
 
@@ -99,7 +98,6 @@ namespace Myrmidon.Core.Maps {
             }
 
             Rooms = new List<Rect>();
-            Entities = new GoRogue.MultiSpatialMap<Entity>();
         }
 
 
@@ -111,13 +109,6 @@ namespace Myrmidon.Core.Maps {
             // then return whether the tile is walkable
             return _tiles[location.Y * Width + location.X].IsWalkable;
         }
-
-
-        // Returns an entity if it exists at location. Return null otherwise.
-        public T GetEntityAt<T>(Vec location) where T : Actor {
-            return Entities.GetItems(new GoRogue.Coord(location.X, location.Y)).OfType<T>().FirstOrDefault();
-        }
-
 
         // Returns a tile if it exists at location. Return null otherwise.
         public T? GetTileAt<T>(int x, int y) where T : Tile {
@@ -175,30 +166,6 @@ namespace Myrmidon.Core.Maps {
         private int GetIndexFromPoint(int x, int y, int width) {
             return x + y * width;
         }
-
-
-
-        // Removes an Entity from the Map
-        public void Remove(Actor entity) {
-            //// remove from SpatialMap
-            //if (!Entities.Remove(entity))
-            //    throw new Exception("Failed to remove entity from map");
-
-            //// De-link the entity's Moved event from the handler
-            //entity.Moved -= OnEntityMoved;
-        }
-
-
-        // Adds an Entity to the MultiSpatialMap
-        public void AddEntity(Actor entity) {
-            //if (!Entities.Add(entity, entity.Position))
-            //    throw new Exception("Failed to add entity to map");
-
-            //entity.Moved += OnEntityMoved; // Link entity Moved event to new handler
-        }
-
-
-
 
     }
 }

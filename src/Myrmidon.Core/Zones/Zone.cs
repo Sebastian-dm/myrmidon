@@ -63,6 +63,9 @@ public sealed class ZoneSpatialIndex
             : [];
     }
 
+    public IEnumerable<EntityId> All() {
+        return _entitiesByPosition.Values.SelectMany(hashSet => hashSet);
+    }
 
     public IEnumerable<EntityId> InBounds(Rect bounds) {
         for (int y = bounds.Top; y < bounds.Bottom; y++) {

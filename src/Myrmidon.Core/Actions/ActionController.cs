@@ -6,6 +6,8 @@ using Myrmidon.Core.Systems;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Myrmidon.Core.Components;
+using Myrmidon.Core.Ecs;
 using static System.Collections.Specialized.BitVector32;
 
 namespace Myrmidon.Core.Actions {
@@ -104,23 +106,28 @@ namespace Myrmidon.Core.Actions {
 
         private IAction? CreateActionFromInput(InputAction command) {
             return command switch {
-                InputAction.MovePlayerN => new WalkAction(_gameState.Player, new Vec(0, -1)),
-                InputAction.MovePlayerNE => new WalkAction(_gameState.Player, new Vec(1, -1)),
-                InputAction.MovePlayerS => new WalkAction(_gameState.Player, new Vec(0, 1)),
-                InputAction.MovePlayerSE => new WalkAction(_gameState.Player, new Vec(1, 1)),
-                InputAction.MovePlayerW => new WalkAction(_gameState.Player, new Vec(-1, 0)),
-                InputAction.MovePlayerSW => new WalkAction(_gameState.Player, new Vec(-1, 1)),
-                InputAction.MovePlayerE => new WalkAction(_gameState.Player, new Vec(1, 0)),
-                InputAction.MovePlayerNW => new WalkAction(_gameState.Player, new Vec(-1, -1)),
-                InputAction.SkipPlayerTurn => new SkipAction(_gameState.Player),
+                InputAction.MovePlayerN => new WalkAction(_gameState.PlayerEntity, new Vec(0, -1)),
+                InputAction.MovePlayerNe => new WalkAction(_gameState.PlayerEntity, new Vec(1, -1)),
+                InputAction.MovePlayerS => new WalkAction(_gameState.PlayerEntity, new Vec(0, 1)),
+                InputAction.MovePlayerSe => new WalkAction(_gameState.PlayerEntity, new Vec(1, 1)),
+                InputAction.MovePlayerW => new WalkAction(_gameState.PlayerEntity, new Vec(-1, 0)),
+                InputAction.MovePlayerSw => new WalkAction(_gameState.PlayerEntity, new Vec(-1, 1)),
+                InputAction.MovePlayerE => new WalkAction(_gameState.PlayerEntity, new Vec(1, 0)),
+                InputAction.MovePlayerNw => new WalkAction(_gameState.PlayerEntity, new Vec(-1, -1)),
+                InputAction.SkipPlayerTurn => new SkipAction(_gameState.PlayerEntity),
                 _ => null
             };
         }
 
 
-        public void CollectEntityActions() {
-            foreach (Actor actor in _gameState.Zone.Map.Entities.Items) {
-                _actionQueue.Enqueue(actor.GetAction());
+        public void CollectEntityActions()
+        {
+            foreach (EntityId actor in _gameState.Zone.SpatialIndex.All()) {
+                
+                if (_gameState.EcsWorld.TryGet<Brain>(actor, out var brain)) {
+                    var action = brain.GetAction(actor);
+                    _actionQueue.Enqueue(action);
+                }
             }
         }
 

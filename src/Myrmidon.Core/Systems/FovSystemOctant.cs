@@ -55,15 +55,15 @@ public class FovSystemOctant : IFovSystem {
     }
 
     private void RefreshEntities(TileMap map, Vec origin) {
-        // Update entity visibility
-        foreach (Entity entity in map.Entities.Items) {
-            if (Vec.IsDistanceWithin(origin, entity.Position, _range)) {
-                entity.isVisible = true;
-            }
-            else {
-                entity.isVisible = false;
-            }
-        }
+        // // Update entity visibility
+        // foreach (Entity entity in map.Entities.Items) {
+        //     if (Vec.IsDistanceWithin(origin, entity.Position, _range)) {
+        //         entity.isVisible = true;
+        //     }
+        //     else {
+        //         entity.isVisible = false;
+        //     }
+        // }
     }
     
     

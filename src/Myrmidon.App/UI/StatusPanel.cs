@@ -1,17 +1,15 @@
-﻿using Bramble.Core;
-using Myrmidon.Core.Maps;
-using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Entities;
-
-using SDL3;
+﻿using SDL3;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bramble.Core;
 using Myrmidon.App.Render;
 using Myrmidon.Core;
+using Myrmidon.Core.Ecs;
 using Myrmidon.Core.Zones;
+using Myrmidon.Core.Components;
 
 namespace Myrmidon.App.UI;
 
@@ -28,12 +26,15 @@ public class StatusPanel : GridPanel {
         base.Draw();
         FillBackground("black");
         if (_gameState.Zone.GenerationState == ZoneGenState.Ready)
-            RenderStatus(_gameState.Player);
+            RenderStatus(_gameState.PlayerEntity);
     }
 
-    public void RenderStatus(Player player) {
-        DrawText(new Vec(1, 1), $"HP: {player.Health}/{player.MaxHealth}", "w");
-        DrawText(new Vec(1, 3), $"Gold: {player.Gold}", "w");
+    public void RenderStatus(EntityId player) {
+        _gameState.EcsWorld.TryGet<Health>(player, out var health);
+        DrawText(new Vec(1, 1), $"HP: {health.Current}/{health.Maximum}", "w");
+        
+        _gameState.EcsWorld.TryGet<Inventory>(player, out var inv);
+        DrawText(new Vec(1, 3), $"Gold: {inv.Coins}", "w");
     }
 
 }

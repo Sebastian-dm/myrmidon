@@ -62,18 +62,6 @@ public class ZoneGenerator : IZoneGenerator {
 
     public void CreateMonsters(Zone zone) {
         for (int i = 0; i < 30; i++) {
-            
-            // Old Method
-            var monster = new Monster(Color.Red, Color.Transparent, glyph: 2) {
-                AttackChance = rng.Next(0, 50),
-                AttackStrength = rng.Next(0, 10),
-                DefenseChance = rng.Next(0, 50),
-                DefenseStrength = rng.Next(0, 10),
-                Name = "a common troll"
-            };
-            PlaceEntityAtRandomWalkable(zone.Map, monster);
-
-            // New Method
             Vec pos = GetRandomWalkablePosition(zone.Map);
             EntityId monsterEntity = _entityFactory.CreateMonster(zone.Id, pos);
             zone.SpatialIndex.Add(monsterEntity, pos);
@@ -83,12 +71,6 @@ public class ZoneGenerator : IZoneGenerator {
 
     public void CreateTreasure(Zone zone) {
         for (int i = 0; i < 20; i++) {
-
-            // Old Method
-            var loot = new Item(Color.Yellow, Color.Transparent, glyph: 36, name: "Loot");
-            PlaceEntityAtRandomWalkable(zone.Map, loot);
-
-            // New Method
             Vec pos = GetRandomWalkablePosition(zone.Map);
             EntityId lootEntity = _entityFactory.CreateTreasure(zone.Id, pos);
             zone.SpatialIndex.Add(lootEntity, pos);
@@ -96,20 +78,18 @@ public class ZoneGenerator : IZoneGenerator {
     }
 
 
-
-
-    private void PlaceEntityAtRandomWalkable(TileMap map, Entity entity) {
-        int pos;
-        bool valid;
-        do {
-            pos = rng.Next(0, map.Width * map.Height);
-            valid = map.Tiles[pos].IsWalkable;
-        }
-        while (!valid);
-
-        entity.Position = new Vec(pos % map.Width, pos / map.Width);
-        map.Entities.Add(entity, new Coord(entity.Position.X, entity.Position.Y));
-    }
+    // private void PlaceEntityAtRandomWalkable(TileMap map, Entity entity) {
+    //     int pos;
+    //     bool valid;
+    //     do {
+    //         pos = rng.Next(0, map.Width * map.Height);
+    //         valid = map.Tiles[pos].IsWalkable;
+    //     }
+    //     while (!valid);
+    //
+    //     entity.Position = new Vec(pos % map.Width, pos / map.Width);
+    //     map.Entities.Add(entity, new Coord(entity.Position.X, entity.Position.Y));
+    // }
 
 
 

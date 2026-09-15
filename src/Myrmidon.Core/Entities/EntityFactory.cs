@@ -29,7 +29,7 @@ public class EntityFactory {
     public EntityId CreatePlayer(int zoneId, Vec position) {
         EntityId entity = _world.CreateEntity();
         _world.Add(entity, new Identity { Name = "Player" });
-        _world.Add(entity, new Position { Location = position, ZoneId = zoneId });
+        _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
         _world.Add(entity, new Health {
             Current = 20,
             Maximum = 20
@@ -51,7 +51,8 @@ public class EntityFactory {
         EntityId entity = _world.CreateEntity();
 
         _world.Add(entity, new Identity { Name = "a common goblin" });
-        _world.Add(entity, new Position { Location = position, ZoneId = zoneId });
+        _world.Add(entity, new Brain());
+        _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
         _world.Add(entity, new Health {
             Current = 3,
             Maximum = 3
@@ -73,7 +74,7 @@ public class EntityFactory {
     public EntityId CreateTreasure(int zoneId, Vec position) {
         EntityId entity = _world.CreateEntity();
         _world.Add(entity, new Identity { Name = "a pile of gold" });
-        _world.Add(entity, new Position { Location = position, ZoneId = zoneId });
+        _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
         _world.Add(entity, new Renderable("text/default", (byte)'$', "Y"));
         _world.Add(entity, new Perceptible());
         return entity;

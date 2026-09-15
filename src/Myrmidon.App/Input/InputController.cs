@@ -68,19 +68,19 @@ public class InputController {
         if (keys[(int)SDL.Scancode.Kp8] || keys[(int)SDL.Scancode.Up])
             action = InputAction.MovePlayerN;
         if (keys[(int)SDL.Scancode.Kp9])
-            action = InputAction.MovePlayerNE;
+            action = InputAction.MovePlayerNe;
         if (keys[(int)SDL.Scancode.Kp6] || keys[(int)SDL.Scancode.Right])
             action = InputAction.MovePlayerE;
         if (keys[(int)SDL.Scancode.Kp3])
-            action = InputAction.MovePlayerSE;
+            action = InputAction.MovePlayerSe;
         if (keys[(int)SDL.Scancode.Kp2] || keys[(int)SDL.Scancode.Down])
             action = InputAction.MovePlayerS;
         if (keys[(int)SDL.Scancode.Kp1])
-            action = InputAction.MovePlayerSW;
+            action = InputAction.MovePlayerSw;
         if (keys[(int)SDL.Scancode.Kp4] || keys[(int)SDL.Scancode.Left])
             action = InputAction.MovePlayerW;
         if (keys[(int)SDL.Scancode.Kp7])
-            action = InputAction.MovePlayerNW;
+            action = InputAction.MovePlayerNw;
 
         // Other player actions
         if (keys[(int)SDL.Scancode.Kp5] || keys[(int)SDL.Scancode.Space])

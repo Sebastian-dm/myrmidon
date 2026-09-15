@@ -7,32 +7,44 @@ using System.Threading.Tasks;
 using Bramble.Core;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Actions;
+using Myrmidon.Core.Components;
+using Myrmidon.Core.Ecs;
+using Myrmidon.Core.Signals;
 
-namespace Myrmidon.Core.Actions {
-    internal class PickupAction : IAction {
+namespace Myrmidon.Core.Actions;
 
-        public bool IsImmediate { get; } = false;
-        public readonly Actor Performer;
-        public readonly Item Item;
+internal class PickupAction : IAction {
 
-        public PickupAction(Actor performer, Item item) {
-            Performer = performer;
-            Item = item;
-        }
+    public bool IsImmediate { get; } = false;
+    public readonly EntityId Performer;
+    public readonly EntityId Item;
 
-        public ActionResult Perform(IWorldState context) {
+    public PickupAction(EntityId performer, EntityId item) {
+        Performer = performer;
+        Item = item;
+    }
 
-            if (Performer.Position.IsAdjacentTo(Item.Position)) {
-                Performer.Inventory.Add(Item);
-                //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
-                context.Zone.Map.Remove(Item);
-                return new ActionResult(succeeded: true);
-            }
-            else {
-                return new ActionResult(succeeded: false,
-                alternative: new SkipAction(Performer)
-                );
-            }
-        }
+    public ActionResult Perform(IWorldState context) {
+        
+        context.EcsWorld.TryGet<Identity>(Performer, out var performerIdentity);
+        context.EcsWorld.TryGet<Identity>(Performer, out var subjectIdentity);
+        context.SignalQueue.Enqueue(new LogSignal(($"{performerIdentity.Name} wants to pickup {subjectIdentity.Name} but this function is not implemented.")));
+        
+        // Todo: pickup in ECS
+        //if (Performer.Position.IsAdjacentTo(Item.Position)) {
+        //    Performer.Inventory.Add(Item);
+        //    //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
+        //    context.Zone.Map.Remove(Item);
+        //    return new ActionResult(succeeded: true);
+        //}
+        //else {
+        //    return new ActionResult(succeeded: false,
+        //    alternative: new SkipAction(Performer)
+        //    );
+        //}
+        
+        return new ActionResult(succeeded: false,
+            alternative: new SkipAction(Performer)
+        );
     }
 }

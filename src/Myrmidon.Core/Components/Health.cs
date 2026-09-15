@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Myrmidon.Core.Components {
-    internal class Health : Component {
+    public class Health : Component {
         public int Current { get; set; }
         public int Maximum { get; set; }
 

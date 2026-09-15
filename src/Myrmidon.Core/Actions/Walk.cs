@@ -4,74 +4,94 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Bramble.Core;
-
+using Myrmidon.Core.Components;
+using Myrmidon.Core.Ecs;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.Zones;
 
 namespace Myrmidon.Core.Actions {
     public class WalkAction : IAction {
 
         public bool IsImmediate { get; } = false;
-        public readonly Actor Performer;
+        public readonly EntityId Performer;
         public readonly Vec Direction;
 
         private Vec _originalPosition;
 
-        public WalkAction(Actor performer, Vec direction) {
+        public WalkAction(EntityId performer, Vec direction) {
+            
             Performer = performer;
             Direction = direction;
-            _originalPosition = performer.Position;
+            
         }
 
         public ActionResult Perform(IWorldState context) {
 
             // Do nothing if no length given
-            if (Direction.X == 0 && Direction.Y == 0) {
-                return new ActionResult(
-                succeeded: false,
-                alternative: new SkipAction(Performer)
-                );
-            }
+            if (Direction.X == 0 && Direction.Y == 0)
+                return GetDoNothingResult();
+            
+            // Do nothing if performer has no position
+            if (!context.EcsWorld.TryGet<Position>(Performer, out var pos))
+                return GetDoNothingResult();
 
             // store the actor's last move state
-            _originalPosition = new Vec(Performer.Position.X, Performer.Position.Y);
+            _originalPosition = new Vec(pos.Coords.X, pos.Coords.Y);
             Vec newPosition = _originalPosition + Direction;
 
             // Check if there is an actor on new position
-            Monster monster = context.Zone.Map.GetEntityAt<Monster>(newPosition);
-            if (monster != null) {
-                return new ActionResult( succeeded: false,
-                alternative: new AttackAction(Performer, monster)
-                );
+            var entityInFront = context.Zone.SpatialIndex.At(newPosition).FirstOrDefault();
+            
+            // There is an entity in front of the player
+            if (entityInFront != null) {
+                
+                // Fight if the entity has combat stats
+                if (context.EcsWorld.TryGet<CombatStats>(entityInFront, out var combatStats)) {
+                    return new ActionResult( succeeded: false,
+                        alternative: new AttackAction(Performer, entityInFront)
+                    );
+                }
+                
+                // Pick up if entity has no brain
+                // Todo: Figure out a way to check if items can be picked up
+                if (!context.EcsWorld.TryGet<Brain>(entityInFront, out var brain)) {
+                    return new ActionResult( succeeded: false,
+                        alternative: new PickupAction(Performer, entityInFront)
+                    );
+                }
             }
-
-            // Check if there is an item on the new position
-            Item item = context.Zone.Map.GetEntityAt<Item>(newPosition);
-            if (item != null) {
-                return new ActionResult( succeeded: false,
-                alternative: new PickupAction(Performer, item)
-                );
-            }
-
+            
             // Check for the presence of a door
             TileDoor door = context.Zone.Map.GetTileAt<TileDoor>(newPosition);
             if (door != null && !door.IsOpen) {
                 return new ActionResult(succeeded: false,
-                alternative: new OpenDoorAction(Performer, door)
+                    alternative: new OpenDoorAction(Performer, door)
                 );
             }
-
+            
             // Check if it is possible to go there
             if (context.Zone.Map.IsTileWalkable(newPosition)) {
-                Performer.MoveTo(newPosition, context.Zone.Map);
+                context.Zone.SpatialIndex.Remove(Performer, pos.Coords);
+                context.Zone.SpatialIndex.Add(Performer, newPosition);
+                pos.Coords = newPosition;
                 return new ActionResult(succeeded: true);
             }
 
             // Handle situations where there are non-walkable tiles that CAN be used
             return new ActionResult(succeeded: false,
                 alternative: new SkipAction(Performer)
-                );
+            );
+
+
+        }
+
+        private ActionResult GetDoNothingResult() {
+            return new ActionResult(
+                succeeded: false,
+                alternative: new SkipAction(Performer)
+            );
         }
 
 

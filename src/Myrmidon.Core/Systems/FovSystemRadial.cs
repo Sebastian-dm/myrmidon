@@ -52,14 +52,16 @@ namespace Myrmidon.Core.Systems {
             }
 
             // Update entity visibility
-            foreach (Entity entity in map.Entities.Items) {
-                if (Vec.IsDistanceWithin(origin, entity.Position, _range)) {
-                    entity.isVisible = true;
-                }
-                else {
-                    entity.isVisible = false;
-                }
-            }
+            // Todo: Update entity loop for ecs
+            
+            // foreach (Entity entity in map.Entities.Items) {
+            //     if (Vec.IsDistanceWithin(origin, entity.Position, _range)) {
+            //         entity.isVisible = true;
+            //     }
+            //     else {
+            //         entity.isVisible = false;
+            //     }
+            // }
         }
 
         private void SetRenderLightFromDistance(TileMap map, Vec origin, Vec target) {

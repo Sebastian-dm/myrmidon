@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Myrmidon.Core.Ecs;
 using Myrmidon.Core.Entities;
 
 namespace Myrmidon.Core.Actions {
@@ -10,7 +11,7 @@ namespace Myrmidon.Core.Actions {
 
         public bool IsImmediate { get; } = false;
 
-        public SkipAction(Actor performer) {
+        public SkipAction(EntityId performer) {
 
         }
 

@@ -29,16 +29,18 @@ public class ScenePanel : GridPanel {
     public override void Draw() {
         base.Draw();
         if (_worldState.Zone.GenerationState == ZoneGenState.Ready)
-            DrawZone(_worldState.Zone, _worldState.Player, _worldState.PlayerEntity);
+            DrawZone(_worldState.Zone, _worldState.PlayerEntity);
     }
 
-    private void DrawZone(Zone zone, Player player, EntityId playerEntity) {
+    private void DrawZone(Zone zone, EntityId player) {
 
         var map = zone.Map;
         
-        // Todo: Adapt draw center to entity based player
-        
-        Vec drawCenter = new Vec(player.Position.X, player.Position.Y);
+        // Center on player
+        if (!_worldState.EcsWorld.TryGet<Position>(player, out var pPos))
+            return;
+            
+        Vec drawCenter = pPos.Coords;
         Rect viewBounds = new Rect(
             drawCenter.X - PanelRect.Size.X/2,
             drawCenter.Y - PanelRect.Size.Y/2,
@@ -71,39 +73,22 @@ public class ScenePanel : GridPanel {
                 }
             }
         }
-
-        //Paint entities old way
-        foreach (var entity in map.Entities.Items) {
-            if (entity is Actor actor) {
-                if (!IsInMapBounds(actor.Position.X, actor.Position.Y, map)) continue;
-                if (!IsInViewBounds(actor.Position.X, actor.Position.Y, viewBounds)) continue;
-                Vec gridPos = new Vec(actor.Position.X - viewBounds.Left, actor.Position.Y - viewBounds.Top);
-                string color = "W";
-                if (actor is Monster monster) {
-                    color = "g";
-                }
-                //DrawTile(gridPos, "text/default", actor.Glyph, color, "M");
-            }
-        }
-
+        
+        // Paint entities
         foreach(var entityId in zone.SpatialIndex.InBounds(viewBounds)) {
-            if (!_worldState.EcsWorld.TryGet<Position>(entityId, out var position) && !(position.ZoneId == zone.Id))
+            if (!_worldState.EcsWorld.TryGet<Position>(entityId, out var mpos) ||
+                !_worldState.EcsWorld.TryGet<Renderable>(entityId, out var mren))
                 continue;
-            if (!_worldState.EcsWorld.TryGet<Renderable>(entityId, out var renderable))
-                continue;
-            Vec gridPos = new Vec(position.Location.X - viewBounds.Left, position.Location.Y - viewBounds.Top);
-            DrawTile(gridPos, renderable.TextureSheetName, renderable.TextureIndex, renderable.ColorBase, renderable.ColorAccent, renderable.ColorBackground);
+            Vec gridPos = new Vec(mpos.Coords.X - viewBounds.Left, mpos.Coords.Y - viewBounds.Top);
+            DrawTile(gridPos, mren.TextureSheetName, mren.TextureIndex, mren.ColorBase, mren.ColorAccent, mren.ColorBackground);
         }
 
         // Paint player
-        if (playerEntity != null) {
-            if ((_worldState.EcsWorld.TryGet<Position>(playerEntity, out var pos) && pos.ZoneId == zone.Id) &&
-            (_worldState.EcsWorld.TryGet<Renderable>(playerEntity, out var ren))) {
-                var gridPosNew = new Vec(pos.Location.X - viewBounds.Left, pos.Location.Y - viewBounds.Top);
-                var gridPos = new Vec(player.Position.X - viewBounds.Left, player.Position.Y - viewBounds.Top);
-                //DrawTile(gridPos, ren.TextureSheetName, ren.TextureIndex, ren.ColorBase, ren.ColorAccent, ren.ColorBackground);
-                DrawTile(gridPos, "text/default", player.Glyph, "o", "M");
-            }
+        if (_worldState.EcsWorld.TryGet<Position>(player, out var ppos) &&
+            _worldState.EcsWorld.TryGet<Renderable>(player, out var pren))
+        {
+            var gridPos = new Vec(ppos.Coords.X - viewBounds.Left, ppos.Coords.Y - viewBounds.Top);
+            DrawTile(gridPos, pren.TextureSheetName, pren.TextureIndex, pren.ColorBase, pren.ColorAccent, pren.ColorBackground);
         }
     }
 
