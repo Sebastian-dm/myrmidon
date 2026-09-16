@@ -15,7 +15,7 @@ namespace Myrmidon.Core.Maps.Generation {
 
 
         static TileFactory() {
-            renderableBlueprints["floor"] = new Renderable("text/default", (byte)253, "B");
+            renderableBlueprints["floor"] = new Renderable("text/default", (byte)253, "m");
             renderableBlueprints["wall"] = new Renderable("tile/wall", (byte)0, "O");
             renderableBlueprints["door"] = new Renderable("text/default", (byte)'+', "Y");
         }
