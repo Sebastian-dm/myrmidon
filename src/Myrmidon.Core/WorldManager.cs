@@ -23,7 +23,7 @@ namespace Myrmidon.Core {
 
         public WorldManager(IWorldState worldstate, ActionController actionController, IZoneGenerator zoneGenerator) {
             WorldState = worldstate;
-            FovSystem = new FovSystemOctant();
+            FovSystem = new FovSystemOctant(worldstate.EcsWorld);
             _zoneGen = zoneGenerator;
             
             ActionController =  actionController;
@@ -39,7 +39,7 @@ namespace Myrmidon.Core {
             
             
             if (WorldState.EcsWorld.TryGet<Position>(WorldState.PlayerEntity, out var pPos))
-                FovSystem.Recompute(WorldState.Zone.Map, pPos.Coords);
+                FovSystem.Recompute(WorldState.Zone, pPos.Coords);
 
         }
 
