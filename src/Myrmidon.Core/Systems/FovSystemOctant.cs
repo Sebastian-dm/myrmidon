@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 
 using Bramble.Core;
 using Myrmidon.Core.Components;
+using Myrmidon.Core.Ecs;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
+using Myrmidon.Core.Zones;
 
 namespace Myrmidon.Core.Systems;
 
@@ -17,57 +19,45 @@ public class FovSystemOctant : IFovSystem {
 
     private int _range;
     private int _rangeSqrt;
+    private EcsWorld _ecs;
 
-    public FovSystemOctant(int range = 8) {
+    public FovSystemOctant(EcsWorld ecs, int range = 8) {
+        _ecs = ecs;
         _range = range;
         _rangeSqrt = _range * _range;
     }
 
 
     // Recompute the visible area based on a given location.
-    public void Recompute(TileMap map, Vec origin) {
+    public void Recompute(Zone zone, Vec origin) {
         
-        RefreshEntities(map, origin);
-        
-        ResetLightLevelInBoundDist(map, origin);
+        ResetLightLevelInBoundDist(zone, origin);
         for (var octant = 0; octant < 8; octant++) {
-            RefreshOctant(map, octant, origin);
+            RefreshOctant(zone, octant, origin);
         }
         
         // Set origin to be visible
-        UpdatePerceptible(map, origin, origin);
+        UpdatePerceptibleLightFromDistance(zone, new Vec(0,0), zone.Map.GetPerceptibleComponent(origin));
     }
 
-    private void ResetLightLevelInBoundDist(TileMap map, Vec origin) {
+    private void ResetLightLevelInBoundDist(Zone zone, Vec origin) {
         int margin = 1;
         int left = Math.Max(0, origin.X - _range - margin);
         int top = Math.Max(0, origin.Y - _range  - margin);
-        int right = Math.Min(map.Width, origin.X + _range + margin);
-        int bottom = Math.Min(map.Height, origin.Y + _range + margin);
+        int right = Math.Min(zone.Map.Width, origin.X + _range + margin);
+        int bottom = Math.Min(zone.Map.Height, origin.Y + _range + margin);
 
         // Update tile visiblity
         for (int x = left; x < right; x++) {
             for (int y = top; y < bottom; y++) {
-                map.GetPerceptibleComponent(x,y).LightLevel = 0.0f;
+                zone.Map.GetPerceptibleComponent(x,y).LightLevel = 0.0f;
             }
         }
     }
-
-    private void RefreshEntities(TileMap map, Vec origin) {
-        // TODO: Refactor for ECS
-        // // Update entity visibility
-        // foreach (Entity entity in map.Entities.Items) {
-        //     if (Vec.IsDistanceWithin(origin, entity.Position, _range)) {
-        //         entity.isVisible = true;
-        //     }
-        //     else {
-        //         entity.isVisible = false;
-        //     }
-        // }
-    }
     
     
-    private List<Shadow> RefreshOctant(TileMap map, int octant, Vec origin) {
+    private List<Shadow> RefreshOctant(Zone zone, int octant, Vec origin) {
+        var map = zone.Map;
         var line = new ShadowLine();
         var fullShadow = false;
 
@@ -85,33 +75,30 @@ public class FovSystemOctant : IFovSystem {
                 // the starting tile of the FOV is in bounds.
                 if (!map.Bounds.Contains(pos)) break;
 
-                // If we know the entire row is in shadow, we don't need to be more
-                // specific.
-                if (fullShadow) {
+                // Skip if we know the entire row is in shadow
+                if (fullShadow)
                     continue;
-                    //var renderComp = map.GetRenderComponent(pos);
-                    //renderComp.ColorBase = "black";
-                    //renderComp.Dimfactor = 0.0f;
-                    //renderComp.Explored = false;
-                }
-                else {
-                    var projection = _projectTile(row, col);
 
+                var projection = _projectTile(row, col);
+                var visible = !line.IsInShadow(projection);
+
+                if (visible) {
+                    Vec distance = origin - pos;
                     // Set the visibility of this tile.
-                    var visible = !line.IsInShadow(projection);
-
-                    //renderComp.Explored = true;
-
+                    UpdatePerceptibleLightFromDistance(zone, distance, zone.Map.GetPerceptibleComponent(pos));
+                    
+                    // Set visibility of entities on this tile
+                    var entitiesOnTile = zone.SpatialIndex.At(pos);
+                    foreach (var entity in entitiesOnTile) {
+                        if (_ecs.TryGet(entity, out Perceptible perc));
+                            UpdatePerceptibleLightFromDistance(zone, distance, perc);
+                    }
+                    
                     // Add any opaque tiles to the shadow map.
                     var tile = map[pos];
-                    
-                    if (visible) {
-                        UpdatePerceptible(map, origin, pos);
-                        
-                        if (tile.IsBlockingLos) {
-                            line.Add(projection);
-                            fullShadow = line.IsFullShadow;
-                        }
+                    if (tile.IsBlockingLos) {
+                        line.Add(projection);
+                        fullShadow = line.IsFullShadow;
                     }
                 }
             }
@@ -157,15 +144,14 @@ public class FovSystemOctant : IFovSystem {
         return shadow;
     }
 
-    private void UpdatePerceptible(TileMap map, Vec origin, Vec target) {
-        var prcpt = map.GetPerceptibleComponent(target);
+    private void UpdatePerceptibleLightFromDistance(Zone zone, Vec distance, Perceptible perceptible) {
 
-        int distSqrt = (target - origin).LengthSquared;
+        int distSqrt = distance.LengthSquared;
         if (distSqrt <= _rangeSqrt)
-            prcpt.Explored = true;
+            perceptible.Explored = true;
 
         float clampedDist = (float)Math.Clamp(Math.Pow(distSqrt / _rangeSqrt, 1.0f),  0.0f, 1.0f);
-        prcpt.LightLevel = 1f - clampedDist;
+        perceptible.LightLevel = 1f - clampedDist;
     }
 }
 

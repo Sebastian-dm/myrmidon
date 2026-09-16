@@ -10,11 +10,12 @@ using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
+using Myrmidon.Core.Zones;
 
 namespace Myrmidon.Core.Systems {
 
     public interface IFovSystem {
-        public void Recompute(TileMap map, Vec origin);
+        public void Recompute(Zone zone, Vec origin);
     }
 
 
@@ -30,8 +31,8 @@ namespace Myrmidon.Core.Systems {
 
 
         // Recompute the visible area based on a given location.
-        public void Recompute(TileMap map, Vec origin) {
-            ComputeRadialFov(map, origin);
+        public void Recompute(Zone zone, Vec origin) {
+            ComputeRadialFov(zone.Map, origin);
         }
         
         

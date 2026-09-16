@@ -97,12 +97,13 @@ public class ZoneGenerator : IZoneGenerator {
         int pos;
         bool valid;
         do {
-            pos = rng.Next(0, map.Width * map.Height);
+            pos = rng.Next(0, map.Tiles.Length);
             valid = map.Tiles[pos].IsWalkable;
         }
         while (!valid);
 
-        return new Vec(pos % map.Width, pos / map.Height);
+        var posVec = new Vec(pos % map.Width, pos / map.Width);
+        return posVec;
     }
 
     public Vec GetCenterOfRandomRoom(TileMap map) {

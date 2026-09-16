@@ -30,7 +30,7 @@ public class TerminalRenderer : IDisposable {
     public int WindowHeightTiles => WindowHeightPix / _tileHeight;
 
 
-    public TerminalRenderer(int widthTiles, int heightTiles) {
+    public TerminalRenderer(int widthTiles, int heightTiles, string palette) {
         if (!SDL.Init(SDL.InitFlags.Video))
             throw new InvalidOperationException("Failed to initialize SDL.");
         
@@ -58,7 +58,7 @@ public class TerminalRenderer : IDisposable {
         SDL.SetRenderVSync(_renderer, 1);
 
 
-        TerminalColor.LoadColorsFromFile("lostCentury");
+        TerminalColor.LoadColorsFromFile(palette);
     }
 
     public void BeginFrame() {

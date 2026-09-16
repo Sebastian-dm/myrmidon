@@ -23,7 +23,7 @@ public sealed class AppHost : IDisposable {
     }
 
     public static AppHost Create() {
-        var terminal = new TerminalRenderer(80, 30);
+        var terminal = new TerminalRenderer(80, 30, "qud");
 
         var gameState = new WorldState();
         var actionController = new ActionController(gameState);

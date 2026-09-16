@@ -9,14 +9,14 @@ using Myrmidon.Core.Components;
 using Bramble.Core;
 
 namespace Myrmidon.Core.Maps.Generation {
-    public static class TileSpawner {
+    public static class TileFactory {
 
         private static Dictionary<string, Renderable> renderableBlueprints = new Dictionary<string, Renderable>();
 
 
-        static TileSpawner() {
-            renderableBlueprints["floor"] = new Renderable("text/default", (byte)' ', "g");
-            renderableBlueprints["wall"] = new Renderable("tile/wall", (byte)0, "G");
+        static TileFactory() {
+            renderableBlueprints["floor"] = new Renderable("text/default", (byte)253, "B");
+            renderableBlueprints["wall"] = new Renderable("tile/wall", (byte)0, "O");
             renderableBlueprints["door"] = new Renderable("text/default", (byte)'+', "Y");
         }
 

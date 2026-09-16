@@ -93,7 +93,7 @@ namespace Myrmidon.Core.Maps.Generation {
 
         private void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
-                TileSpawner.SpawnTile(_map, i, new TileWall(), "wall");
+                TileFactory.SpawnTile(_map, i, new TileWall(), "wall");
             }
         }
 
@@ -288,14 +288,14 @@ namespace Myrmidon.Core.Maps.Generation {
         private void LinkRegions(Vec pos) {
             if (rng.OneIn(4)) {
                 if (rng.OneIn(3)) {
-                    TileSpawner.SpawnTile(_map, pos, new TileDoor(isLocked: false, open: true), "door");
+                    TileFactory.SpawnTile(_map, pos, new TileDoor(isLocked: false, open: true), "door");
                 }
                 else {
-                    TileSpawner.SpawnTile(_map, pos, new TileFloor(), "floor");
+                    TileFactory.SpawnTile(_map, pos, new TileFloor(), "floor");
                 }
             }
             else {
-                TileSpawner.SpawnTile(_map, pos, new TileDoor(isLocked: false, open: false), "door");
+                TileFactory.SpawnTile(_map, pos, new TileDoor(isLocked: false, open: false), "door");
             }
         }
 
@@ -320,7 +320,7 @@ namespace Myrmidon.Core.Maps.Generation {
 
                         done = false;
                         
-                        TileSpawner.SpawnTile(_map, pos, new TileWall(), "wall");
+                        TileFactory.SpawnTile(_map, pos, new TileWall(), "wall");
 
                         Thread.Sleep(_tileStepWaitMs / 5);
                     }
@@ -350,7 +350,7 @@ namespace Myrmidon.Core.Maps.Generation {
         private void Carve(Vec pos) {
             int locationIndex = pos.Y * _map.Width + pos.X;
             _regions[locationIndex] = _currentRegion;
-            TileSpawner.SpawnTile(_map, locationIndex, new TileFloor(), "floor");
+            TileFactory.SpawnTile(_map, locationIndex, new TileFloor(), "floor");
         }
     }
 }

@@ -42,10 +42,12 @@ namespace Myrmidon.Core.Actions {
             Vec newPosition = _originalPosition + Direction;
 
             // Check if there is an actor on new position
-            var entityInFront = context.Zone.SpatialIndex.At(newPosition).FirstOrDefault();
+            var entitiesInFront = context.Zone.SpatialIndex.At(newPosition);
             
             // There is an entity in front of the player
-            if (entityInFront != null) {
+            if (entitiesInFront.Count != 0) {
+                
+                var entityInFront = entitiesInFront.First();
                 
                 // Fight if the entity has combat stats
                 if (context.EcsWorld.TryGet<CombatStats>(entityInFront, out var combatStats)) {

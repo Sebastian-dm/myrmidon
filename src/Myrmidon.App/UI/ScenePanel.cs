@@ -69,7 +69,7 @@ public class ScenePanel : GridPanel {
                 }
                 else {
                     // Draw darkened tiles with their respective colors and textures
-                    DrawTile(panelPos, render.TextureSheetName, render.TextureIndex, "K", alpha:0.2f);
+                    DrawTile(panelPos, render.TextureSheetName, render.TextureIndex, "K", alpha:0.5f);
                 }
             }
         }
@@ -77,10 +77,14 @@ public class ScenePanel : GridPanel {
         // Paint entities
         foreach(var entityId in zone.SpatialIndex.InBounds(viewBounds)) {
             if (!_worldState.EcsWorld.TryGet<Position>(entityId, out var mpos) ||
-                !_worldState.EcsWorld.TryGet<Renderable>(entityId, out var mren))
+                !_worldState.EcsWorld.TryGet<Renderable>(entityId, out var mren) ||
+                !_worldState.EcsWorld.TryGet<Perceptible>(entityId, out var mperc))
                 continue;
-            Vec gridPos = new Vec(mpos.Coords.X - viewBounds.Left, mpos.Coords.Y - viewBounds.Top);
-            DrawTile(gridPos, mren.TextureSheetName, mren.TextureIndex, mren.ColorBase, mren.ColorAccent, mren.ColorBackground);
+            if (mperc.LightLevel > 0.2f) {
+                Vec gridPos = new Vec(mpos.Coords.X - viewBounds.Left, mpos.Coords.Y - viewBounds.Top);
+                DrawTile(gridPos, mren.TextureSheetName, mren.TextureIndex, mren.ColorBase, mren.ColorAccent,
+                    mren.ColorBackground);
+            }
         }
 
         // Paint player
