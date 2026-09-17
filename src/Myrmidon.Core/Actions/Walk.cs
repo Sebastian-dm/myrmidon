@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Bramble.Core;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using Myrmidon.Core.Ecs;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Utilities.Geometry;

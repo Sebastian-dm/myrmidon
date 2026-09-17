@@ -1,5 +1,5 @@
 ﻿using System;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using Myrmidon.Core.Utilities.Graphics;
 
 

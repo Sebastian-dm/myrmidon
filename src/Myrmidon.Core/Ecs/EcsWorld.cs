@@ -8,7 +8,7 @@ public sealed class EcsWorld {
     public IEnumerable<EntityId> Entities => _entities;
 
 
-    private readonly Dictionary<Type, IComponentStore> _stores = new Dictionary<Type, IComponentStore>();
+    private readonly Dictionary<Type, IPartStore> _stores = new Dictionary<Type, IPartStore>();
     private readonly HashSet<EntityId> _entities = new HashSet<EntityId>();
     private uint _nextEntityId = 1;
 
@@ -54,14 +54,14 @@ public sealed class EcsWorld {
     }
 
 
-    private ComponentStore<T> GetStore<T>()
+    private PartStore<T> GetStore<T>()
         where T : class {
         var type = typeof(T);
 
         if (_stores.TryGetValue(type, out var existing))
-            return (ComponentStore<T>)existing;
+            return (PartStore<T>)existing;
 
-        var created = new ComponentStore<T>();
+        var created = new PartStore<T>();
         _stores[type] = created;
         return created;
     }

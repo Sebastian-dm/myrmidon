@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using Myrmidon.Core.Utilities.Graphics;
 
 namespace Myrmidon.Core.Maps.Tiles {

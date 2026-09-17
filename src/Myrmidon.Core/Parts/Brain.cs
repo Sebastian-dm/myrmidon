@@ -1,9 +1,9 @@
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Ecs;
 
-namespace Myrmidon.Core.Components;
+namespace Myrmidon.Core.Parts;
 
-public class Brain : Component {
+public class Brain : Part {
     
     
     public IAction GetAction(EntityId entityId) {

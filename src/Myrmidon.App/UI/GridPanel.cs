@@ -1,6 +1,6 @@
 using Bramble.Core;
 using Myrmidon.App.Render;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using SDL3;
 
 namespace Myrmidon.App.UI;

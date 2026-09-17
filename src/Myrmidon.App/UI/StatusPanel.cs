@@ -9,7 +9,7 @@ using Myrmidon.App.Render;
 using Myrmidon.Core;
 using Myrmidon.Core.Ecs;
 using Myrmidon.Core.Zones;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 
 namespace Myrmidon.App.UI;
 

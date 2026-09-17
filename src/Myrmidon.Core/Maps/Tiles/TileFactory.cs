@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using Bramble.Core;
 
 namespace Myrmidon.Core.Maps.Generation {

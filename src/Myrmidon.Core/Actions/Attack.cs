@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using Myrmidon.Core.Ecs;
 using Myrmidon.Core.Signals;
 

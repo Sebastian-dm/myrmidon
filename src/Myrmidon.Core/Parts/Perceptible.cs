@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Myrmidon.Core.Components {
-    public class Perceptible : Component {
+namespace Myrmidon.Core.Parts {
+    public class Perceptible : Part {
 
         public float LightLevel { get; set; } = 0.0f;
 

@@ -1,6 +1,5 @@
 ﻿using Bramble.Core;
-using Myrmidon.Core.Components;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.Parts;
 using Myrmidon.Core.Utilities.Random;
 using Myrmidon.Core.Zones;
 using System;
@@ -11,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Myrmidon.Core.Entities;
+namespace Myrmidon.Core.Ecs;
 
 
 public class EntityFactory {

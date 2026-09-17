@@ -1,9 +1,8 @@
 ﻿using Bramble.Core;
 using GoRogue;
 using GoRogue.GameFramework;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using Myrmidon.Core.Ecs;
-using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Generation;
 using Myrmidon.Core.Utilities.Graphics;

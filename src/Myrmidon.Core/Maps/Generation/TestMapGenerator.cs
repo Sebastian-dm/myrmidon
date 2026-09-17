@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Linq;
 
 using Bramble.Core;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Random;
 using Myrmidon.Core.Systems;

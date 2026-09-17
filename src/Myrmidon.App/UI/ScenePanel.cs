@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Myrmidon.App.Render;
 using static System.Net.WebRequestMethods;
 using Myrmidon.Core;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using Myrmidon.Core.Ecs;
 using Myrmidon.Core.Zones;
 

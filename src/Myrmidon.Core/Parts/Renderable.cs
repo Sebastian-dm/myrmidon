@@ -1,8 +1,8 @@
 using Myrmidon.Core.Entities;
 
-namespace Myrmidon.Core.Components;
+namespace Myrmidon.Core.Parts;
 
-public class Renderable : Component {
+public class Renderable : Part {
 
     public string SpriteId { get; set; } = "default.floor";
     public string TextureSheetName { get; set; } = "text/default";

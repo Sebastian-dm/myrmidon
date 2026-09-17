@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Bramble.Core;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
 //using Myrmidon.Core.Utilities.Geometry;

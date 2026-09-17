@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Myrmidon.Core.Components {
-    internal class CombatStats : Component {
+namespace Myrmidon.Core.Parts {
+    internal class CombatStats : Part {
         public int AttackStrength { get; set; }
         public int AttackChance { get; set; }
         public int DefenseStrength { get; set; }
