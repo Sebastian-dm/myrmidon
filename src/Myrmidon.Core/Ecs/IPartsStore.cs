@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Myrmidon.Core.Maps.Generation {
-    public interface IMapGenerator {
-        TileMap Generate(TileMap map);
+namespace Myrmidon.Core.Ecs {
+    public interface IPartStore {
+        void Remove(uint id);
+        bool Contains(uint id);
     }
 }

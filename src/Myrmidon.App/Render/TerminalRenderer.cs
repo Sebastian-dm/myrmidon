@@ -4,7 +4,6 @@ using SDL3;
 
 using Bramble.Core;
 using Myrmidon.App.UI;
-using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
 
 namespace Myrmidon.App.Render;

@@ -1,7 +1,6 @@
 ﻿using Bramble.Core;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Generation;
 using Myrmidon.Core.Systems;

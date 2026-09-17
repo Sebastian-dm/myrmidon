@@ -16,11 +16,11 @@ namespace Myrmidon.Core.Ecs;
 public class EntityFactory {
 
 
-    private readonly EcsWorld _world;
+    private readonly Ecs _world;
     private RandomNumberGenerator rng = new RandomNumberGenerator();
 
 
-    public EntityFactory(EcsWorld world) {
+    public EntityFactory(Ecs world) {
         _world = world;
     }
 

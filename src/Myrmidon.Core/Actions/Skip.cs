@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Myrmidon.Core.Ecs;
-using Myrmidon.Core.Entities;
 
 namespace Myrmidon.Core.Actions {
     internal class SkipAction : IAction {

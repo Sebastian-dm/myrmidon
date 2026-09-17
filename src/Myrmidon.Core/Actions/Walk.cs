@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Bramble.Core;
 using Myrmidon.Core.Parts;
 using Myrmidon.Core.Ecs;
-using Myrmidon.Core.Entities;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Zones;

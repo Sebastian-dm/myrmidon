@@ -2,7 +2,6 @@
 using Bramble.Core;
 using GoRogue;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Entities;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Systems;
 using Myrmidon.Core.Utilities.Random;
