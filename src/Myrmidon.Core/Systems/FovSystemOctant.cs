@@ -18,9 +18,9 @@ public class FovSystemOctant : IFovSystem {
 
     private int _range;
     private int _rangeSqrt;
-    private ECS.Ecs _ecs;
+    private Ecs _ecs;
 
-    public FovSystemOctant(ECS.Ecs ecs, int range = 8) {
+    public FovSystemOctant(Ecs ecs, int range = 8) {
         _ecs = ecs;
         _range = range;
         _rangeSqrt = _range * _range;
