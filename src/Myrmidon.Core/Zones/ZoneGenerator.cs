@@ -2,7 +2,7 @@
 using GoRogue;
 using GoRogue.GameFramework;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Maps.Generation;
 using Myrmidon.Core.Utilities.Graphics;
@@ -33,7 +33,7 @@ public class ZoneGenerator : IZoneGenerator {
     private EntityFactory _entityFactory;
 
 
-    public ZoneGenerator(Ecs.Ecs ecsWorld, IMapGenerator mapGenerator) {
+    public ZoneGenerator(ECS.Ecs ecsWorld, IMapGenerator mapGenerator) {
         _mapGenerator = mapGenerator;
         _entityFactory = new EntityFactory(ecsWorld);
     }

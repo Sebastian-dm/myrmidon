@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 
 
 /// The random dungeon generator.

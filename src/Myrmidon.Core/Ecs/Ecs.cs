@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Myrmidon.Core.Ecs;
+namespace Myrmidon.Core.ECS;
 
 public sealed class Ecs(uint Size=0) {
 

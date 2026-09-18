@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Bramble.Core;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 using Myrmidon.Core.Signals;
 
 namespace Myrmidon.Core.Actions;

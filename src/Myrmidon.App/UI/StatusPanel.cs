@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Bramble.Core;
 using Myrmidon.App.Render;
 using Myrmidon.Core;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 using Myrmidon.Core.Zones;
 using Myrmidon.Core.Parts;
 

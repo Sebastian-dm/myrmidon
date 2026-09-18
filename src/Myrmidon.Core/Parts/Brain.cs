@@ -1,5 +1,5 @@
 using Myrmidon.Core.Actions;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 
 namespace Myrmidon.Core.Parts;
 

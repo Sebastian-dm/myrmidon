@@ -6,7 +6,7 @@ using Myrmidon.Core.Maps.Generation;
 using Myrmidon.Core.Systems;
 using Myrmidon.Core.Zones;
 using Myrmidon.Core.Utilities.Graphics;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 
 namespace Myrmidon.Core {
     public class WorldManager {

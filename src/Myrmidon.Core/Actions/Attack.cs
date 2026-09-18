@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 using Myrmidon.Core.Signals;
 
 namespace Myrmidon.Core.Actions;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Bramble.Core;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Maps;
@@ -18,9 +18,9 @@ public class FovSystemOctant : IFovSystem {
 
     private int _range;
     private int _rangeSqrt;
-    private Ecs.Ecs _ecs;
+    private ECS.Ecs _ecs;
 
-    public FovSystemOctant(Ecs.Ecs ecs, int range = 8) {
+    public FovSystemOctant(ECS.Ecs ecs, int range = 8) {
         _ecs = ecs;
         _range = range;
         _rangeSqrt = _range * _range;

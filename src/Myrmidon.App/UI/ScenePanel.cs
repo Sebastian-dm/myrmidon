@@ -11,7 +11,7 @@ using Bramble.Core;
 using Myrmidon.Core;
 using Myrmidon.Core.Maps;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 using Myrmidon.Core.Zones;
 using Myrmidon.App.Render;
 

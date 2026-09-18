@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Ecs;
+using Myrmidon.Core.ECS;
 using static System.Collections.Specialized.BitVector32;
 
 namespace Myrmidon.Core.Actions {
