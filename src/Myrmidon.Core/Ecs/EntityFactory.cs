@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Myrmidon.Core.Ecs;
+namespace Myrmidon.Core.ECS;
 
 
 public class EntityFactory {
@@ -79,6 +79,16 @@ public class EntityFactory {
         return entity;
     }
 
+    public EntityId CreateDoor(int zoneId, Vec position, bool isLocked, bool isOpen) {
+        EntityId entity = _world.CreateEntity();
+        _world.Add(entity, new Identity { Name = "a door" });
+        _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
+        _world.Add(entity, new Door(isLocked, isOpen));
+        _world.Add(entity, new Renderable("text/default", (byte)'+', "Y"));
+        _world.Add(entity, new Perceptible());
+        _world.Add(entity, new Physics { BlocksMovement = !isOpen, BlocksLineOfSight = !isOpen });
+        return entity;
+    }
 
 
 }
