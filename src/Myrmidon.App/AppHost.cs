@@ -27,7 +27,7 @@ public sealed class AppHost : IDisposable {
 
         var gameState = new WorldState();
         var actionController = new ActionController(gameState);
-        var zoneGenerator = new ZoneGenerator(gameState.Ecs, new DungeonGenerator());
+        var zoneGenerator = new ZoneGenerator(gameState.EcsWorld, new DungeonGenerator());
         var worldManager = new WorldManager(
             gameState,
             actionController,

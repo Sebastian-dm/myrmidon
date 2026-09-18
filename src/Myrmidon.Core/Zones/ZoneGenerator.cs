@@ -97,7 +97,7 @@ public class ZoneGenerator : IZoneGenerator {
         bool valid;
         do {
             pos = rng.Next(0, map.Tiles.Length);
-            valid = map.Tiles[pos].IsWalkable;
+            valid = map.Ecs.Get<Physics>(map.Tiles[pos]).BlocksMovement == false;
         }
         while (!valid);
 

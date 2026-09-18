@@ -33,7 +33,7 @@ namespace Myrmidon.Core.Actions {
                 return GetDoNothingResult();
             
             // Do nothing if performer has no position
-            if (!context.Ecs.TryGet<Position>(Performer, out var pos))
+            if (!context.EcsWorld.TryGet<Position>(Performer, out var pos))
                 return GetDoNothingResult();
 
             // store the actor's last move state
@@ -49,7 +49,7 @@ namespace Myrmidon.Core.Actions {
                 var entityInFront = entitiesInFront.First();
                 
                 // Fight if the entity has combat stats
-                if (context.Ecs.TryGet<CombatStats>(entityInFront, out var combatStats)) {
+                if (context.EcsWorld.TryGet<CombatStats>(entityInFront, out var combatStats)) {
                     return new ActionResult( succeeded: false,
                         alternative: new AttackAction(Performer, entityInFront)
                     );
@@ -57,7 +57,7 @@ namespace Myrmidon.Core.Actions {
                 
                 // Pick up if entity has no brain
                 // TODO: Create a better way to check if something is an item
-                if (!context.Ecs.TryGet<Brain>(entityInFront, out var brain)) {
+                if (!context.EcsWorld.TryGet<Brain>(entityInFront, out var brain)) {
                     return new ActionResult( succeeded: false,
                         alternative: new PickupAction(Performer, entityInFront)
                     );
@@ -65,10 +65,12 @@ namespace Myrmidon.Core.Actions {
             }
             
             // Check for the presence of a door
-            TileDoor door = context.Zone.TileMap.GetTileAt<TileDoor>(newPosition);
-            if (door != null && !door.IsOpen) {
+            var tile = context.Zone.TileMap[newPosition];
+            context.Zone.TileMap.Ecs.TryGet<Door>(tile, out var doorComponent);
+            
+            if (doorComponent != null && !doorComponent.IsClosed) {
                 return new ActionResult(succeeded: false,
-                    alternative: new OpenDoorAction(Performer, door)
+                    alternative: new OpenDoorAction(Performer, tile)
                 );
             }
             

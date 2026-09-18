@@ -34,9 +34,10 @@ public class FovSystemOctant : IFovSystem {
         for (var octant = 0; octant < 8; octant++) {
             RefreshOctant(zone, octant, origin);
         }
-        
+
         // Set origin to be visible
-        UpdatePerceptibleLightFromDistance(zone, new Vec(0,0), zone.TileMap.GetPerceptibleComponent(origin));
+        var perc = zone.TileMap.Ecs.Get<Perceptible>(zone.TileMap[origin.X, origin.Y]);
+        UpdatePerceptibleLightFromDistance(zone, new Vec(0,0), perc);
     }
 
     private void ResetLightLevelInBoundDist(Zone zone, Vec origin) {
@@ -46,10 +47,10 @@ public class FovSystemOctant : IFovSystem {
         int right = Math.Min(zone.TileMap.Width, origin.X + _range + margin);
         int bottom = Math.Min(zone.TileMap.Height, origin.Y + _range + margin);
 
-        // Update tile visiblity
+        // Reset tile visiblity
         for (int x = left; x < right; x++) {
             for (int y = top; y < bottom; y++) {
-                zone.TileMap.GetPerceptibleComponent(x,y).LightLevel = 0.0f;
+                zone.TileMap.Ecs.Get<Perceptible>(zone.TileMap[x, y]).LightLevel = 0.0f;
             }
         }
     }
@@ -82,20 +83,22 @@ public class FovSystemOctant : IFovSystem {
                 var visible = !line.IsInShadow(projection);
 
                 if (visible) {
+                    var tile = map[pos];
                     Vec distance = origin - pos;
                     // Set the visibility of this tile.
-                    UpdatePerceptibleLightFromDistance(zone, distance, zone.TileMap.GetPerceptibleComponent(pos));
+                    var tilePerc = zone.TileMap.Ecs.Get<Perceptible>(tile);
+                    UpdatePerceptibleLightFromDistance(zone, distance, tilePerc);
                     
                     // Set visibility of entities on this tile
                     var entitiesOnTile = zone.EntityIndex.At(pos);
                     foreach (var entity in entitiesOnTile) {
-                        if (_ecs.TryGet(entity, out Perceptible perc));
-                            UpdatePerceptibleLightFromDistance(zone, distance, perc);
+                        if (_ecs.TryGet(entity, out Perceptible entityPerc));
+                            UpdatePerceptibleLightFromDistance(zone, distance, entityPerc);
                     }
-                    
+
                     // Add any opaque tiles to the shadow map.
-                    var tile = map[pos];
-                    if (tile.IsBlockingLos) {
+                    var tilePhys = zone.TileMap.Ecs.Get<Physics>(tile);
+                    if (tilePhys.BlocksLineOfSight) {
                         line.Add(projection);
                         fullShadow = line.IsFullShadow;
                     }

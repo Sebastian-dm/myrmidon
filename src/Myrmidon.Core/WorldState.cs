@@ -14,7 +14,8 @@ namespace Myrmidon.Core;
 
 public interface IWorldState {
 
-    Ecs Ecs { get; }
+    Ecs EcsWorld { get; }
+    Ecs EcsZone { get; }
     List<Zone> Zones { get; }
     Zone Zone { get; }
     //Player Player { get; set; }
@@ -25,7 +26,8 @@ public interface IWorldState {
 
 public class WorldState : IWorldState {
         
-    public Ecs Ecs { get; private set; }
+    public Ecs EcsWorld { get; private set; }
+    public Ecs EcsZone { get { return Zone.TileMap.Ecs; } }
     public List<Zone> Zones { get; private set; } = new List<Zone>();
     public Zone Zone { get { return Zones[_currentZoneId]; } }
     //public Player Player { get; set; }
@@ -35,7 +37,7 @@ public class WorldState : IWorldState {
     private int _currentZoneId { get; set; } = 0;
 
     public WorldState() {
-        Ecs = new Ecs();
+        EcsWorld = new Ecs();
         Zones.Add(new Zone(0, 91, 61));
         SignalQueue = new SignalQueue();
     }

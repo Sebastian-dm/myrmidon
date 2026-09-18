@@ -16,6 +16,8 @@ namespace Myrmidon.Core.Maps.Generation {
 
     public class TestMapGenerator : IMapGenerator {
 
+
+
         public TileMap Generate(TileMap map) {
             FillWithFloor(map);
             PlacePillarWall(map, new Vec(11, 8));

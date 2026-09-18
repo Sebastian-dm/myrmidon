@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 namespace Myrmidon.Core.ECS;
 
-public sealed class Ecs(uint Size=0) {
+public sealed class Ecs(uint size=0) {
+
+    private readonly uint _size = size;
 
     public IEnumerable<EntityId> Entities => _entities;
 
@@ -16,6 +18,8 @@ public sealed class Ecs(uint Size=0) {
     public EntityId CreateEntity() {
         var entity = new EntityId(_nextEntityId++);
         _entities.Add(entity);
+        if(_size > 0 && _nextEntityId > _size)
+            throw new InvalidOperationException("Maximum number of entities reached.");
         return entity;
     }
 
@@ -30,52 +34,37 @@ public sealed class Ecs(uint Size=0) {
 
 
     public T Add<T>(EntityId entity, T component) where T : class {
-        return Add(entity.Value, component);
-    }
-    public T Add<T>(uint id, T component) where T : class {
-        return (Size == 0) ?
-            GetStore<T>().Add(id, component) :
-            GetArrStore<T>().Add(id, component);
+        return (_size == 0) ?
+            GetStore<T>().Add(entity.Value, component) :
+            GetArrStore<T>().Add(entity.Value, component);
     }
 
 
     public T Get<T>(EntityId entity) where T : class {
-        return Get<T>(entity.Value);
-    }
-    public T Get<T>(uint id) where T : class {
-        return (Size==0) ?
-            GetStore<T>().Get(id) :
-            GetArrStore<T>().Get(id);
+        return (_size == 0) ?
+            GetStore<T>().Get(entity.Value) :
+            GetArrStore<T>().Get(entity.Value);
     }
 
 
     public bool TryGet<T>(EntityId entity, out T? component) where T : class {
-        return TryGet<T>(entity.Value, out component);
-    }
-    public bool TryGet<T>(uint id, out T? component) where T : class {
-        return (Size==0) ?
-            GetStore<T>().TryGet(id, out component) :
-            GetArrStore<T>().TryGet(id, out component);
+        return (_size == 0) ?
+            GetStore<T>().TryGet(entity.Value, out component) :
+            GetArrStore<T>().TryGet(entity.Value, out component);
     }
 
 
     public bool Has<T>(EntityId entity) where T : class {
-        return Has<T>(entity.Value);
-    }
-    public bool Has<T>(uint id) where T : class {
-        return (Size == 0) ?
-            GetStore<T>().Contains(id) :
-            GetArrStore<T>().Contains(id);
+        return (_size == 0) ?
+            GetStore<T>().Contains(entity.Value) :
+            GetArrStore<T>().Contains(entity.Value);
     }
 
 
     public bool Remove<T>(EntityId entity) where T : class {
-        return Remove<T>(entity.Value);
-    }
-    public bool Remove<T>(uint id) where T : class {
-        return (Size == 0) ?
-            GetStore<T>().Remove(id) :
-            GetArrStore<T>().Remove(id);
+        return (_size == 0) ?
+            GetStore<T>().Remove(entity.Value) :
+            GetArrStore<T>().Remove(entity.Value);
     }
 
 
@@ -99,7 +88,7 @@ public sealed class Ecs(uint Size=0) {
         if (_stores.TryGetValue(type, out var existing))
             return (PartArrStore<T>)existing;
 
-        var created = new PartArrStore<T>(Size);
+        var created = new PartArrStore<T>(_size);
         _stores[type] = created;
         return created;
     }

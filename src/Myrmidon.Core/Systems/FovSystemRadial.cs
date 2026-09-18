@@ -31,13 +31,15 @@ namespace Myrmidon.Core.Systems {
 
         // Recompute the visible area based on a given location.
         public void Recompute(Zone zone, Vec origin) {
-            ComputeRadialFov(zone.TileMap, origin);
+            ComputeRadialFov(zone, origin);
         }
         
         
         // Computes the visibility and dimness values based on a simple radius
-        private void ComputeRadialFov(TileMap map, Vec origin) {
-            
+        private void ComputeRadialFov(Zone zone, Vec origin) {
+
+            var map = zone.TileMap;
+
             int margin = 1;
             int left = Math.Max(0, origin.X - _range - margin);
             int top = Math.Max(0, origin.Y - _range  - margin);
@@ -47,7 +49,8 @@ namespace Myrmidon.Core.Systems {
             // Update tile visiblity
             for (int x = left; x < right; x++) {
                 for (int y = top; y < bottom; y++) {
-                    SetRenderLightFromDistance(map, origin, new Vec(x, y));
+                    var perceptible = map.Ecs.Get<Perceptible>(map[x, y]);
+                    UpdatePerceptibleLightFromDistance(zone, origin, perceptible);
                 }
             }
 
@@ -64,15 +67,14 @@ namespace Myrmidon.Core.Systems {
             // }
         }
 
-        private void SetRenderLightFromDistance(TileMap map, Vec origin, Vec target) {
-            var prcpt = map.GetPerceptibleComponent(target);
+        private void UpdatePerceptibleLightFromDistance(Zone zone, Vec distance, Perceptible perceptible) {
 
-            int distSqrt = (target - origin).LengthSquared;
+            int distSqrt = distance.LengthSquared;
             if (distSqrt <= _rangeSqrt)
-                prcpt.Explored = true;
+                perceptible.Explored = true;
 
-            float clampedDist = (float)Math.Clamp(Math.Pow(distSqrt / _rangeSqrt, 2.0f),  0.0f, 1.0f);
-            prcpt.LightLevel = 1f - clampedDist;
+            float clampedDist = (float)Math.Clamp(Math.Pow(distSqrt / _rangeSqrt, 1.0f), 0.0f, 1.0f);
+            perceptible.LightLevel = 1f - clampedDist;
         }
     }
 }

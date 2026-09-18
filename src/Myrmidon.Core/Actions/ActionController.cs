@@ -123,7 +123,7 @@ namespace Myrmidon.Core.Actions {
         {
             foreach (EntityId actor in _gameState.Zone.EntityIndex.All()) {
                 
-                if (_gameState.Ecs.TryGet<Brain>(actor, out var brain)) {
+                if (_gameState.EcsWorld.TryGet<Brain>(actor, out var brain)) {
                     var action = brain.GetAction(actor);
                     _actionQueue.Enqueue(action);
                 }

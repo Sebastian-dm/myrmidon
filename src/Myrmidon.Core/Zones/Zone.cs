@@ -20,7 +20,6 @@ public class Zone
 
 
     public TileMap TileMap { get; set; }
-    public Ecs TileEcs { get; private set; }
 
     public EntitySpatialIndex EntityIndex { get; }
 
@@ -29,7 +28,6 @@ public class Zone
     {
         Id = id;
         TileMap = new TileMap(width, height);
-        TileEcs = new Ecs((uint)(width*height));
         EntityIndex = new EntitySpatialIndex();
     }
 

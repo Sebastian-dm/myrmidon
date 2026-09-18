@@ -5,15 +5,13 @@ using System.Collections.Generic;
 using Bramble.Core;
 using Myrmidon.Core.Parts;
 using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.ECS;
 
 namespace Myrmidon.Core.Maps;
 
 // Stores and queries Tile data
 public class TileMap {
-
-    public Renderable[] RenderComponents { get; private set; }
-    public Perceptible[] PerceptibleComponents { get; private set; }
-
+    
 
     public List<Rect> Rooms { get; set; }
 
@@ -21,137 +19,101 @@ public class TileMap {
     public int Height { get; private set; }
     public Rect Bounds {get {return new Rect(0, 0, Width, Height);}}
         
-    public Tile[] Tiles { get; private set; }
-    public Tile this[int x, int y] {
+    public EntityId[] Tiles { get; private set; }
+    public EntityId this[int x, int y] {
         get => Tiles[x + y * Width];
         set => Tiles[x + y * Width] = value;
     }
-    public Tile this[int i] {
+    public EntityId this[int i] {
         get => Tiles[i];
         set => Tiles[i] = value;
     }
-    public Tile this[Vec v] {
+    public EntityId this[Vec v] {
         get => Tiles[v.X + v.Y * Width];
         set => Tiles[v.X + v.Y * Width] = value;
     }
+    public Ecs Ecs { get; private set; } = new Ecs();
 
 
     // Build a new map with a specified width and height
     public TileMap(int width, int height) {
         Width = width;
         Height = height;
-        RenderComponents = new Renderable[width * height];
-        PerceptibleComponents = new Perceptible[width * height];
-        Tiles = new Tile[width * height];
+        Ecs = new Ecs((uint)(width * height));
+        Tiles = new EntityId[width * height];
         for (int i = 0; i < width * height; i++) {
-            RenderComponents[i] = new Renderable();
-            Tiles[i] = new TileEmpty();
+            Tiles[i] = Ecs.CreateEntity();
         }
 
         Rooms = new List<Rect>();
     }
 
 
-    public Perceptible GetPerceptibleComponent(int i) {
-        return PerceptibleComponents[i];
-    }
-    public Perceptible GetPerceptibleComponent(Vec location) {
-        return PerceptibleComponents[location.Y * Width + location.X];
-    }
-    public Perceptible GetPerceptibleComponent(int x, int y) {
-        return PerceptibleComponents[y * Width + x];
-    }
-
-    public void SetPerceptibleComponent(Vec location, Perceptible perceptibleComponent) {
-        PerceptibleComponents[location.Y * Width + location.X] = perceptibleComponent;
-    }
-    public void SetPerceptibleComponent(int i, Perceptible perceptibleComponent) {
-        PerceptibleComponents[i] = perceptibleComponent;
-    }
-
-
-    public Renderable GetRenderComponent(int i) {
-        return RenderComponents[i];
-    }
-    public Renderable GetRenderComponent(Vec location) {
-        return RenderComponents[location.Y * Width + location.X];
-    }
-    public Renderable GetRenderComponent(int x, int y) {
-        return RenderComponents[y * Width + x];
-    }
-
-    public void SetRenderComponent(Vec location, Renderable renderComponent) {
-        RenderComponents[location.Y * Width + location.X] = renderComponent;
-    }
-    public void SetRenderComponent(int i, Renderable renderComponent) {
-        RenderComponents[i] = renderComponent;
-    }
-
-
-    // Checks whether actor tried to walk off map or into solid tiles.
+    
     public bool IsTileWalkable(Vec location) {
-        // first make sure that actor isn't trying to move off the limits of the map
-        if (location.X < 0 || location.Y < 0 || location.X >= Width || location.Y >= Height)
+        if (!Bounds.Contains(location))
             return false;
-        // then return whether the tile is walkable
-        return Tiles[location.Y * Width + location.X].IsWalkable;
+        
+        if (Ecs.Has<Physics>(Tiles[location.Y * Width + location.X]))
+            return Ecs.Get<Physics>(Tiles[location.Y * Width + location.X]).BlocksMovement == false;
+
+        return false;
     }
+
+
 
     // Returns a tile if it exists at location. Return null otherwise.
-    public T? GetTileAt<T>(int x, int y) where T : Tile {
-        int locationIndex = GetIndexFromPoint(x, y, Width);
+    public EntityId? GetTileAt(Vec location) {
+        return GetTileAt(location.X, location.Y);
+    }
+    public EntityId? GetTileAt(int x, int y){
+        int locationIndex = x + y * Width;
         // make sure the index is within the boundaries of the map!
-        if (0 <= locationIndex && locationIndex < Width * Height) {
-            if (Tiles[locationIndex] is T)
-                return (T)Tiles[locationIndex];
-            else return null;
-        }
+        if (0 <= locationIndex && locationIndex < Width * Height)
+            return Tiles[locationIndex];
         else return null;
     }
-    public T? GetTileAt<T>(Vec location) where T : Tile {
-        return GetTileAt<T>(location.X, location.Y);
-    }
 
-    public T?[] GetOrthoAdjacentTiles<T>(Vec loc) where T : Tile {
+
+
+    public EntityId?[] GetOrthoAdjacentTiles(Vec loc) {
+        return GetOrthoAdjacentTiles(loc.X, loc.Y);
+    }
+    public EntityId?[] GetOrthoAdjacentTiles(int x, int y) {
         int w = Width;
         int h = Height;
 
-        T[] result = [
-            (               loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X  , loc.Y-1),
-            (loc.X >= w-1               ) ? null : GetTileAt<T>(loc.X+1, loc.Y  ),
-            (               loc.Y >= h-1) ? null : GetTileAt<T>(loc.X  , loc.Y+1),
-            (loc.X <= 0                 ) ? null : GetTileAt<T>(loc.X-1, loc.Y  ),
+        EntityId?[] result = [
+            (               y <= 0  ) ? null : GetTileAt(x  , y-1),
+            (x >= w-1               ) ? null : GetTileAt(x+1, y  ),
+            (               y >= h-1) ? null : GetTileAt(x  , y+1),
+            (x <= 0                 ) ? null : GetTileAt(x-1, y  ),
         ];
         return result;
     }
-    public T?[] GetOrthoAdjacentTiles<T>(int x, int y) where T : Tile {
-        return GetOrthoAdjacentTiles<T>(new Vec(x, y));
-    }
+
+
 
     // Checks if a specific type of tile at a specified location is on the map. If it exists, returns that Tile.
-    public T?[] GetAdjacentTiles<T>(Vec loc) where T : Tile {
+    public EntityId?[] GetAdjacentTiles(Vec loc) {
+        return GetAdjacentTiles(loc.X, loc.Y);
+    }
+    public EntityId?[] GetAdjacentTiles(int x, int y) {
         int w = Width;
         int h = Height;
 
-        T[] result = [
-            (loc.X <= 0   | loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X-1, loc.Y-1),
-            (               loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X  , loc.Y-1),
-            (loc.X >= w-1 | loc.Y <= 0  ) ? null : GetTileAt<T>(loc.X+1, loc.Y-1),
-            (loc.X >= w-1               ) ? null : GetTileAt<T>(loc.X+1, loc.Y  ),
-            (loc.X >= w-1 | loc.Y >= h-1) ? null : GetTileAt<T>(loc.X+1, loc.Y+1),
-            (               loc.Y >= h-1) ? null : GetTileAt<T>(loc.X  , loc.Y+1),
-            (loc.X <= 0   | loc.Y >= h-1) ? null : GetTileAt<T>(loc.X-1, loc.Y+1),
-            (loc.X <= 0                 ) ? null : GetTileAt<T>(loc.X-1, loc.Y  ),
+        EntityId?[] result = [
+            (x <= 0   | y <= 0  ) ? null : GetTileAt(x-1, y-1),
+            (           y <= 0  ) ? null : GetTileAt(x  , y-1),
+            (x >= w-1 | y <= 0  ) ? null : GetTileAt(x+1, y-1),
+            (x >= w-1           ) ? null : GetTileAt(x+1, y  ),
+            (x >= w-1 | y >= h-1) ? null : GetTileAt(x+1, y+1),
+            (           y >= h-1) ? null : GetTileAt(x  , y+1),
+            (x <= 0   | y >= h-1) ? null : GetTileAt(x-1, y+1),
+            (x <= 0             ) ? null : GetTileAt(x-1, y  ),
         ];
         return result;
     }
-    public T?[] GetAdjacentTiles<T>(int x, int y) where T : Tile {
-        return GetAdjacentTiles<T>(new Vec(x, y));
-    }
 
-
-    private int GetIndexFromPoint(int x, int y, int width) {
-        return x + y * width;
-    }
 
 }

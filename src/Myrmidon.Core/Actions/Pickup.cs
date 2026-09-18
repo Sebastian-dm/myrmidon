@@ -25,8 +25,8 @@ internal class PickupAction : IAction {
 
     public ActionResult Perform(IWorldState context) {
         
-        context.Ecs.TryGet<Identity>(Performer, out var performerIdentity);
-        context.Ecs.TryGet<Identity>(Performer, out var subjectIdentity);
+        context.EcsWorld.TryGet<Identity>(Performer, out var performerIdentity);
+        context.EcsWorld.TryGet<Identity>(Performer, out var subjectIdentity);
         context.SignalQueue.Enqueue(new LogSignal(($"{performerIdentity.Name} wants to pickup {subjectIdentity.Name} but this function is not implemented.")));
         
         // TODO: Refactor for ECS

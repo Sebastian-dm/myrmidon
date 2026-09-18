@@ -22,7 +22,7 @@ namespace Myrmidon.Core {
 
         public WorldManager(IWorldState worldstate, ActionController actionController, IZoneGenerator zoneGenerator) {
             WorldState = worldstate;
-            FovSystem = new FovSystemOctant(worldstate.Ecs);
+            FovSystem = new FovSystemOctant(worldstate.EcsWorld);
             _zoneGen = zoneGenerator;
             
             ActionController =  actionController;
@@ -37,14 +37,14 @@ namespace Myrmidon.Core {
             }
             
             
-            if (WorldState.Ecs.TryGet<Position>(WorldState.PlayerEntity, out var pPos))
+            if (WorldState.EcsWorld.TryGet<Position>(WorldState.PlayerEntity, out var pPos))
                 FovSystem.Recompute(WorldState.Zone, pPos.Coords);
 
         }
 
 
         public void CreatePlayer(Zone zone) {
-            var entityFactory = new EntityFactory(WorldState.Ecs);
+            var entityFactory = new EntityFactory(WorldState.EcsWorld);
             Vec pos = _zoneGen.GetRandomWalkablePosition(zone.TileMap);
             EntityId playerId = entityFactory.CreatePlayer(zone.Id, pos);
             zone.EntityIndex.Add(playerId, pos);
