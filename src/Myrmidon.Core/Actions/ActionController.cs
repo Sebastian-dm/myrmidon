@@ -121,9 +121,9 @@ namespace Myrmidon.Core.Actions {
 
         public void CollectEntityActions()
         {
-            foreach (EntityId actor in _gameState.Zone.SpatialIndex.All()) {
+            foreach (EntityId actor in _gameState.Zone.EntityIndex.All()) {
                 
-                if (_gameState.EcsWorld.TryGet<Brain>(actor, out var brain)) {
+                if (_gameState.Ecs.TryGet<Brain>(actor, out var brain)) {
                     var action = brain.GetAction(actor);
                     _actionQueue.Enqueue(action);
                 }

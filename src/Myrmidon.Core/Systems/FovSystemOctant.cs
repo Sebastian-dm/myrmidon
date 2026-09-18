@@ -36,27 +36,27 @@ public class FovSystemOctant : IFovSystem {
         }
         
         // Set origin to be visible
-        UpdatePerceptibleLightFromDistance(zone, new Vec(0,0), zone.Map.GetPerceptibleComponent(origin));
+        UpdatePerceptibleLightFromDistance(zone, new Vec(0,0), zone.TileMap.GetPerceptibleComponent(origin));
     }
 
     private void ResetLightLevelInBoundDist(Zone zone, Vec origin) {
         int margin = 1;
         int left = Math.Max(0, origin.X - _range - margin);
         int top = Math.Max(0, origin.Y - _range  - margin);
-        int right = Math.Min(zone.Map.Width, origin.X + _range + margin);
-        int bottom = Math.Min(zone.Map.Height, origin.Y + _range + margin);
+        int right = Math.Min(zone.TileMap.Width, origin.X + _range + margin);
+        int bottom = Math.Min(zone.TileMap.Height, origin.Y + _range + margin);
 
         // Update tile visiblity
         for (int x = left; x < right; x++) {
             for (int y = top; y < bottom; y++) {
-                zone.Map.GetPerceptibleComponent(x,y).LightLevel = 0.0f;
+                zone.TileMap.GetPerceptibleComponent(x,y).LightLevel = 0.0f;
             }
         }
     }
     
     
     private List<Shadow> RefreshOctant(Zone zone, int octant, Vec origin) {
-        var map = zone.Map;
+        var map = zone.TileMap;
         var line = new ShadowLine();
         var fullShadow = false;
 
@@ -84,10 +84,10 @@ public class FovSystemOctant : IFovSystem {
                 if (visible) {
                     Vec distance = origin - pos;
                     // Set the visibility of this tile.
-                    UpdatePerceptibleLightFromDistance(zone, distance, zone.Map.GetPerceptibleComponent(pos));
+                    UpdatePerceptibleLightFromDistance(zone, distance, zone.TileMap.GetPerceptibleComponent(pos));
                     
                     // Set visibility of entities on this tile
-                    var entitiesOnTile = zone.SpatialIndex.At(pos);
+                    var entitiesOnTile = zone.EntityIndex.At(pos);
                     foreach (var entity in entitiesOnTile) {
                         if (_ecs.TryGet(entity, out Perceptible perc));
                             UpdatePerceptibleLightFromDistance(zone, distance, perc);

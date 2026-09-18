@@ -26,8 +26,8 @@ internal class AttackAction : IAction {
 
     public ActionResult Perform(IWorldState context) {
         
-        context.EcsWorld.TryGet<Identity>(Performer, out var performerIdentity);
-        context.EcsWorld.TryGet<Identity>(Performer, out var subjectIdentity);
+        context.Ecs.TryGet<Identity>(Performer, out var performerIdentity);
+        context.Ecs.TryGet<Identity>(Performer, out var subjectIdentity);
         context.SignalQueue.Enqueue(new LogSignal(($"{performerIdentity.Name} wants to attack {subjectIdentity.Name} but this function is not implemented.")));
         
         //if (Performer.Position.IsAdjacentTo(Subject.Position)) {

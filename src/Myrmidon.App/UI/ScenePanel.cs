@@ -34,10 +34,10 @@ public class ScenePanel : GridPanel {
 
     private void DrawZone(Zone zone, EntityId player) {
 
-        var map = zone.Map;
+        var map = zone.TileMap;
         
         // Center on player
-        if (!_worldState.EcsWorld.TryGet<Position>(player, out var pPos))
+        if (!_worldState.Ecs.TryGet<Position>(player, out var pPos))
             return;
             
         Vec drawCenter = pPos.Coords;
@@ -75,10 +75,10 @@ public class ScenePanel : GridPanel {
         }
         
         // Paint entities
-        foreach(var entityId in zone.SpatialIndex.InBounds(viewBounds)) {
-            if (!_worldState.EcsWorld.TryGet<Position>(entityId, out var mpos) ||
-                !_worldState.EcsWorld.TryGet<Renderable>(entityId, out var mren) ||
-                !_worldState.EcsWorld.TryGet<Perceptible>(entityId, out var mperc))
+        foreach(var entityId in zone.EntityIndex.InBounds(viewBounds)) {
+            if (!_worldState.Ecs.TryGet<Position>(entityId, out var mpos) ||
+                !_worldState.Ecs.TryGet<Renderable>(entityId, out var mren) ||
+                !_worldState.Ecs.TryGet<Perceptible>(entityId, out var mperc))
                 continue;
             if (mperc.LightLevel > 0.2f) {
                 Vec gridPos = new Vec(mpos.Coords.X - viewBounds.Left, mpos.Coords.Y - viewBounds.Top);
@@ -88,8 +88,8 @@ public class ScenePanel : GridPanel {
         }
 
         // Paint player
-        if (_worldState.EcsWorld.TryGet<Position>(player, out var ppos) &&
-            _worldState.EcsWorld.TryGet<Renderable>(player, out var pren))
+        if (_worldState.Ecs.TryGet<Position>(player, out var ppos) &&
+            _worldState.Ecs.TryGet<Renderable>(player, out var pren))
         {
             var gridPos = new Vec(ppos.Coords.X - viewBounds.Left, ppos.Coords.Y - viewBounds.Top);
             DrawTile(gridPos, pren.TextureSheetName, pren.TextureIndex, pren.ColorBase, pren.ColorAccent, pren.ColorBackground);

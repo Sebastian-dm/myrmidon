@@ -48,7 +48,7 @@ public class ZoneGenerator : IZoneGenerator {
     public void Generate(Zone zone, IMapGenerator mapGen) {
         if (zone.GenerationState == ZoneGenState.NotStarted) {
             zone.GenerationState = ZoneGenState.Terraforming;
-            mapGen.Generate(zone.Map);
+            mapGen.Generate(zone.TileMap);
             zone.GenerationState = ZoneGenState.Unpopulated;
         }
         if (zone.GenerationState == ZoneGenState.Unpopulated) {
@@ -61,18 +61,18 @@ public class ZoneGenerator : IZoneGenerator {
 
     public void CreateMonsters(Zone zone) {
         for (int i = 0; i < 30; i++) {
-            Vec pos = GetRandomWalkablePosition(zone.Map);
+            Vec pos = GetRandomWalkablePosition(zone.TileMap);
             EntityId monsterEntity = _entityFactory.CreateMonster(zone.Id, pos);
-            zone.SpatialIndex.Add(monsterEntity, pos);
+            zone.EntityIndex.Add(monsterEntity, pos);
         }
     }
 
 
     public void CreateTreasure(Zone zone) {
         for (int i = 0; i < 20; i++) {
-            Vec pos = GetRandomWalkablePosition(zone.Map);
+            Vec pos = GetRandomWalkablePosition(zone.TileMap);
             EntityId lootEntity = _entityFactory.CreateTreasure(zone.Id, pos);
-            zone.SpatialIndex.Add(lootEntity, pos);
+            zone.EntityIndex.Add(lootEntity, pos);
         }
     }
 

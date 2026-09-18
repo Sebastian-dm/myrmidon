@@ -33,7 +33,7 @@ namespace Myrmidon.Core.Actions {
                 return GetDoNothingResult();
             
             // Do nothing if performer has no position
-            if (!context.EcsWorld.TryGet<Position>(Performer, out var pos))
+            if (!context.Ecs.TryGet<Position>(Performer, out var pos))
                 return GetDoNothingResult();
 
             // store the actor's last move state
@@ -41,7 +41,7 @@ namespace Myrmidon.Core.Actions {
             Vec newPosition = _originalPosition + Direction;
 
             // Check if there is an actor on new position
-            var entitiesInFront = context.Zone.SpatialIndex.At(newPosition);
+            var entitiesInFront = context.Zone.EntityIndex.At(newPosition);
             
             // There is an entity in front of the player
             if (entitiesInFront.Count != 0) {
@@ -49,7 +49,7 @@ namespace Myrmidon.Core.Actions {
                 var entityInFront = entitiesInFront.First();
                 
                 // Fight if the entity has combat stats
-                if (context.EcsWorld.TryGet<CombatStats>(entityInFront, out var combatStats)) {
+                if (context.Ecs.TryGet<CombatStats>(entityInFront, out var combatStats)) {
                     return new ActionResult( succeeded: false,
                         alternative: new AttackAction(Performer, entityInFront)
                     );
@@ -57,7 +57,7 @@ namespace Myrmidon.Core.Actions {
                 
                 // Pick up if entity has no brain
                 // TODO: Create a better way to check if something is an item
-                if (!context.EcsWorld.TryGet<Brain>(entityInFront, out var brain)) {
+                if (!context.Ecs.TryGet<Brain>(entityInFront, out var brain)) {
                     return new ActionResult( succeeded: false,
                         alternative: new PickupAction(Performer, entityInFront)
                     );
@@ -65,7 +65,7 @@ namespace Myrmidon.Core.Actions {
             }
             
             // Check for the presence of a door
-            TileDoor door = context.Zone.Map.GetTileAt<TileDoor>(newPosition);
+            TileDoor door = context.Zone.TileMap.GetTileAt<TileDoor>(newPosition);
             if (door != null && !door.IsOpen) {
                 return new ActionResult(succeeded: false,
                     alternative: new OpenDoorAction(Performer, door)
@@ -73,9 +73,9 @@ namespace Myrmidon.Core.Actions {
             }
             
             // Check if it is possible to go there
-            if (context.Zone.Map.IsTileWalkable(newPosition)) {
-                context.Zone.SpatialIndex.Remove(Performer, pos.Coords);
-                context.Zone.SpatialIndex.Add(Performer, newPosition);
+            if (context.Zone.TileMap.IsTileWalkable(newPosition)) {
+                context.Zone.EntityIndex.Remove(Performer, pos.Coords);
+                context.Zone.EntityIndex.Add(Performer, newPosition);
                 pos.Coords = newPosition;
                 return new ActionResult(succeeded: true);
             }

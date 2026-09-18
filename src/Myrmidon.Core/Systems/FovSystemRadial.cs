@@ -31,7 +31,7 @@ namespace Myrmidon.Core.Systems {
 
         // Recompute the visible area based on a given location.
         public void Recompute(Zone zone, Vec origin) {
-            ComputeRadialFov(zone.Map, origin);
+            ComputeRadialFov(zone.TileMap, origin);
         }
         
         

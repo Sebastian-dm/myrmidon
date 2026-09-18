@@ -16,24 +16,27 @@ public class Zone
 {
 
     public int Id { get; set; }
-    public TileMap Map { get; set; }
-    public ZoneSpatialIndex SpatialIndex { get; }
     public ZoneGenState GenerationState { get; set; } = ZoneGenState.NotStarted;
 
+
+    public TileMap TileMap { get; set; }
+    public Ecs TileEcs { get; private set; }
+
+    public EntitySpatialIndex EntityIndex { get; }
 
 
     public Zone(int id, int width, int height)
     {
         Id = id;
-        Map = new TileMap(width, height);
-        SpatialIndex = new ZoneSpatialIndex();
+        TileMap = new TileMap(width, height);
+        TileEcs = new Ecs((uint)(width*height));
+        EntityIndex = new EntitySpatialIndex();
     }
-
 
 }
 
 
-public sealed class ZoneSpatialIndex
+public sealed class EntitySpatialIndex
 {
     private readonly Dictionary<Vec, HashSet<EntityId>> _entitiesByPosition = new();
 

@@ -21,7 +21,7 @@ namespace Myrmidon.Core.Actions {
         }
 
         public ActionResult Perform(IWorldState context) {
-            context.EcsWorld.TryGet<Identity>(Performer, out var identity);
+            context.Ecs.TryGet<Identity>(Performer, out var identity);
             
             try {
                 if (Door.IsLocked) {
