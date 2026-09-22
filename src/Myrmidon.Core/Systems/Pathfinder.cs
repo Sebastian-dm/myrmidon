@@ -6,9 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Bramble.Core;
-using Myrmidon.Core.Maps;
-using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Geometry;
+using Myrmidon.Core.Zones;
 
 namespace Myrmidon.Core.Systems {
 
@@ -137,7 +136,7 @@ namespace Myrmidon.Core.Systems {
                         if (explored.Contains(neighbor)) continue;
                         if (!stage.Bounds.Contains(neighbor)) continue;
 
-                        var cost = StepCost(neighbor, stage[neighbor]);
+                        var cost = StepCost(neighbor);
                         if (cost == null) continue;
 
                         var newPath = new Path(
@@ -164,7 +163,7 @@ namespace Myrmidon.Core.Systems {
 
         /// The cost required to enter [tile] at [pos] from a neighboring tile or
         /// `null` if the tile cannot be entered.
-        internal abstract int StepCost(Vec pos, Tile tile);
+        internal abstract int StepCost(Vec pos);
 
         /// Called for each step of pathfinding where [path] is the current path
         /// being processed.
