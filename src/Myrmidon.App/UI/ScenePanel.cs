@@ -9,7 +9,6 @@ using static System.Net.WebRequestMethods;
 
 using Bramble.Core;
 using Myrmidon.Core;
-using Myrmidon.Core.Maps;
 using Myrmidon.Core.Parts;
 using Myrmidon.Core.ECS;
 using Myrmidon.Core.Zones;

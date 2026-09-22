@@ -3,8 +3,6 @@ using GoRogue;
 using GoRogue.GameFramework;
 using Myrmidon.Core.Parts;
 using Myrmidon.Core.ECS;
-using Myrmidon.Core.Maps;
-using Myrmidon.Core.Maps.Generation;
 using Myrmidon.Core.Utilities.Graphics;
 using Myrmidon.Core.Utilities.Random;
 using System;

@@ -1,7 +1,5 @@
 ﻿using Bramble.Core;
 using Myrmidon.Core.ECS;
-using Myrmidon.Core.Maps;
-using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Graphics;
 using System;
 using System.Collections.Generic;
