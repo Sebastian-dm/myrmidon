@@ -32,7 +32,33 @@ namespace Myrmidon.Core.Systems {
 
         // Recompute the visible area based on a given location.
         public void Recompute(Zone zone, Vec origin) {
+            ResetLightLevelInBoundDist(zone, origin);
             ComputeRadialFov(zone, origin);
+        }
+        
+        private void ResetLightLevelInBoundDist(Zone zone, Vec origin) {
+            int margin = 1;
+            int left = Math.Max(0, origin.X - _range - margin);
+            int top = Math.Max(0, origin.Y - _range  - margin);
+            int right = Math.Min(zone.TileMap.Width, origin.X + _range + margin);
+            int bottom = Math.Min(zone.TileMap.Height, origin.Y + _range + margin);
+
+            // Reset tile visiblity
+            for (int x = left; x < right; x++) {
+                for (int y = top; y < bottom; y++) {
+                    Vec pos =  new Vec(x, y);
+                
+                    // Reset tile light
+                    zone.TileMap.Ecs.Get<Perceptible>(zone.TileMap[pos]).LightLevel = 0.0f;
+                
+                    // Reset entity light
+                    var entitiesOnTile = zone.EntityIndex.At(pos);
+                    foreach (var entity in entitiesOnTile) {
+                        if (!_ecs.Has<Perceptible>(entity)) continue;
+                        _ecs.Get<Perceptible>(entity).LightLevel = 0.0f;
+                    }
+                }
+            }
         }
         
         
@@ -70,7 +96,7 @@ namespace Myrmidon.Core.Systems {
 
         private void UpdatePerceptibleLightFromDistance(Zone zone, Vec distance, Perceptible perceptible) {
 
-            int distSqrt = distance.LengthSquared;
+            var distSqrt = (float)distance.LengthSquared;
             if (distSqrt <= _rangeSqrt)
                 perceptible.Explored = true;
 

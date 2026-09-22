@@ -48,7 +48,17 @@ public class FovSystemOctant : IFovSystem {
         // Reset tile visiblity
         for (int x = left; x < right; x++) {
             for (int y = top; y < bottom; y++) {
-                zone.TileMap.Ecs.Get<Perceptible>(zone.TileMap[x, y]).LightLevel = 0.0f;
+                Vec pos =  new Vec(x, y);
+                
+                // Reset tile light
+                zone.TileMap.Ecs.Get<Perceptible>(zone.TileMap[pos]).LightLevel = 0.0f;
+                
+                // Reset entity light
+                var entitiesOnTile = zone.EntityIndex.At(pos);
+                foreach (var entity in entitiesOnTile) {
+                    if (!_ecs.Has<Perceptible>(entity)) continue;
+                    _ecs.Get<Perceptible>(entity).LightLevel = 0.0f;
+                }
             }
         }
     }
@@ -147,7 +157,7 @@ public class FovSystemOctant : IFovSystem {
 
     private void UpdatePerceptibleLightFromDistance(Zone zone, Vec distance, Perceptible perceptible) {
 
-        int distSqrt = distance.LengthSquared;
+        float distSqrt = distance.LengthSquared;
         if (distSqrt <= _rangeSqrt)
             perceptible.Explored = true;
 
