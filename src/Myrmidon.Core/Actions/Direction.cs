@@ -54,8 +54,7 @@ namespace Myrmidon.Core.Actions {
                     );
                 }
                 
-                // Pick up if entity has no brain
-                // TODO: Create a better way to check if something is an item
+                // Pick up if entity is an item
                 if (context.EcsWorld.Has<Identity>(entityInFront) &&
                     context.EcsWorld.Get<Identity>(entityInFront).Groups.Contains("Item"))
                 {

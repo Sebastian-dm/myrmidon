@@ -108,7 +108,6 @@ namespace Myrmidon.Core.Zones {
                 // - It makes sure rooms are odd-sized to line up with maze.
                 // - It avoids creating rooms that are too rectangular: too tall and
                 //   narrow or too wide and flat.
-                // TODO: This isn't very flexible or tunable. Do something better here.
                 int size = rng.Range(1, 3 + _roomExtraSize) * 2 + 1;
                 int rectangularity = rng.Range(0, 1 + size / 2) * 2;
                 int width = size;
@@ -320,7 +319,6 @@ namespace Myrmidon.Core.Zones {
                         var exits = 0;
                         foreach (var dir in CardinalDirections) {
                             var neighborTile = _map.TryGetTile(pos + dir);
-                            // Todo: Check this logic
                             if (neighborTile != null && !_map.Ecs.Get<Identity>(neighborTile.Value).Groups.Contains("Wall"))
                                 exits++;
                         }
