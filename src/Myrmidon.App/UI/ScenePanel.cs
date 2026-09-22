@@ -1,5 +1,4 @@
-﻿using Myrmidon.Core.Maps.Tiles;
-using SDL3;
+﻿using SDL3;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,8 +55,10 @@ public class ScenePanel : GridPanel {
                 Vec mapPos = new Vec(x, y);
                 Vec panelPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
 
-                Renderable render = map.GetRenderComponent(mapPos);
-                Perceptible percept = map.GetPerceptibleComponent(mapPos);
+                var tile = map.GetTile(mapPos);
+                if (tile == null) continue;
+                Renderable render = map.Ecs.Get<Renderable>(tile.Value);
+                Perceptible percept = map.Ecs.Get<Perceptible>(tile.Value);
 
                 if (render == null || !percept.Explored) continue;
 
