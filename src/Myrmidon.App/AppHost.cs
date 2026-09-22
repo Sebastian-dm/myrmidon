@@ -6,7 +6,6 @@ using Myrmidon.App.UI;
 using Myrmidon.Core;
 using Myrmidon.Core.Actions;
 using Myrmidon.Core.Zones;
-using Myrmidon.Core.Maps.Generation;
 using Myrmidon.Core.Systems;
 
 namespace Myrmidon.App;

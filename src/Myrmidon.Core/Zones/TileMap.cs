@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 using Bramble.Core;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.ECS;
 
 namespace Myrmidon.Core.Zones;
@@ -63,7 +62,7 @@ public class TileMap {
 
 
     // Returns a tile if it exists at location. Return null otherwise.
-    public EntityId? GetTileAt(Vec location) {
+    public EntityId? GetTile(Vec location) {
         return GetTileAt(location.X, location.Y);
     }
     public EntityId? GetTileAt(int x, int y){

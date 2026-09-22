@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Myrmidon.Core.Parts;
 using Myrmidon.Core.ECS;
-using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Signals;
 using Myrmidon.Core.Systems;
 

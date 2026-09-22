@@ -8,8 +8,6 @@ using Bramble.Core;
 using Myrmidon.Core.Parts;
 using Myrmidon.Core.ECS;
 using Myrmidon.Core.Utilities.Geometry;
-using Myrmidon.Core.Maps.Tiles;
-using Myrmidon.Core.Maps;
 using Myrmidon.Core.Zones;
 
 namespace Myrmidon.Core.Systems;

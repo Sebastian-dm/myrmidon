@@ -1,6 +1,5 @@
 ﻿using GoRogue.GameFramework;
 using Myrmidon.Core.ECS;
-using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Parts;
 using Myrmidon.Core.Zones;
 using System;

@@ -1,5 +1,4 @@
 ﻿using Bramble.Core;
-using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Systems;
 
 using System;
