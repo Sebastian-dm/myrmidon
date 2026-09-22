@@ -25,11 +25,8 @@ internal class PickupAction : IAction {
 
     public ActionResult Perform(IWorldState context) {
         
-        context.EcsWorld.TryGet<Identity>(Performer, out var performerIdentity);
-        context.EcsWorld.TryGet<Identity>(Performer, out var subjectIdentity);
-        context.SignalQueue.Enqueue(new LogSignal(($"{performerIdentity.Name} wants to pickup {subjectIdentity.Name} but this function is not implemented.")));
-        
-        
+        var IdPerformer = context.EcsWorld.Get<Identity>(Performer);
+        var IdItem = context.EcsWorld.Get<Identity>(Item);
         
         var posPerformer = context.EcsWorld.Get<Position>(Performer);
         var posItem = context.EcsWorld.Get<Position>(Item);
@@ -42,6 +39,7 @@ internal class PickupAction : IAction {
             context.EcsWorld.DestroyEntity(Item);
             context.Zone.EntityIndex.Remove(Item, posPerformer.Coords);
             
+            context.SignalQueue.Enqueue(new LogSignal(($"{IdPerformer.Name} picked up {IdItem.Name}.")));
             return new ActionResult(succeeded: true);
         }
         else {
