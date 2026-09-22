@@ -30,10 +30,10 @@ public class StatusPanel : GridPanel {
     }
 
     public void RenderStatus(EntityId player) {
-        _gameState.EcsWorld.TryGet<Health>(player, out var health);
+        var health = _gameState.EcsWorld.Get<Health>(player);
         DrawText(new Vec(1, 1), $"HP: {health.Current}/{health.Maximum}", "w");
         
-        _gameState.EcsWorld.TryGet<Inventory>(player, out var inv);
+        var inv = _gameState.EcsWorld.Get<Inventory>(player);
         DrawText(new Vec(1, 3), $"Gold: {inv.Coins}", "w");
     }
 

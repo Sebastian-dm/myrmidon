@@ -72,7 +72,7 @@ public class EntityFactory {
 
     public EntityId CreateTreasure(int zoneId, Vec position) {
         EntityId entity = _world.CreateEntity();
-        _world.Add(entity, new Identity { Name = "a pile of gold", Groups = new List<string> { "Treasure"} });
+        _world.Add(entity, new Identity { Name = "a pile of gold", Groups = new List<string> { "Treasure", "Item"} });
         _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
         _world.Add(entity, new Renderable("text/default", (byte)'$', "Y"));
         _world.Add(entity, new Perceptible());

@@ -29,21 +29,25 @@ internal class PickupAction : IAction {
         context.EcsWorld.TryGet<Identity>(Performer, out var subjectIdentity);
         context.SignalQueue.Enqueue(new LogSignal(($"{performerIdentity.Name} wants to pickup {subjectIdentity.Name} but this function is not implemented.")));
         
-        // TODO: Refactor for ECS
-        //if (Performer.Position.IsAdjacentTo(Item.Position)) {
-        //    Performer.Inventory.Add(Item);
-        //    //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
-        //    context.Zone.Map.Remove(Item);
-        //    return new ActionResult(succeeded: true);
-        //}
-        //else {
-        //    return new ActionResult(succeeded: false,
-        //    alternative: new SkipAction(Performer)
-        //    );
-        //}
         
-        return new ActionResult(succeeded: false,
+        
+        var posPerformer = context.EcsWorld.Get<Position>(Performer);
+        var posItem = context.EcsWorld.Get<Position>(Item);
+        
+        if ((posItem.Coords-posPerformer.Coords).KingLength <= 1) {
+            
+            var invPerformer = context.EcsWorld.Get<Inventory>(Performer);
+            invPerformer.Coins++;
+            
+            context.EcsWorld.DestroyEntity(Item);
+            context.Zone.EntityIndex.Remove(Item, posPerformer.Coords);
+            
+            return new ActionResult(succeeded: true);
+        }
+        else {
+            return new ActionResult(succeeded: false,
             alternative: new SkipAction(Performer)
-        );
+            );
+        }
     }
 }
