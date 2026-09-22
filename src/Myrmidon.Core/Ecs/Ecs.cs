@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Myrmidon.Core.Parts;
+using System;
 using System.Collections.Generic;
 
 
@@ -13,14 +14,15 @@ public sealed class Ecs(uint size=0) {
 
     private readonly Dictionary<Type, IPartStore> _stores = new Dictionary<Type, IPartStore>();
     private readonly HashSet<EntityId> _entities = new HashSet<EntityId>();
-    private uint _nextEntityId = 1;
+    private uint _nextEntityId = 0;
 
 
     public EntityId CreateEntity() {
+        if (_size > 0 && _nextEntityId >= _size) {
+            throw new InvalidOperationException("Maximum number of entities reached.");
+        }
         var entity = new EntityId(_nextEntityId++);
         _entities.Add(entity);
-        if(_size > 0 && _nextEntityId > _size)
-            throw new InvalidOperationException("Maximum number of entities reached.");
         return entity;
     }
 
