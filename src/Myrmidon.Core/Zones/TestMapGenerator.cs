@@ -31,7 +31,7 @@ namespace Myrmidon.Core.Zones {
             PlacePillarWall(map, new Vec(12, 8));
             PlacePillarWall(map, new Vec(10, 18));
 
-            TextureVariationSystem.RefineTileAdjacencyConnections(map);
+            TextureVariationSystem.RefineTileAdjacencyConnections(map, "Wall");
 
             return map;
         }

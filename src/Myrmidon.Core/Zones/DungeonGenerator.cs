@@ -82,7 +82,7 @@ namespace Myrmidon.Core.Zones {
             FillSpacesWithMazes();
             ConnectRegions();
             RemoveDeadEnds();
-            TextureVariationSystem.RefineTileAdjacencyConnections(map);
+            TextureVariationSystem.RefineTileAdjacencyConnections(map, "Wall");
             //_map.Rooms.ForEach(onDecorateRoom);
 
             return _map;
@@ -146,7 +146,7 @@ namespace Myrmidon.Core.Zones {
                 for (int x = 1; x < _map.Width; x += 2) {
                     Vec loc = new Vec(x, y);
                     var tile = _map.GetTile(loc);
-                    if (_map.Ecs.Get<Identity>(tile.Value).Groups.Contains("Wall")) {
+                    if (_map.Ecs.Get<Identity>(tile).Groups.Contains("Wall")) {
                         GrowMaze(loc);
                     }
                 }
@@ -213,12 +213,12 @@ namespace Myrmidon.Core.Zones {
                     Vec pos = new Vec(x, y);
 
                     // Must be a wall tile to be a connector
-                    var tile = _map.GetTile(pos);
-                    if (tile == null || !_map.Ecs.Get<Identity>(tile.Value).Groups.Contains("Wall")) continue;
+                    var identity = _map.Ecs.Get<Identity>(_map.GetTile(pos));
+                    if (!identity.Groups.Contains("Wall")) continue;
 
                     // Can't already be part of a region.
                     HashSet<int> AdjacentRegions = new HashSet<int>();
-                    foreach (Vec dir in CardinalDirections) { // NOTE: I don't know if this check is correct. Does it check element guid or value?
+                    foreach (Vec dir in CardinalDirections) {
                         Vec PosAdjacent = pos + dir;
                         int PosAdjacentIndex = PosAdjacent.Y * _map.Width + PosAdjacent.X;
                         int RegionInDirection = _regions[PosAdjacentIndex];
@@ -311,18 +311,17 @@ namespace Myrmidon.Core.Zones {
                 for (int x = 1; x < _map.Width-1; x++) {
                     for (int y = 1; y < _map.Height - 1; y++) {
                         Vec pos = new Vec(x, y);
-                        var tile = _map.GetTile(pos);
+                        var tile = _map.TryGetTile(pos);
                         // Must not be a wall
-                        // Todo: Check this logic
                         if (tile == null || _map.Ecs.Get<Identity>(tile.Value).Groups.Contains("Wall"))
                             continue;
 
                         // If it only has one exit, it's a dead end.
                         var exits = 0;
                         foreach (var dir in CardinalDirections) {
-                            var neighbor = _map.GetTile(pos + dir);
+                            var neighborTile = _map.TryGetTile(pos + dir);
                             // Todo: Check this logic
-                            if (neighbor == null || _map.Ecs.Get<Identity>(neighbor.Value).Groups.Contains("Wall"))
+                            if (neighborTile != null && !_map.Ecs.Get<Identity>(neighborTile.Value).Groups.Contains("Wall"))
                                 exits++;
                         }
 
@@ -351,11 +350,11 @@ namespace Myrmidon.Core.Zones {
             // Destination must not be open.
             Vec destination = pos + direction * 2;
 
-            var tile = _map.GetTile(pos);
-            if (tile == null)
-                return false;
+            var tile = _map.GetTile(destination);
+            var identity = _map.Ecs.Get<Identity>(tile);
+            bool canCarve = identity.Groups.Contains("Wall");
 
-            return _map.Ecs.Get<Identity>(tile.Value).Groups.Contains("Wall");
+            return canCarve;
         }
 
         private void StartRegion() {

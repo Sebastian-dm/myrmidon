@@ -61,11 +61,22 @@ public class TileMap {
 
 
 
-    // Returns a tile if it exists at location. Return null otherwise.
-    public EntityId? GetTile(Vec location) {
+    // Returns a tile and throws error if it does not exist
+    public EntityId GetTile(Vec location)
+    {
         return GetTileAt(location.X, location.Y);
     }
-    public EntityId? GetTileAt(int x, int y){
+    public EntityId GetTileAt(int x, int y)
+    {
+        int locationIndex = x + y * Width;
+        return Tiles[locationIndex];
+    }
+
+    // Returns a tile if it exists at location. Return null otherwise.
+    public EntityId? TryGetTile(Vec location) {
+        return TryGetTile(location.X, location.Y);
+    }
+    public EntityId? TryGetTile(int x, int y){
         int locationIndex = x + y * Width;
         // make sure the index is within the boundaries of the map!
         if (0 <= locationIndex && locationIndex < Width * Height)
@@ -83,10 +94,10 @@ public class TileMap {
         int h = Height;
 
         EntityId?[] result = [
-            (               y <= 0  ) ? null : GetTileAt(x  , y-1),
-            (x >= w-1               ) ? null : GetTileAt(x+1, y  ),
-            (               y >= h-1) ? null : GetTileAt(x  , y+1),
-            (x <= 0                 ) ? null : GetTileAt(x-1, y  ),
+            (               y <= 0  ) ? null : TryGetTile(x  , y-1),
+            (x >= w-1               ) ? null : TryGetTile(x+1, y  ),
+            (               y >= h-1) ? null : TryGetTile(x  , y+1),
+            (x <= 0                 ) ? null : TryGetTile(x-1, y  ),
         ];
         return result;
     }
@@ -102,14 +113,14 @@ public class TileMap {
         int h = Height;
 
         EntityId?[] result = [
-            (x <= 0   | y <= 0  ) ? null : GetTileAt(x-1, y-1),
-            (           y <= 0  ) ? null : GetTileAt(x  , y-1),
-            (x >= w-1 | y <= 0  ) ? null : GetTileAt(x+1, y-1),
-            (x >= w-1           ) ? null : GetTileAt(x+1, y  ),
-            (x >= w-1 | y >= h-1) ? null : GetTileAt(x+1, y+1),
-            (           y >= h-1) ? null : GetTileAt(x  , y+1),
-            (x <= 0   | y >= h-1) ? null : GetTileAt(x-1, y+1),
-            (x <= 0             ) ? null : GetTileAt(x-1, y  ),
+            (x <= 0   | y <= 0  ) ? null : TryGetTile(x-1, y-1),
+            (           y <= 0  ) ? null : TryGetTile(x  , y-1),
+            (x >= w-1 | y <= 0  ) ? null : TryGetTile(x+1, y-1),
+            (x >= w-1           ) ? null : TryGetTile(x+1, y  ),
+            (x >= w-1 | y >= h-1) ? null : TryGetTile(x+1, y+1),
+            (           y >= h-1) ? null : TryGetTile(x  , y+1),
+            (x <= 0   | y >= h-1) ? null : TryGetTile(x-1, y+1),
+            (x <= 0             ) ? null : TryGetTile(x-1, y  ),
         ];
         return result;
     }

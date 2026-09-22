@@ -22,7 +22,7 @@ public  class EntityTileFactory {
     public EntityId CreateWall(TileMap map, Vec loc) {
         EntityId entity = map[loc];
         _ecs.Add(entity, new Identity { Name = "Wall", Groups = new List<string> { "Wall" } });
-        _ecs.Add(entity, new Renderable("tile/wall", (byte)0, "O"));
+        _ecs.Add(entity, new Renderable("tile/wall", (byte)0, "O") { VariantType = RenderableVariantType.OrthoAdjacent });
         _ecs.Add(entity, new Perceptible());
         _ecs.Add(entity, new Physics { BlocksMovement = true, BlocksLineOfSight = true });
         return entity;

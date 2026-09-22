@@ -55,7 +55,7 @@ public class ScenePanel : GridPanel {
                 Vec mapPos = new Vec(x, y);
                 Vec panelPos = new Vec(x - viewBounds.Left, y - viewBounds.Top);
 
-                var tile = map.GetTile(mapPos);
+                var tile = map.TryGetTile(mapPos);
                 if (tile == null) continue;
                 Renderable render = map.Ecs.Get<Renderable>(tile.Value);
                 Perceptible percept = map.Ecs.Get<Perceptible>(tile.Value);
