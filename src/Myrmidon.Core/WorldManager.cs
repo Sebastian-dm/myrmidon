@@ -20,6 +20,7 @@ namespace Myrmidon.Core {
 
         public WorldManager(IWorldState worldstate, ActionController actionController, IZoneGenerator zoneGenerator) {
             WorldState = worldstate;
+            //FovSystem = new FovSystemRadial(worldstate.EcsWorld);
             FovSystem = new FovSystemOctant(worldstate.EcsWorld);
             _zoneGen = zoneGenerator;
             
