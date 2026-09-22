@@ -41,7 +41,8 @@ public  class EntityTileFactory {
         EntityId entity = map[loc];
         _ecs.Add(entity, new Identity { Name = "Door", Groups = new List<string> { "Door" } });
         _ecs.Add(entity, new Door { IsLocked = locked, IsClosed = closed });
-        _ecs.Add(entity, new Renderable("text/default", (byte)'+', "Y"));
+        byte texIndex = closed ? (byte)'+' : (byte)'-';
+        _ecs.Add(entity, new Renderable("text/default", texIndex, "Y"));
         _ecs.Add(entity, new Perceptible());
         _ecs.Add(entity, new Physics { BlocksMovement = closed, BlocksLineOfSight = closed });
         return entity;

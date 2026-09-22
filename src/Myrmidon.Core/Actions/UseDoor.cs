@@ -24,15 +24,15 @@ namespace Myrmidon.Core.Actions {
             context.EcsWorld.TryGet<Identity>(Performer, out var identity);
 
             var doorIdentity = context.EcsZone.Get<Identity>(Door);
-            var door = context.EcsZone.Get<Door>(Door);
+            var doorPart = context.EcsZone.Get<Door>(Door);
             var doorSystem = new DoorSystem(context.EcsZone);
 
             try {
-                if (door.IsLocked) {
+                if (doorPart.IsLocked) {
                     doorSystem.Unlock(Door);
                     context.SignalQueue.Enqueue(new LogSignal(($"{identity.Name} unlocked {doorIdentity.Name}")));
                 }
-                else if (!door.IsLocked && door.IsClosed) {
+                else if (!doorPart.IsLocked && doorPart.IsClosed) {
                     doorSystem.Open(Door);
                     context.SignalQueue.Enqueue(new LogSignal(($"{identity.Name} opened {doorIdentity.Name}")));
                 }

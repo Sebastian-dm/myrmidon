@@ -10,7 +10,7 @@ using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Zones;
 
 namespace Myrmidon.Core.Actions {
-    public class WalkAction : IAction {
+    public class DirectionAction : IAction {
 
         public bool IsImmediate { get; } = false;
         public readonly EntityId Performer;
@@ -18,7 +18,7 @@ namespace Myrmidon.Core.Actions {
 
         private Vec _originalPosition;
 
-        public WalkAction(EntityId performer, Vec direction) {
+        public DirectionAction(EntityId performer, Vec direction) {
             
             Performer = performer;
             Direction = direction;
@@ -65,9 +65,9 @@ namespace Myrmidon.Core.Actions {
             
             // Check for the presence of a door
             var tile = context.Zone.TileMap[newPosition];
-            context.Zone.TileMap.Ecs.TryGet<Door>(tile, out var doorComponent);
+            context.EcsZone.TryGet<Door>(tile, out var doorComponent);
             
-            if (doorComponent != null && !doorComponent.IsClosed) {
+            if (doorComponent != null && doorComponent.IsClosed) {
                 return new ActionResult(succeeded: false,
                     alternative: new OpenDoorAction(Performer, tile)
                 );

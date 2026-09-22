@@ -104,14 +104,14 @@ namespace Myrmidon.Core.Actions {
 
         private IAction? CreateActionFromInput(InputAction command) {
             return command switch {
-                InputAction.MovePlayerN => new WalkAction(_gameState.PlayerEntity, new Vec(0, -1)),
-                InputAction.MovePlayerNe => new WalkAction(_gameState.PlayerEntity, new Vec(1, -1)),
-                InputAction.MovePlayerS => new WalkAction(_gameState.PlayerEntity, new Vec(0, 1)),
-                InputAction.MovePlayerSe => new WalkAction(_gameState.PlayerEntity, new Vec(1, 1)),
-                InputAction.MovePlayerW => new WalkAction(_gameState.PlayerEntity, new Vec(-1, 0)),
-                InputAction.MovePlayerSw => new WalkAction(_gameState.PlayerEntity, new Vec(-1, 1)),
-                InputAction.MovePlayerE => new WalkAction(_gameState.PlayerEntity, new Vec(1, 0)),
-                InputAction.MovePlayerNw => new WalkAction(_gameState.PlayerEntity, new Vec(-1, -1)),
+                InputAction.MovePlayerN => new DirectionAction(_gameState.PlayerEntity, new Vec(0, -1)),
+                InputAction.MovePlayerNe => new DirectionAction(_gameState.PlayerEntity, new Vec(1, -1)),
+                InputAction.MovePlayerS => new DirectionAction(_gameState.PlayerEntity, new Vec(0, 1)),
+                InputAction.MovePlayerSe => new DirectionAction(_gameState.PlayerEntity, new Vec(1, 1)),
+                InputAction.MovePlayerW => new DirectionAction(_gameState.PlayerEntity, new Vec(-1, 0)),
+                InputAction.MovePlayerSw => new DirectionAction(_gameState.PlayerEntity, new Vec(-1, 1)),
+                InputAction.MovePlayerE => new DirectionAction(_gameState.PlayerEntity, new Vec(1, 0)),
+                InputAction.MovePlayerNw => new DirectionAction(_gameState.PlayerEntity, new Vec(-1, -1)),
                 InputAction.SkipPlayerTurn => new SkipAction(_gameState.PlayerEntity),
                 _ => null
             };
