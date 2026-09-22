@@ -90,8 +90,9 @@ public class FovSystemOctant : IFovSystem {
                     // Set visibility of entities on this tile
                     var entitiesOnTile = zone.EntityIndex.At(pos);
                     foreach (var entity in entitiesOnTile) {
-                        if (_ecs.TryGet(entity, out Perceptible entityPerc));
-                            UpdatePerceptibleLightFromDistance(zone, distance, entityPerc);
+                        if (!_ecs.Has<Perceptible>(entity)) continue;
+                        var entityPerc = _ecs.Get<Perceptible>(entity);
+                        UpdatePerceptibleLightFromDistance(zone, distance, entityPerc);
                     }
 
                     // Add any opaque tiles to the shadow map.

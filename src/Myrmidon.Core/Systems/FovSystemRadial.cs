@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Bramble.Core;
+using Myrmidon.Core.ECS;
 using Myrmidon.Core.Parts;
 using Myrmidon.Core.Utilities.Geometry;
 using Myrmidon.Core.Zones;
@@ -17,11 +18,13 @@ namespace Myrmidon.Core.Systems {
 
 
     public class FovSystemRadial : IFovSystem {
-
+        
         private int _range;
         private float _rangeSqrt;
+        private Ecs _ecs;
 
-        public FovSystemRadial(int range = 8) {
+        public FovSystemRadial(Ecs ecs, int range = 8) {
+            _ecs = ecs;
             _range = range;
             _rangeSqrt = _range * _range;
         }
@@ -33,7 +36,7 @@ namespace Myrmidon.Core.Systems {
         }
         
         
-        // Computes the visibility and dimness values based on a simple radius
+        // Computes the visibility and light values based on a simple radius
         private void ComputeRadialFov(Zone zone, Vec origin) {
 
             var map = zone.TileMap;
@@ -47,22 +50,22 @@ namespace Myrmidon.Core.Systems {
             // Update tile visiblity
             for (int x = left; x < right; x++) {
                 for (int y = top; y < bottom; y++) {
-                    var perceptible = map.Ecs.Get<Perceptible>(map[x, y]);
-                    UpdatePerceptibleLightFromDistance(zone, origin, perceptible);
+                    Vec pos = new Vec(x, y);
+                    Vec dist = origin - pos;
+                    
+                    // Set the visibility of this tile.
+                    var tilePerc = map.Ecs.Get<Perceptible>(map[x, y]);
+                    UpdatePerceptibleLightFromDistance(zone, dist, tilePerc);
+                    
+                    // Set visibility of entities on this tile
+                    var entitiesOnTile = zone.EntityIndex.At(pos);
+                    foreach (var entity in entitiesOnTile) {
+                        if (!_ecs.Has<Perceptible>(entity)) continue;
+                        var entityPerc = _ecs.Get<Perceptible>(entity);
+                        UpdatePerceptibleLightFromDistance(zone, dist, entityPerc);
+                    }
                 }
             }
-
-            // Update entity visibility
-            // TODO: Refactor for ECS
-            
-            // foreach (Entity entity in map.Entities.Items) {
-            //     if (Vec.IsDistanceWithin(origin, entity.Position, _range)) {
-            //         entity.isVisible = true;
-            //     }
-            //     else {
-            //         entity.isVisible = false;
-            //     }
-            // }
         }
 
         private void UpdatePerceptibleLightFromDistance(Zone zone, Vec distance, Perceptible perceptible) {
@@ -71,7 +74,7 @@ namespace Myrmidon.Core.Systems {
             if (distSqrt <= _rangeSqrt)
                 perceptible.Explored = true;
 
-            float clampedDist = (float)Math.Clamp(Math.Pow(distSqrt / _rangeSqrt, 1.0f), 0.0f, 1.0f);
+            float clampedDist = (float)Math.Clamp(Math.Pow(distSqrt / _rangeSqrt, 1.0f),  0.0f, 1.0f);
             perceptible.LightLevel = 1f - clampedDist;
         }
     }
