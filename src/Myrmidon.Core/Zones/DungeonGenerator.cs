@@ -94,7 +94,7 @@ namespace Myrmidon.Core.Zones {
 
         private void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
-                _map[i] = _tileFactory.CreateWall(_map);
+                _map[i] = _tileFactory.CreateWall(_map, new Vec(i % _map.Width, i / _map.Width));
             }
         }
 
@@ -144,9 +144,10 @@ namespace Myrmidon.Core.Zones {
             // Fill in all of the empty space with mazes.
             for (int y = 1; y < _map.Height; y += 2) {
                 for (int x = 1; x < _map.Width; x += 2) {
-                    Vec location = new Vec(x, y);
-                    if (_map.GetTileAt<TileWall>(location) != null) {
-                        GrowMaze(location);
+                    Vec loc = new Vec(x, y);
+                    var tile = _map.GetTile(loc);
+                    if (_map.Ecs.Get<Identity>(tile.Value).Groups.Contains("Wall")) {
+                        GrowMaze(loc);
                     }
                 }
             }
@@ -212,7 +213,8 @@ namespace Myrmidon.Core.Zones {
                     Vec pos = new Vec(x, y);
 
                     // Must be a wall tile to be a connector
-                    if (_map.GetTileAt<TileWall>(pos) == null) continue;
+                    var tile = _map.GetTile(pos);
+                    if (tile == null || !_map.Ecs.Get<Identity>(tile.Value).Groups.Contains("Wall")) continue;
 
                     // Can't already be part of a region.
                     HashSet<int> AdjacentRegions = new HashSet<int>();
@@ -289,14 +291,14 @@ namespace Myrmidon.Core.Zones {
         private void LinkRegions(Vec pos) {
             if (rng.OneIn(4)) {
                 if (rng.OneIn(3)) {
-                    _map[pos] = _tileFactory.CreateDoor(_map, locked: false, closed: false);
+                    _map[pos] = _tileFactory.CreateDoor(_map, pos, locked: false, closed: false);
                 }
                 else {
-                    _map[pos] = _tileFactory.CreateFloor(_map);
+                    _map[pos] = _tileFactory.CreateFloor(_map, pos);
                 }
             }
             else {
-                _map[pos] = _tileFactory.CreateDoor(_map, locked: false, closed: true);
+                _map[pos] = _tileFactory.CreateDoor(_map, pos, locked: false, closed: true);
             }
         }
 
@@ -309,19 +311,26 @@ namespace Myrmidon.Core.Zones {
                 for (int x = 1; x < _map.Width-1; x++) {
                     for (int y = 1; y < _map.Height - 1; y++) {
                         Vec pos = new Vec(x, y);
-                        if (_map.GetTileAt<TileWall>(pos) != null) continue;
+                        var tile = _map.GetTile(pos);
+                        // Must not be a wall
+                        // Todo: Check this logic
+                        if (tile == null || _map.Ecs.Get<Identity>(tile.Value).Groups.Contains("Wall"))
+                            continue;
 
                         // If it only has one exit, it's a dead end.
                         var exits = 0;
                         foreach (var dir in CardinalDirections) {
-                            if (_map.GetTileAt<TileWall>(pos + dir) == null) exits++;
+                            var neighbor = _map.GetTile(pos + dir);
+                            // Todo: Check this logic
+                            if (neighbor == null || _map.Ecs.Get<Identity>(neighbor.Value).Groups.Contains("Wall"))
+                                exits++;
                         }
 
                         if (exits != 1) continue;
 
                         done = false;
 
-                        _map[pos] = _tileFactory.CreateWall(_map);
+                        _map[pos] = _tileFactory.CreateWall(_map, pos);
 
                         Thread.Sleep(_tileStepWaitMs / 5);
                     }
@@ -341,7 +350,12 @@ namespace Myrmidon.Core.Zones {
 
             // Destination must not be open.
             Vec destination = pos + direction * 2;
-            return _map.GetTileAt<TileWall>(destination) != null;
+
+            var tile = _map.GetTile(pos);
+            if (tile == null)
+                return false;
+
+            return _map.Ecs.Get<Identity>(tile.Value).Groups.Contains("Wall");
         }
 
         private void StartRegion() {
@@ -351,7 +365,7 @@ namespace Myrmidon.Core.Zones {
         private void Carve(Vec pos) {
             int locationIndex = pos.Y * _map.Width + pos.X;
             _regions[locationIndex] = _currentRegion;
-            _map[pos] = _tileFactory.CreateFloor(_map);
+            _map[pos] = _tileFactory.CreateFloor(_map, pos);
         }
     }
 }

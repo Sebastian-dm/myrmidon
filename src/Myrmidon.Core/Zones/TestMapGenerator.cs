@@ -38,14 +38,14 @@ namespace Myrmidon.Core.Zones {
 
         private void PlacePillarWall(TileMap map, Vec position) {
             if (map.Bounds.Contains(position)) {
-                map[position] = _entityFactory.CreateWall(map);
+                map[position] = _entityFactory.CreateWall(map, position);
             }
         }
 
 
         private void FillWithFloor(TileMap map) {
             for (int i = 0; i < map.Tiles.Length; i++) {
-                map[i] = _entityFactory.CreateFloor(map);
+                map[i] = _entityFactory.CreateFloor(map, new Vec(i % map.Width, i / map.Width));
             }
         }
 
