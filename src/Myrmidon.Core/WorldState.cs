@@ -18,7 +18,6 @@ public interface IWorldState {
     Ecs EcsZone { get; }
     List<Zone> Zones { get; }
     Zone Zone { get; }
-    //Player Player { get; set; }
     EntityId PlayerEntity { get; set; }
     SignalQueue SignalQueue { get; }
 }
@@ -30,7 +29,6 @@ public class WorldState : IWorldState {
     public Ecs EcsZone { get { return Zone.TileMap.Ecs; } }
     public List<Zone> Zones { get; private set; } = new List<Zone>();
     public Zone Zone { get { return Zones[_currentZoneId]; } }
-    //public Player Player { get; set; }
     public EntityId PlayerEntity { get; set; }
     public SignalQueue SignalQueue { get; private set; }
 
