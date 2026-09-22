@@ -49,7 +49,7 @@ public class EntityFactory {
     public EntityId CreateMonster(int zoneId, Vec position) {
         EntityId entity = _world.CreateEntity();
 
-        _world.Add(entity, new Identity { Name = "a common goblin" });
+        _world.Add(entity, new Identity { Name = "a common goblin", Groups = new List<string> { "Monster", "Goblin" } });
         _world.Add(entity, new Brain());
         _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
         _world.Add(entity, new Health {
@@ -72,21 +72,10 @@ public class EntityFactory {
 
     public EntityId CreateTreasure(int zoneId, Vec position) {
         EntityId entity = _world.CreateEntity();
-        _world.Add(entity, new Identity { Name = "a pile of gold" });
+        _world.Add(entity, new Identity { Name = "a pile of gold", Groups = new List<string> { "Treasure"} });
         _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
         _world.Add(entity, new Renderable("text/default", (byte)'$', "Y"));
         _world.Add(entity, new Perceptible());
-        return entity;
-    }
-
-    public EntityId CreateDoor(int zoneId, Vec position, bool isLocked, bool isOpen) {
-        EntityId entity = _world.CreateEntity();
-        _world.Add(entity, new Identity { Name = "a door" });
-        _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
-        _world.Add(entity, new Door(isLocked, isOpen));
-        _world.Add(entity, new Renderable("text/default", (byte)'+', "Y"));
-        _world.Add(entity, new Perceptible());
-        _world.Add(entity, new Physics { BlocksMovement = !isOpen, BlocksLineOfSight = !isOpen });
         return entity;
     }
 
