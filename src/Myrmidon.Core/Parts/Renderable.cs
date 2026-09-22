@@ -8,6 +8,8 @@ public class Renderable : Part {
     
     public byte TextureIndex { get; set; } = (byte)'.';
     private byte _textureIndex { get; set; } = (byte)'.';
+
+    public int VariantType { get; set; }
     public int VariantOffset { get; set; } = 0;
     public int AnimationOffset { get; set; } = 0;
 
@@ -52,4 +54,9 @@ public class Renderable : Part {
     }
 
 
+}
+
+public enum RenderableVariantType {
+    None = 0,
+    OrthoAdjacent = 1,
 }
