@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 
 namespace Myrmidon.Core.ECS;
 
-public readonly record struct EntityId(uint Value);
+public readonly record struct EntityId(uint Id);

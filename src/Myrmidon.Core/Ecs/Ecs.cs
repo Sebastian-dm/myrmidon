@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+
 namespace Myrmidon.Core.ECS;
 
 public sealed class Ecs(uint size=0) {
@@ -29,42 +30,42 @@ public sealed class Ecs(uint size=0) {
             return;
 
         foreach (var store in _stores.Values)
-            store.Remove(entity.Value);
+            store.Remove(entity.Id);
     }
 
 
     public T Add<T>(EntityId entity, T component) where T : class {
         return (_size == 0) ?
-            GetStore<T>().Add(entity.Value, component) :
-            GetArrStore<T>().Add(entity.Value, component);
+            GetStore<T>().Add(entity.Id, component) :
+            GetArrStore<T>().Add(entity.Id, component);
     }
 
 
     public T Get<T>(EntityId entity) where T : class {
         return (_size == 0) ?
-            GetStore<T>().Get(entity.Value) :
-            GetArrStore<T>().Get(entity.Value);
+            GetStore<T>().Get(entity.Id) :
+            GetArrStore<T>().Get(entity.Id);
     }
 
 
     public bool TryGet<T>(EntityId entity, out T? component) where T : class {
         return (_size == 0) ?
-            GetStore<T>().TryGet(entity.Value, out component) :
-            GetArrStore<T>().TryGet(entity.Value, out component);
+            GetStore<T>().TryGet(entity.Id, out component) :
+            GetArrStore<T>().TryGet(entity.Id, out component);
     }
 
 
     public bool Has<T>(EntityId entity) where T : class {
         return (_size == 0) ?
-            GetStore<T>().Contains(entity.Value) :
-            GetArrStore<T>().Contains(entity.Value);
+            GetStore<T>().Contains(entity.Id) :
+            GetArrStore<T>().Contains(entity.Id);
     }
 
 
     public bool Remove<T>(EntityId entity) where T : class {
         return (_size == 0) ?
-            GetStore<T>().Remove(entity.Value) :
-            GetArrStore<T>().Remove(entity.Value);
+            GetStore<T>().Remove(entity.Id) :
+            GetArrStore<T>().Remove(entity.Id);
     }
 
 
