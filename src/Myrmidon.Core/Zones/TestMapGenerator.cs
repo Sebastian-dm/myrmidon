@@ -6,44 +6,46 @@ using System.Linq;
 
 using Bramble.Core;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Utilities.Random;
 using Myrmidon.Core.Systems;
+using Myrmidon.Core.ECS;
 
-/// This generator fills the whole map with floor tiles.
 
-namespace Myrmidon.Core.Maps.Generation {
+
+namespace Myrmidon.Core.Zones {
 
     public class TestMapGenerator : IMapGenerator {
 
 
+        private RandomNumberGenerator rng = new();
+
+        private EntityTileFactory _entityFactory;
+
 
         public TileMap Generate(TileMap map) {
+            
+            _entityFactory = new EntityTileFactory(map.Ecs);
+
             FillWithFloor(map);
             PlacePillarWall(map, new Vec(11, 8));
             PlacePillarWall(map, new Vec(12, 8));
             PlacePillarWall(map, new Vec(10, 18));
 
-            //TextureVariationSystem.RefineTileAdjacencyConnections<TileWall>(map);
+            TextureVariationSystem.RefineTileAdjacencyConnections(map);
 
             return map;
         }
 
         private void PlacePillarWall(TileMap map, Vec position) {
             if (map.Bounds.Contains(position)) {
-                map.SetRenderComponent(position, new Renderable("text/default", (byte)'#', "Y"));
-                map[position] = new TileWall();
+                map[position] = _entityFactory.CreateWall(map);
             }
         }
 
 
         private void FillWithFloor(TileMap map) {
             for (int i = 0; i < map.Tiles.Length; i++) {
-                var render = new Renderable("text/default", 7, "g");
-                map.SetRenderComponent(i, render);
-                var percept = new Perceptible();
-                map.SetPerceptibleComponent(i, percept);
-                map[i] = new TileFloor();
+                map[i] = _entityFactory.CreateFloor(map);
             }
         }
 

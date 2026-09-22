@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Myrmidon.Core.Maps.Generation {
+namespace Myrmidon.Core.Zones {
     public interface IMapGenerator {
         TileMap Generate(TileMap map);
     }

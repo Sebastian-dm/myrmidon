@@ -2,7 +2,6 @@
 using Bramble.Core;
 using GoRogue;
 using Myrmidon.Core.Parts;
-using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.Systems;
 using Myrmidon.Core.Utilities.Random;
 using Myrmidon.Core.Utilities.Graphics;
@@ -12,6 +11,7 @@ using System.Reflection;
 using System.Threading;
 
 using Myrmidon.Core.ECS;
+using GoRogue.GameFramework;
 
 
 /// The random dungeon generator.
@@ -41,7 +41,7 @@ using Myrmidon.Core.ECS;
 /// The end result of this is a multiply-connected dungeon with rooms and lots
 /// of winding corridors.
 
-namespace Myrmidon.Core.Maps.Generation {
+namespace Myrmidon.Core.Zones {
 
     public class DungeonGenerator : IMapGenerator {
 
@@ -53,6 +53,7 @@ namespace Myrmidon.Core.Maps.Generation {
         private int _currentRegion = -1; // Index of current region being carved.
         private int[] _regions; // For each open position in the dungeon, the index of the connected region that that position is a part of.
         private RandomNumberGenerator rng = new ();
+        private EntityTileFactory _tileFactory;
 
         private readonly int _tileStepWaitMs = 0;
 
@@ -64,6 +65,7 @@ namespace Myrmidon.Core.Maps.Generation {
 
         public TileMap Generate(TileMap map) {
             _map = map;
+            _tileFactory = new EntityTileFactory(map.Ecs);
 
             _regions = Enumerable.Repeat(-1, _map.Width * _map.Height).ToArray();
 
@@ -80,7 +82,7 @@ namespace Myrmidon.Core.Maps.Generation {
             FillSpacesWithMazes();
             ConnectRegions();
             RemoveDeadEnds();
-            TextureVariationSystem.RefineTileAdjacencyConnections<TileWall>(map);
+            TextureVariationSystem.RefineTileAdjacencyConnections(map);
             //_map.Rooms.ForEach(onDecorateRoom);
 
             return _map;
@@ -92,7 +94,7 @@ namespace Myrmidon.Core.Maps.Generation {
 
         private void FillWithWalls() {
             for (int i = 0; i < _map.Tiles.Length; i++) {
-                TileFactory.SpawnTile(_map, i, new TileWall(), "wall");
+                _map[i] = _tileFactory.CreateWall(_map);
             }
         }
 
@@ -287,14 +289,14 @@ namespace Myrmidon.Core.Maps.Generation {
         private void LinkRegions(Vec pos) {
             if (rng.OneIn(4)) {
                 if (rng.OneIn(3)) {
-                    TileFactory.SpawnTile(_map, pos, new TileDoor(isLocked: false, open: true), "door");
+                    _map[pos] = _tileFactory.CreateDoor(_map, locked: false, closed: false);
                 }
                 else {
-                    TileFactory.SpawnTile(_map, pos, new TileFloor(), "floor");
+                    _map[pos] = _tileFactory.CreateFloor(_map);
                 }
             }
             else {
-                TileFactory.SpawnTile(_map, pos, new TileDoor(isLocked: false, open: false), "door");
+                _map[pos] = _tileFactory.CreateDoor(_map, locked: false, closed: true);
             }
         }
 
@@ -318,8 +320,8 @@ namespace Myrmidon.Core.Maps.Generation {
                         if (exits != 1) continue;
 
                         done = false;
-                        
-                        TileFactory.SpawnTile(_map, pos, new TileWall(), "wall");
+
+                        _map[pos] = _tileFactory.CreateWall(_map);
 
                         Thread.Sleep(_tileStepWaitMs / 5);
                     }
@@ -349,7 +351,7 @@ namespace Myrmidon.Core.Maps.Generation {
         private void Carve(Vec pos) {
             int locationIndex = pos.Y * _map.Width + pos.X;
             _regions[locationIndex] = _currentRegion;
-            TileFactory.SpawnTile(_map, locationIndex, new TileFloor(), "floor");
+            _map[pos] = _tileFactory.CreateFloor(_map);
         }
     }
 }

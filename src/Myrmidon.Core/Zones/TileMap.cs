@@ -7,7 +7,7 @@ using Myrmidon.Core.Parts;
 using Myrmidon.Core.Maps.Tiles;
 using Myrmidon.Core.ECS;
 
-namespace Myrmidon.Core.Maps;
+namespace Myrmidon.Core.Zones;
 
 // Stores and queries Tile data
 public class TileMap {
