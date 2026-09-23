@@ -34,10 +34,10 @@ public class EntityFactory {
             Maximum = 20
         });
         _world.Add(entity, new CombatStats {
-            AttackChance = rng.Next(0, 50),
-            AttackStrength = rng.Next(0, 10),
-            DefenseChance = rng.Next(0, 50),
-            DefenseStrength = rng.Next(0, 10)
+            AttackChance = rng.Next(0, 100),
+            NoAttacks = rng.Next(0, 10),
+            BlockChance = rng.Next(0, 50),
+            NoBlocks = rng.Next(0, 10)
         });
         _world.Add(entity, new Inventory());
         _world.Add(entity, new Renderable("text/default", (byte)'@', "B", "M"));
@@ -49,7 +49,7 @@ public class EntityFactory {
     public EntityId CreateMonster(int zoneId, Vec position) {
         EntityId entity = _world.CreateEntity();
 
-        _world.Add(entity, new Identity { Name = "a common goblin", Groups = new List<string> { "Monster", "Goblin" } });
+        _world.Add(entity, new Identity { Name = "ghost", Groups = new List<string> { "Creature", "Chaotic" } });
         _world.Add(entity, new Brain());
         _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
         _world.Add(entity, new Health {
@@ -58,12 +58,12 @@ public class EntityFactory {
         });
         _world.Add(entity, new CombatStats {
             AttackChance = rng.Next(0, 50),
-            AttackStrength = rng.Next(0, 10),
-            DefenseChance = rng.Next(0, 50),
-            DefenseStrength = rng.Next(0, 10)
+            NoAttacks = rng.Next(0, 1),
+            BlockChance = rng.Next(0, 10),
+            NoBlocks = rng.Next(0, 1)
         });
         _world.Add(entity, new Inventory());
-        _world.Add(entity, new Renderable("text/default", (byte)'M', "R"));
+        _world.Add(entity, new Renderable("etc/robert", (byte)17, "r", colorAccent: "W"));
         _world.Add(entity, new Perceptible());
 
 
