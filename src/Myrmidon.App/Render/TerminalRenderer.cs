@@ -46,12 +46,17 @@ public class TerminalRenderer : IDisposable {
         }
 
         // Create renderer with Direct3D if available, otherwise use default
-        _renderer = SDL.CreateRenderer(_window, null); //renderDrivers.Contains("opengl") ? "opengl" : null);
+        string? wantedRenderer = "direct3d12";
+        wantedRenderer = renderDrivers.Contains(wantedRenderer) ? wantedRenderer : null;
+        _renderer = SDL.CreateRenderer(_window, null); 
         if (_renderer == IntPtr.Zero)
             throw new InvalidOperationException("Failed to create SDL renderer.");
         else
             SDL.Log("Chosen renderer: " + SDL.GetRendererName(_renderer));
         
+        SDL.SetDefaultTextureScaleMode(_renderer, SDL.ScaleMode.PixelArt);
+        //SDL.SetHint("SDL_HINT_RENDER_SCALE_QUALITY", )
+
         SDL.SetRenderLogicalPresentation(_renderer, WindowWidtPix, WindowHeightPix, SDL.RendererLogicalPresentation.Letterbox);
         SDL.SetRenderVSync(_renderer, 1);
 
