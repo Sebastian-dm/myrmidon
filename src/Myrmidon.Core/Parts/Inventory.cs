@@ -8,7 +8,7 @@ namespace Myrmidon.Core.Parts {
     public class Inventory : Part {
 
         // List of item entity IDs in the inventory
-        public List<uint> Items { get; } = new List<uint>();
+        public List<uint> Items { get; set; } = new List<uint>();
         public int Coins { get; set; }
         public int Capacity { get; set; }
     }

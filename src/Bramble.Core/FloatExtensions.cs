@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Bramble.Core
 {
-    public static class SingleExtensions
+    public static class FloatExtensions
     {
         /// <summary>
         /// Normalizes the value to range from 0.0 to 1.0 from the given range.

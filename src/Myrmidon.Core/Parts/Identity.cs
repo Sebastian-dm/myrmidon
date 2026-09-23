@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Myrmidon.Core.Parts;
 
-internal class Identity {
+public class Identity : Part {
 
     public string Name { get; set; } = "Unknown";
 

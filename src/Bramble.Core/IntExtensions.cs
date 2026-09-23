@@ -8,7 +8,7 @@ namespace Bramble.Core
     /// <summary>
     /// Extension methods on <c>int</c>.
     /// </summary>
-    public static class Int32Extensions
+    public static class IntExtensions
     {
         /// <summary>
         /// Clamps the value to be within the given range, inclusive.

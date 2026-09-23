@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Myrmidon.Core.Systems {
-    internal class DoorSystem {
+namespace Myrmidon.Core.Behavior {
+    internal class DoorBehavior {
 
         private Ecs _ecs;
 
 
-        public DoorSystem(Ecs ecs) {
+        public DoorBehavior(Ecs ecs) {
             _ecs = ecs;
         }
 

@@ -26,6 +26,7 @@ public class Renderable : Part {
         TextureSheetName = other.TextureSheetName;
         TextureIndex = other.TextureIndex;
         _textureIndex = other._textureIndex;
+        VariantType = other.VariantType;
         VariantOffset = other.VariantOffset;
         AnimationOffset = other.AnimationOffset;
         ColorBase = other.ColorBase;

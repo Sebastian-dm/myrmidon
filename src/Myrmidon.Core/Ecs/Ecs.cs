@@ -24,6 +24,11 @@ public sealed class Ecs(uint size=0) {
         var entity = new EntityId(_nextEntityId++);
         _entities.Add(entity);
         return entity;
+
+        // Note: If you want to reuse entity IDs after they are destroyed,
+        // you can implement a free list or a queue to keep track of available IDs.
+        // This implementation does not reuse IDs, so once an entity is destroyed,
+        // its ID will not be reused.
     }
 
 
@@ -36,35 +41,55 @@ public sealed class Ecs(uint size=0) {
     }
 
 
-    public T Add<T>(EntityId entity, T component) where T : class {
+    public T Add<T>(EntityId entity, T part) where T : Part {
+        if (!_entities.Contains(entity)) {
+            throw new InvalidOperationException("Entity does not exist.");
+        }
         return (_size == 0) ?
-            GetStore<T>().Add(entity.Id, component) :
-            GetArrStore<T>().Add(entity.Id, component);
+            GetStore<T>().Add(entity.Id, part) :
+            GetArrStore<T>().Add(entity.Id, part);
     }
 
 
-    public T Get<T>(EntityId entity) where T : class {
+    public T Get<T>(EntityId entity) where T : Part
+    {
+        if (!_entities.Contains(entity)) {
+            throw new InvalidOperationException("Entity does not exist.");
+        }
         return (_size == 0) ?
             GetStore<T>().Get(entity.Id) :
             GetArrStore<T>().Get(entity.Id);
     }
 
 
-    public bool TryGet<T>(EntityId entity, out T? component) where T : class {
+    public bool TryGet<T>(EntityId entity, out T? part) where T : Part
+    {
+        if (!_entities.Contains(entity)) {
+            part = null;
+            return false;
+        }
         return (_size == 0) ?
-            GetStore<T>().TryGet(entity.Id, out component) :
-            GetArrStore<T>().TryGet(entity.Id, out component);
+            GetStore<T>().TryGet(entity.Id, out part) :
+            GetArrStore<T>().TryGet(entity.Id, out part);
     }
 
 
-    public bool Has<T>(EntityId entity) where T : class {
+    public bool Has<T>(EntityId entity) where T : Part
+    {
+        if (!_entities.Contains(entity)) {
+            return false;
+        }
         return (_size == 0) ?
             GetStore<T>().Contains(entity.Id) :
             GetArrStore<T>().Contains(entity.Id);
     }
 
 
-    public bool Remove<T>(EntityId entity) where T : class {
+    public bool Remove<T>(EntityId entity) where T : Part
+    {
+        if (!_entities.Contains(entity)) {
+            return false;
+        }
         return (_size == 0) ?
             GetStore<T>().Remove(entity.Id) :
             GetArrStore<T>().Remove(entity.Id);
@@ -73,7 +98,7 @@ public sealed class Ecs(uint size=0) {
 
 
     private PartStore<T> GetStore<T>()
-        where T : class {
+        where T : Part {
         var type = typeof(T);
 
         if (_stores.TryGetValue(type, out var existing))
@@ -85,7 +110,7 @@ public sealed class Ecs(uint size=0) {
     }
 
     private PartArrStore<T> GetArrStore<T>()
-        where T : class {
+        where T : Part {
         var type = typeof(T);
 
         if (_stores.TryGetValue(type, out var existing))
@@ -98,8 +123,9 @@ public sealed class Ecs(uint size=0) {
 
 
     public IEnumerable<EntityId> Query<T1, T2>()
-        where T1 : class
-        where T2 : class {
+        where T1 : Part
+        where T2 : Part
+    {
         foreach (var entity in _entities) {
             if (Has<T1>(entity) && Has<T2>(entity))
                 yield return entity;
@@ -107,9 +133,10 @@ public sealed class Ecs(uint size=0) {
     }
 
     public IEnumerable<EntityId> Query<T1, T2, T3>()
-        where T1 : class
-        where T2 : class
-        where T3 : class {
+        where T1 : Part
+        where T2 : Part
+        where T3 : Part
+    {
         foreach (var entity in _entities) {
             if (Has<T1>(entity) &&
                 Has<T2>(entity) &&

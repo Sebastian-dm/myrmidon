@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Myrmidon.Core.Parts {
-    internal class Physics : Part {
-        public bool BlocksMovement;
-        public bool BlocksLineOfSight;
+    public class Physics : Part {
+        public bool BlocksMovement { get; set; }
+        public bool BlocksLineOfSight { get; set; }
     }
 }
