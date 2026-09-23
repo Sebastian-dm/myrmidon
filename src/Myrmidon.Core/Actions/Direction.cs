@@ -46,9 +46,10 @@ namespace Myrmidon.Core.Actions {
             if (entitiesInFront.Count != 0) {
                 
                 var entityInFront = entitiesInFront.First();
-                
+
                 // Fight if the entity has combat stats
-                if (context.EcsWorld.TryGet<CombatStats>(entityInFront, out var combatStats)) {
+                if (context.EcsWorld.Has<Identity>(entityInFront) &&
+                    context.EcsWorld.Get<Identity>(entityInFront).Groups.Contains("Chaotic")) {
                     return new ActionResult( succeeded: false,
                         alternative: new AttackAction(Performer, entityInFront)
                     );

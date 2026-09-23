@@ -10,6 +10,9 @@ public class GridPanel : IPanel {
     public Rect PanelRect;
     public readonly TerminalRenderer Terminal;
 
+    public int Width { get { return PanelRect.Width; } }
+    public int Height { get { return PanelRect.Height; } }
+
     public GridPanel(TerminalRenderer terminal, Rect uiArea) {
         PanelRect = uiArea;
         Terminal = terminal;
