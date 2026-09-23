@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace Myrmidon.Core.Actions {
     public enum InputAction {
         MovePlayerN,
-        MovePlayerNE,
+        MovePlayerNe,
         MovePlayerE,
-        MovePlayerSE,
+        MovePlayerSe,
         MovePlayerS,
-        MovePlayerSW,
+        MovePlayerSw,
         MovePlayerW,
-        MovePlayerNW,
+        MovePlayerNw,
         SkipPlayerTurn,
         None
     }

@@ -5,30 +5,32 @@ using Myrmidon.App.UI;
 
 using Myrmidon.Core;
 using Myrmidon.Core.Actions;
-using Myrmidon.Core.Game;
+using Myrmidon.Core.Zones;
 using Myrmidon.Core.Systems;
 
 namespace Myrmidon.App;
 
 public sealed class AppHost : IDisposable {
-    private readonly GameLoop _gameLoop;
+    private readonly IGameLoop _gameLoop;
     private readonly TerminalRenderer _terminal;
 
     private AppHost(
-        GameLoop gameLoop,
+        IGameLoop gameLoop,
         TerminalRenderer terminal) {
         _gameLoop = gameLoop;
         _terminal = terminal;
     }
 
     public static AppHost Create() {
-        var terminal = new TerminalRenderer(80, 30);
+        var terminal = new TerminalRenderer(80, 30, "qud");
 
-        var gameState = new GameState();
+        var gameState = new WorldState();
         var actionController = new ActionController(gameState);
+        var zoneGenerator = new ZoneGenerator(gameState.EcsWorld, new DungeonGenerator());
         var worldManager = new WorldManager(
             gameState,
-            actionController);
+            actionController,
+            zoneGenerator);
 
         worldManager.Update();
 

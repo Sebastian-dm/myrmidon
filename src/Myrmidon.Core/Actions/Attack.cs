@@ -1,180 +1,184 @@
 ﻿using Bramble.Core;
-using Myrmidon.Core.Entities;
+using Myrmidon.Core.ECS;
+using Myrmidon.Core.Parts;
+using Myrmidon.Core.Signals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
-namespace Myrmidon.Core.Actions {
-    internal class AttackAction : IAction {
+namespace Myrmidon.Core.Actions;
 
-        public bool IsImmediate { get; } = false;
-        public readonly Actor Performer;
-        public readonly Actor Subject;
 
-        private IGameState? _context;
+internal class AttackAction : IAction {
 
-        public AttackAction(Actor performer, Actor subject) {
-            Performer = performer;
-            Subject = subject;
+    public bool IsImmediate { get; } = false;
+    public readonly EntityId Performer;
+    public readonly EntityId Subject;
+
+    private IWorldState _context;
+
+
+    public AttackAction(EntityId performer, EntityId subject)
+    {
+        Performer = performer;
+        Subject = subject;
+    }
+
+
+    private bool IsValidEntity(IWorldState context, EntityId entity)
+    {
+        var ecs = context.EcsWorld;
+        return ecs.Has<Identity>(entity) &&
+               ecs.Has<CombatStats>(entity) &&
+               ecs.Has<Position>(entity) &&
+               ecs.Has<Health>(entity);
+    }
+
+
+    public ActionResult Perform(IWorldState context)
+    {
+        if (!IsValidEntity(context, Performer)) return new ActionResult(succeeded: false, alternative: new SkipAction(Performer));
+        if (!IsValidEntity(context, Subject)) return new ActionResult(succeeded: false, alternative: new SkipAction(Performer));
+
+        var perfPos = context.EcsWorld.Get<Position>(Performer);
+        var subjPos = context.EcsWorld.Get<Position>(Subject);
+
+        if (perfPos.Coords.IsAdjacentTo(subjPos.Coords)) {
+            _context = context;
+            Attack(Performer, Subject);
+            return new ActionResult(succeeded: true);
+        }
+        else {
+            return new ActionResult(succeeded: false,
+            alternative: new SkipAction(Performer)
+            );
+        }
+    }
+
+
+    public void Attack(EntityId attacker, EntityId defender)
+    {
+        StringBuilder attackMessage = new StringBuilder();
+        StringBuilder defenseMessage = new StringBuilder();
+
+        int hits = ResolveAttack(attacker, defender, attackMessage);
+        int blocks = ResolveDefense(defender, hits, attackMessage, defenseMessage);
+
+        _context.SignalQueue.Enqueue(new LogSignal(attackMessage.ToString()));
+        if (!string.IsNullOrWhiteSpace(defenseMessage.ToString())) {
+            _context.SignalQueue.Enqueue(new LogSignal(defenseMessage.ToString()));
         }
 
-        public ActionResult Perform(IGameState context) {
-            
-            if (Performer.Position.IsAdjacentTo(Subject.Position)) {
-                _context = context;
-                Attack(Performer, Subject);
-                return new ActionResult(succeeded: true);
-            }
-            else {
-                return new ActionResult( succeeded: false,
-                alternative: new SkipAction(Performer)
-                );
-            }
+        ResolveDamage(defender, hits - blocks);
+    }
+
+
+    private int ResolveAttack(EntityId attacker, EntityId defender, StringBuilder attackMessage)
+    {
+        var atkId = _context.EcsWorld.Get<Identity>(attacker);
+        var defId = _context.EcsWorld.Get<Identity>(defender);
+        var atkCS = _context.EcsWorld.Get<CombatStats>(attacker);
+
+        attackMessage.Append($"{atkId.Name} attacks {defId.Name}, ");
+
+        int hits = 0;
+        for (int dice = 0; dice < atkCS.NoAttacks; dice++) {
+
+            int diceOutcome = GoRogue.DiceNotation.Dice.Roll("1d100");
+
+            if (diceOutcome >= 100 - atkCS.AttackChance)
+                hits++;
         }
 
-        // Executes an attack from an attacking actor
-        // on a defending actor, and then describes
-        // the outcome of the attack in the Message Log
-        public void Attack(Actor attacker, Actor defender) {
-            // Create two messages that describe the outcome
-            // of the attack and defense
-            StringBuilder attackMessage = new StringBuilder();
-            StringBuilder defenseMessage = new StringBuilder();
-
-            // Count up the amount of attacking damage done
-            // and the number of successful blocks
-            int hits = ResolveAttack(attacker, defender, attackMessage);
-            int blocks = ResolveDefense(defender, hits, attackMessage, defenseMessage);
-
-            // Display the outcome of the attack & defense
-            //Program.UIManager.MessageLog.Add(attackMessage.ToString());
-            if (!string.IsNullOrWhiteSpace(defenseMessage.ToString())) {
-                //Program.UIManager.MessageLog.Add(defenseMessage.ToString());
-            }
-
-            int damage = hits - blocks;
-
-            // The defender now takes damage
-            ResolveDamage(defender, damage);
-        }
+        return hits;
+    }
 
 
-        // Calculates the outcome of an attacker's attempt
-        // at scoring a hit on a defender, using the attacker's
-        // AttackChance and a random d100 roll as the basis.
-        // Modifies a StringBuilder message that will be displayed
-        // in the MessageLog
-        private int ResolveAttack(Actor attacker, Actor defender, StringBuilder attackMessage) {
-            // Create a string that expresses the attacker and defender's names
-            int hits = 0;
-            attackMessage.AppendFormat("{0} attacks {1}, ", attacker.Name, defender.Name);
+    private int ResolveDefense(EntityId defender, int hits, StringBuilder attackMessage, StringBuilder defenseMessage)
+    {
+        var defId = _context.EcsWorld.Get<Identity>(defender);
+        var defCS = _context.EcsWorld.Get<CombatStats>(defender);
 
-            // The attacker's Attack value determines the number of D100 dice rolled
-            for (int dice = 0; dice < attacker.AttackStrength; dice++) {
-                //Roll a single D100 and add its results to the attack Message
+        int blocks = 0;
+        if (hits > 0) {
+            attackMessage.Append($"scoring {hits} hits.");
+            defenseMessage.Append($" {defId.Name} defends and rolls: ");
+
+            for (int dice = 0; dice < defCS.NoBlocks; dice++) {
                 int diceOutcome = GoRogue.DiceNotation.Dice.Roll("1d100");
-
-                //Resolve the dicing outcome and register a hit, governed by the
-                //attacker's AttackChance value.
-                if (diceOutcome >= 100 - attacker.AttackChance)
-                    hits++;
+                if (diceOutcome >= 100 - defCS.BlockChance)
+                    blocks++;
             }
-
-            return hits;
+            defenseMessage.Append($"resulting in {blocks} blocks.");
         }
-
-
-        // Calculates the outcome of a defender's attempt
-        // at blocking incoming hits.
-        // Modifies a StringBuilder messages that will be displayed
-        // in the MessageLog, expressing the number of hits blocked.
-        private int ResolveDefense(Actor defender, int hits, StringBuilder attackMessage, StringBuilder defenseMessage) {
-            int blocks = 0;
-            if (hits > 0) {
-                // Create a string that displays the defender's name and outcomes
-                attackMessage.AppendFormat("scoring {0} hits.", hits);
-                defenseMessage.AppendFormat(" {0} defends and rolls: ", defender.Name);
-
-                //The defender's Defense value determines the number of D100 dice rolled
-                for (int dice = 0; dice < defender.DefenseStrength; dice++) {
-                    //Roll a single D100 and add its results to the defense Message
-                    int diceOutcome = GoRogue.DiceNotation.Dice.Roll("1d100");
-
-                    //Resolve the dicing outcome and register a block, governed by the
-                    //attacker's DefenceChance value.
-                    if (diceOutcome >= 100 - defender.DefenseChance)
-                        blocks++;
-                }
-                defenseMessage.AppendFormat("resulting in {0} blocks.", blocks);
-            }
-            else {
-                attackMessage.Append("and misses completely!");
-            }
-            return blocks;
+        else {
+            attackMessage.Append("and misses completely.");
         }
+        return blocks;
+    }
 
 
-        // Calculates the damage a defender takes after a successful hit
-        // and subtracts it from its Health
-        // Then displays the outcome in the MessageLog.
-        private void ResolveDamage(Actor defender, int damage) {
-            if (damage > 0) {
-                defender.Health = defender.Health - damage;
-                //Program.UIManager.MessageLog.Add($" {defender.Name} was hit for {damage} damage");
-                if (defender.Health <= 0) {
-                    ResolveDeath(defender);
-                }
-            }
-            else {
-                //Program.UIManager.MessageLog.Add($"{defender.Name} blocked all damage!");
+    private void ResolveDamage(EntityId defender, int damage)
+    {
+        var defId = _context.EcsWorld.Get<Identity>(defender);
+        var defHlth = _context.EcsWorld.Get<Health>(defender);
+
+        if (damage > 0) {
+            defHlth.Current -= damage;
+            _context.SignalQueue.Enqueue(new LogSignal($" {defId.Name} was hit for {damage} damage."));
+
+            if (defHlth.Current <= 0) {
+                ResolveDeath(defender);
             }
         }
+        else {
+            _context.SignalQueue.Enqueue(new LogSignal($"{defId.Name} blocked all damage."));
+        }
+    }
 
 
-        // Removes an Actor that has died
-        // and displays a message showing
-        // the actor that has died, and they loot they dropped
-        private void ResolveDeath(Actor defender) {
-            // Set up a customized death message
-            StringBuilder deathMessage = new StringBuilder($"{defender.Name} died");
+    private void ResolveDeath(EntityId defender)
+    {
+        var defId = _context.EcsWorld.Get<Identity>(defender);
+        var defPos = _context.EcsWorld.Get<Position>(defender);
 
-            // dump the dead actor's inventory (if any)
-            // at the map position where it died
-            if (defender.Inventory.Count > 0) {
+        StringBuilder deathMessage = new StringBuilder($"{defId.Name} died");
+
+        // Dump inventory
+        if (_context.EcsWorld.Has<Inventory>(defender)) {
+            var defInv = _context.EcsWorld.Get<Inventory>(defender);
+            if (defInv.Items.Count > 0) {
+
                 deathMessage.Append(" and dropped");
 
-                foreach (Item item in defender.Inventory) {
-                    // move the Item to the place where the actor died
-                    item.Position = defender.Position;
+                for (int i = 0; i < defInv.Items.Count; i++) {
+                    var item = defInv.Items[i];
 
-                    // Now let the MultiSpatialMap know that the Item is visible
-                    _context?.Zone.Map.AddEntity(item);
+                    if (_context.EcsWorld.Has<Position>(item)) {
+                        var itemPos = _context.EcsWorld.Get<Position>(item);
+                        itemPos.Coords = defPos.Coords;
+                        itemPos.Container = null;
+                        _context.Zone.EntityIndex.Add(item, itemPos.Coords);
+                    }
 
-                    // Append the item to the deathMessage
-                    deathMessage.Append(", " + item.Name);
+                    var itemId = _context.EcsWorld.Get<Identity>(item);
+                    deathMessage.Append(", " + itemId.Name);
+
                 }
 
-                // Clear the actor's inventory. Not strictly
-                // necessary, but makes for good coding habits!
-                defender.Inventory.Clear();
+                defInv.Items.Clear();
             }
-            else {
-                // The monster carries no loot, so don't show any loot dropped
-                deathMessage.Append(".");
-            }
-
-            // actor goes bye-bye
-            _context?.Zone.Map.Remove(defender);
-
-            // Now show the deathMessage in the messagelog
-            //Program.UIManager.MessageLog.Add(deathMessage.ToString());
         }
+        else {
+            deathMessage.Append('.');
+        }
+        _context.Zone.EntityIndex.Remove(defender, defPos.Coords);
+        _context.EcsWorld.DestroyEntity(defender);
 
-
-
-
-
+        _context.SignalQueue.Enqueue(new LogSignal(deathMessage.ToString()));
     }
+
 }

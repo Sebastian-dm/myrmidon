@@ -12,7 +12,7 @@ public class UiManager {
 
     private readonly TerminalRenderer _terminal;
 
-    public UiManager(IGameState gameState, TerminalRenderer terminal) {
+    public UiManager(IWorldState gameState, TerminalRenderer terminal) {
         _terminal = terminal;
 
         int sceneHeight = terminal.WindowHeightTiles - 5; // Reserve 5 lines for the log

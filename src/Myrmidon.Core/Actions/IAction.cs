@@ -4,29 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Myrmidon.Core.Actions {
-    public interface IAction {
+namespace Myrmidon.Core.Actions;
 
-        bool IsImmediate { get; }
-        ActionResult Perform(IGameState context);
-    }
 
-    public class ActionResult {
-        public bool Succeeded;
-        public IAction? Alternative;
+public interface IAction {
 
-        public ActionResult() { 
-
-        }
-
-        public ActionResult(bool succeeded) {
-            Succeeded = succeeded;
-        }
-
-        public ActionResult(bool succeeded, IAction alternative) {
-            Succeeded = succeeded;
-            Alternative = alternative;
-        }
-
-    }
+    bool IsImmediate { get; }
+    ActionResult Perform(IWorldState context);
 }

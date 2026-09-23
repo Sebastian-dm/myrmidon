@@ -1,7 +1,6 @@
-using Myrmidon.Core.Game;
 using Bramble.Core;
 using Myrmidon.App.Render;
-using Myrmidon.Core.Components;
+using Myrmidon.Core.Parts;
 using SDL3;
 
 namespace Myrmidon.App.UI;
@@ -10,6 +9,9 @@ public class GridPanel : IPanel {
     
     public Rect PanelRect;
     public readonly TerminalRenderer Terminal;
+
+    public int Width { get { return PanelRect.Width; } }
+    public int Height { get { return PanelRect.Height; } }
 
     public GridPanel(TerminalRenderer terminal, Rect uiArea) {
         PanelRect = uiArea;
@@ -32,15 +34,18 @@ public class GridPanel : IPanel {
         Terminal.DrawText(new Vec(PanelRect.X + gridLocation.X, PanelRect.Y + gridLocation.Y), text, color);
     }
 
-    public void DrawTile(Vec gridLocation, RenderComponent rc, float alpha = 1f) {
-        DrawTile(gridLocation, rc.TextureSheetName, rc.TextureIndex,
-            rc.ColorBase, rc.ColorAccent, rc.ColorBackground,  rc.Dimfactor);
-    }
-
-    public void DrawTile(Vec gridLocation, string textureSheetName, byte textureIndex,
-    string foregroundColor, string accentColor, string backgroundColor = "", float alpha = 1f) {
-        Terminal.DrawTile(new Vec(PanelRect.X + gridLocation.X, PanelRect.Y + gridLocation.Y), textureSheetName, textureIndex,
-        foregroundColor, accentColor, backgroundColor, alpha);
+    public void DrawTile(
+        Vec gridLocation,
+        string textureSheetName,
+        byte textureIndex,
+        string foregroundColor,
+        string accentColor = "",
+        string backgroundColor = "",
+        float alpha = 1f) {
+        
+        Terminal.DrawTile(
+            new Vec(PanelRect.X + gridLocation.X, PanelRect.Y + gridLocation.Y),
+            textureSheetName, textureIndex, foregroundColor, accentColor, backgroundColor, alpha);
     }
 
 }

@@ -12,3 +12,4 @@ artifacts/
 *DS_Store
 *.sln.ide
 
+*.afphoto~lock~

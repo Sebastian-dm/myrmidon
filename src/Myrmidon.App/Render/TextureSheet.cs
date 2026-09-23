@@ -46,15 +46,15 @@ public class TextureSheet : IDisposable {
         // TODO: Figure the best size out to get exactly the tile pixel perfect
         int column = index % _textureColumns;
         int row = index / _textureRows;
-        var frect = new SDL.FRect {
+        var fRect = new FRect {
             X = _textureWidth * column,
             Y = _textureHeight * row,
             W = _textureWidth -0.4f,
             H = _textureHeight -0.4f
         };
         var bytearray = new byte[1]{index};
-        var rectString = $"X: {frect.X}, Y: {frect.Y}, W: {frect.W}, H: {frect.H}, ASCII:{System.Text.Encoding.ASCII.GetString(bytearray)}";
-        return frect;
+        var rectString = $"X: {fRect.X}, Y: {fRect.Y}, W: {fRect.W}, H: {fRect.H}, ASCII:{System.Text.Encoding.ASCII.GetString(bytearray)}";
+        return fRect;
     }
 
 

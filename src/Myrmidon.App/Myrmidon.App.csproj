@@ -18,10 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SDL3-CS" Version="3.4.14.1" />
-    <PackageReference Include="SDL3-CS.Linux" Version="3.4.14.1" />
-    <PackageReference Include="SDL3-CS.Windows" Version="3.4.14.1" />
-    <PackageReference Include="System.Text.Json" Version="9.0.5" />
+    <PackageReference Include="SDL3-CS" Version="3.4.16" />
+    <PackageReference Include="SDL3-CS.Linux" Version="3.4.16" />
+    <PackageReference Include="SDL3-CS.Windows" Version="3.4.16" />
+    <PackageReference Include="System.Text.Json" Version="10.0.12" />
   </ItemGroup>
 
   <ItemGroup>

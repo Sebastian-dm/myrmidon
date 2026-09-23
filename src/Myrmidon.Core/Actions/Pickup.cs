@@ -5,34 +5,47 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Bramble.Core;
-using Myrmidon.Core.Entities;
 using Myrmidon.Core.Actions;
+using Myrmidon.Core.Parts;
+using Myrmidon.Core.ECS;
+using Myrmidon.Core.Signals;
 
-namespace Myrmidon.Core.Actions {
-    internal class PickupAction : IAction {
+namespace Myrmidon.Core.Actions;
 
-        public bool IsImmediate { get; } = false;
-        public readonly Actor Performer;
-        public readonly Item Item;
+internal class PickupAction : IAction {
 
-        public PickupAction(Actor performer, Item item) {
-            Performer = performer;
-            Item = item;
+    public bool IsImmediate { get; } = false;
+    public readonly EntityId Performer;
+    public readonly EntityId Item;
+
+    public PickupAction(EntityId performer, EntityId item) {
+        Performer = performer;
+        Item = item;
+    }
+
+    public ActionResult Perform(IWorldState context) {
+        
+        var IdPerformer = context.EcsWorld.Get<Identity>(Performer);
+        var IdItem = context.EcsWorld.Get<Identity>(Item);
+        
+        var posPerformer = context.EcsWorld.Get<Position>(Performer);
+        var posItem = context.EcsWorld.Get<Position>(Item);
+        
+        if ((posItem.Coords-posPerformer.Coords).KingLength <= 1) {
+            
+            var invPerformer = context.EcsWorld.Get<Inventory>(Performer);
+            invPerformer.Coins++;
+            
+            context.EcsWorld.DestroyEntity(Item);
+            context.Zone.EntityIndex.Remove(Item, posPerformer.Coords);
+            
+            context.SignalQueue.Enqueue(new LogSignal(($"{IdPerformer.Name} picked up {IdItem.Name}.")));
+            return new ActionResult(succeeded: true);
         }
-
-        public ActionResult Perform(IGameState context) {
-
-            if (Performer.Position.IsAdjacentTo(Item.Position)) {
-                Performer.Inventory.Add(Item);
-                //Program.UIManager.MessageLog.Add($"{Performer.Name} picked up {Item.Name}");
-                context.Zone.Map.Remove(Item);
-                return new ActionResult(succeeded: true);
-            }
-            else {
-                return new ActionResult(succeeded: false,
-                alternative: new SkipAction(Performer)
-                );
-            }
+        else {
+            return new ActionResult(succeeded: false,
+            alternative: new SkipAction(Performer)
+            );
         }
     }
 }

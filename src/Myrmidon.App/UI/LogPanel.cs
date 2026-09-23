@@ -8,6 +8,8 @@ public class LogPanel : GridPanel {
 
     private List<string> _messages = new List<string>();
 
+    private int _linesVisible { get { return Height; }}
+
 
     public LogPanel(TerminalRenderer terminal, Rect rect) : base(terminal, rect) {
         
@@ -25,8 +27,12 @@ public class LogPanel : GridPanel {
     }
 
     private void RenderLog() {
-        for (int i = 0; i < _messages.Count; i++) {
-            DrawText(new Vec(1, i), $"{_messages[i]}", "w");
+        int firstIndex = Math.Max(0, _messages.Count - _linesVisible);
+        int numberOfMessages = Math.Min(_linesVisible, _messages.Count);
+        var lastMessages = _messages.Slice(firstIndex, numberOfMessages);
+
+        for (int i = 0; i < lastMessages.Count; i++) {
+            DrawText(new Vec(1, i), $"{lastMessages[i]}", "w");
         }
     }
 }

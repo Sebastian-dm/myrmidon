@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Myrmidon.Core.ECS {
+    public interface IPartStore {
+        void Remove(uint id);
+        bool Contains(uint id);
+    }
+}

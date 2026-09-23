@@ -1,4 +1,5 @@
 ﻿using SDL3;
+using Myrmidon.App;
 
 namespace SdlSandbox;
 
@@ -11,15 +12,16 @@ internal static class Program {
     private static FpsCounter _fpsCounter;
 
 
+
+
+
     [STAThread]
-    private static int Main(string[] args) {
+    private static void Main(string[] args) {
         
         Initialize();
         MainLoop();
         Cleanup();
         SDL.Quit();
-
-        return 0;
     }
 
     private static void Initialize() {

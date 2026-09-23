@@ -3,32 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Myrmidon.Core.Entities;
-using Myrmidon.Core.Maps.Tiles;
+using Myrmidon.Core.Parts;
+using Myrmidon.Core.Behavior;
+using Myrmidon.Core.ECS;
 using Myrmidon.Core.Signals;
+using Myrmidon.Core.Systems;
 
 namespace Myrmidon.Core.Actions {
     internal class OpenDoorAction : IAction {
 
         public bool IsImmediate { get; } = false;
-        public readonly Actor Performer;
-        public readonly TileDoor Door;
+        public readonly EntityId Performer;
+        public readonly EntityId Door;
 
-        public OpenDoorAction(Actor performer, TileDoor door) {
+        public OpenDoorAction(EntityId performer, EntityId door) {
             Performer = performer;
             Door = door;
         }
 
-        public ActionResult Perform(IGameState context) {
+        public ActionResult Perform(IWorldState context) {
+            context.EcsWorld.TryGet<Identity>(Performer, out var identity);
+
+            var doorIdentity = context.EcsZone.Get<Identity>(Door);
+            var doorPart = context.EcsZone.Get<Door>(Door);
+            var doorSystem = new DoorBehavior(context.EcsZone);
+
             try {
-                if (Door.IsLocked) {
-                    // TODO: Add a way to open a locked door.
-                    context.SignalQueue.Enqueue(new LogSignal(($"{Performer.Name} could not open locked door {Door.Name}")));
+                if (doorPart.IsLocked) {
+                    doorSystem.Unlock(Door);
+                    context.SignalQueue.Enqueue(new LogSignal(($"{identity.Name} unlocked {doorIdentity.Name}")));
                 }
-                else if (!Door.IsLocked && !Door.IsOpen) {
-                    Door.Open();
-                    context.SignalQueue.Enqueue(new LogSignal(($"{Performer.Name} opened {Door.Name}")));
+                else if (!doorPart.IsLocked && doorPart.IsClosed) {
+                    doorSystem.Open(Door);
+                    context.SignalQueue.Enqueue(new LogSignal(($"{identity.Name} opened {doorIdentity.Name}")));
                 }
                 return new ActionResult(succeeded: true);
             }
@@ -36,7 +43,6 @@ namespace Myrmidon.Core.Actions {
                 return new ActionResult(succeeded: false,
                 alternative: new SkipAction(Performer)
                 );
-                throw;
             }
         }
     }

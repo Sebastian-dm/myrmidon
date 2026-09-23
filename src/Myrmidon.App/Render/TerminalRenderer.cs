@@ -4,9 +4,6 @@ using SDL3;
 
 using Bramble.Core;
 using Myrmidon.App.UI;
-using Myrmidon.Core.Game;
-using Myrmidon.Core.Entities;
-using Myrmidon.Core.Maps.Tiles;
 
 namespace Myrmidon.App.Render;
 
@@ -31,7 +28,7 @@ public class TerminalRenderer : IDisposable {
     public int WindowHeightTiles => WindowHeightPix / _tileHeight;
 
 
-    public TerminalRenderer(int widthTiles, int heightTiles) {
+    public TerminalRenderer(int widthTiles, int heightTiles, string palette) {
         if (!SDL.Init(SDL.InitFlags.Video))
             throw new InvalidOperationException("Failed to initialize SDL.");
         
@@ -49,17 +46,22 @@ public class TerminalRenderer : IDisposable {
         }
 
         // Create renderer with Direct3D if available, otherwise use default
-        _renderer = SDL.CreateRenderer(_window, null); //renderDrivers.Contains("opengl") ? "opengl" : null);
+        string? wantedRenderer = "direct3d12";
+        wantedRenderer = renderDrivers.Contains(wantedRenderer) ? wantedRenderer : null;
+        _renderer = SDL.CreateRenderer(_window, null); 
         if (_renderer == IntPtr.Zero)
             throw new InvalidOperationException("Failed to create SDL renderer.");
         else
             SDL.Log("Chosen renderer: " + SDL.GetRendererName(_renderer));
         
+        SDL.SetDefaultTextureScaleMode(_renderer, SDL.ScaleMode.PixelArt);
+        //SDL.SetHint("SDL_HINT_RENDER_SCALE_QUALITY", )
+
         SDL.SetRenderLogicalPresentation(_renderer, WindowWidtPix, WindowHeightPix, SDL.RendererLogicalPresentation.Letterbox);
         SDL.SetRenderVSync(_renderer, 1);
 
 
-        TerminalColor.LoadColorsFromFile("lostCentury");
+        TerminalColor.LoadColorsFromFile(palette);
     }
 
     public void BeginFrame() {
