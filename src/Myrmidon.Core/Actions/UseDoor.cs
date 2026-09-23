@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Myrmidon.Core.Parts;
+using Myrmidon.Core.Behavior;
 using Myrmidon.Core.ECS;
 using Myrmidon.Core.Signals;
 using Myrmidon.Core.Systems;
@@ -25,7 +26,7 @@ namespace Myrmidon.Core.Actions {
 
             var doorIdentity = context.EcsZone.Get<Identity>(Door);
             var doorPart = context.EcsZone.Get<Door>(Door);
-            var doorSystem = new DoorSystem(context.EcsZone);
+            var doorSystem = new DoorBehavior(context.EcsZone);
 
             try {
                 if (doorPart.IsLocked) {
