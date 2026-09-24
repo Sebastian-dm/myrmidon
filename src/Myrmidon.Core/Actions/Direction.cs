@@ -29,11 +29,11 @@ namespace Myrmidon.Core.Actions {
 
             // Do nothing if no length given
             if (Direction.X == 0 && Direction.Y == 0)
-                return GetDoNothingResult();
+                return DoNothingResult();
             
             // Do nothing if performer has no position
             if (!context.EcsWorld.TryGet<Position>(Performer, out var pos))
-                return GetDoNothingResult();
+                return DoNothingResult();
 
             // store the actor's last move state
             _originalPosition = new Vec(pos.Coords.X, pos.Coords.Y);
@@ -74,24 +74,15 @@ namespace Myrmidon.Core.Actions {
                     alternative: new OpenDoorAction(Performer, tile)
                 );
             }
-            
-            // Check if it is possible to go there
-            if (context.Zone.TileMap.IsTileWalkable(newPosition)) {
-                context.Zone.EntityIndex.Remove(Performer, pos.Coords);
-                context.Zone.EntityIndex.Add(Performer, newPosition);
-                pos.Coords = newPosition;
-                return new ActionResult(succeeded: true);
-            }
 
             // Handle situations where there are non-walkable tiles that CAN be used
             return new ActionResult(succeeded: false,
-                alternative: new SkipAction(Performer)
+                alternative: new MoveAction(Performer, Direction)
             );
-
-
+            
         }
 
-        private ActionResult GetDoNothingResult() {
+        private ActionResult DoNothingResult() {
             return new ActionResult(
                 succeeded: false,
                 alternative: new SkipAction(Performer)
