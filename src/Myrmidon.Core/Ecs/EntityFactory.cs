@@ -70,6 +70,7 @@ public class EntityFactory {
         _world.Add(remains, new Identity { Name = "remains", Groups = new List<string> { "Item" } });
         _world.Add(remains, new Position { Container = entity });
         _world.Add(remains, new Renderable("etc/robert", (byte)24, "r", colorAccent: "W"));
+        _world.Add(remains, new Perceptible());
         inv.Items.Add(remains);
 
 
