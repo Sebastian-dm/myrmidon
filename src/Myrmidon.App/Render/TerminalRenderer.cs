@@ -29,7 +29,7 @@ public class TerminalRenderer : IDisposable {
 
 
     public TerminalRenderer(int widthTiles, int heightTiles, string palette) {
-        if (!SDL.Init(SDL.InitFlags.Video))
+        if (!SDL.Init(SDL.InitFlags.Video | SDL.InitFlags.Audio))
             throw new InvalidOperationException("Failed to initialize SDL.");
         
         WindowWidtPix = widthTiles*_tileWidth;

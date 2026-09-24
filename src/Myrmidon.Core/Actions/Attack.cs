@@ -116,6 +116,7 @@ internal class AttackAction : IAction {
         }
         else {
             attackMessage.Append("and misses completely.");
+            _context.SignalQueue.Enqueue(new SoundSignal("miss"));
         }
         return blocks;
     }
@@ -129,6 +130,7 @@ internal class AttackAction : IAction {
         if (damage > 0) {
             defHlth.Current -= damage;
             _context.SignalQueue.Enqueue(new LogSignal($" {defId.Name} was hit for {damage} damage."));
+            _context.SignalQueue.Enqueue(new SoundSignal("hit"));
 
             if (defHlth.Current <= 0) {
                 ResolveDeath(defender);
@@ -136,6 +138,7 @@ internal class AttackAction : IAction {
         }
         else {
             _context.SignalQueue.Enqueue(new LogSignal($"{defId.Name} blocked all damage."));
+            _context.SignalQueue.Enqueue(new SoundSignal("poing"));
         }
     }
 
@@ -159,7 +162,8 @@ internal class AttackAction : IAction {
 
                     if (_context.EcsWorld.Has<Position>(item)) {
                         var itemPos = _context.EcsWorld.Get<Position>(item);
-                        itemPos.Coords = defPos.Coords;
+                        itemPos.Coords = new Vec(defPos.Coords.X, defPos.Coords.Y);
+                        itemPos.ZoneId = defPos.ZoneId;
                         itemPos.Container = null;
                         _context.Zone.EntityIndex.Add(item, itemPos.Coords);
                     }

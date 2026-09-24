@@ -1,4 +1,5 @@
-﻿using Myrmidon.App.Events;
+﻿using Myrmidon.App.Audio;
+using Myrmidon.App.Events;
 using Myrmidon.App.Input;
 using Myrmidon.App.Render;
 using Myrmidon.App.UI;
@@ -36,16 +37,19 @@ public sealed class AppHost : IDisposable {
 
         var input = new InputController(actionController);
         var ui = new UiManager(gameState, terminal);
-
+        var audio = new AudioManager();
+        
         var signals = new SignalDispatcher(
             gameState.SignalQueue,
-            ui.HandleSignal);
+            ui.HandleSignal,
+            audio.HandleSignal);
 
         var gameLoop = new GameLoop(
             worldManager,
             input,
             signals,
-            ui);
+            ui,
+            audio);
 
         return new AppHost(gameLoop, terminal);
     }

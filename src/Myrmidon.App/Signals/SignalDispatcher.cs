@@ -15,11 +15,11 @@ public class SignalDispatcher
 
     public void DispatchAllQueuedSignals()
     {
-        while (_messageQueue.TryDequeue(out var message))
+        while (_messageQueue.TryDequeue(out var signal))
         {
             foreach (var handler in _handlers)
             {
-                handler(message);
+                handler(signal);
             }
         }
     }

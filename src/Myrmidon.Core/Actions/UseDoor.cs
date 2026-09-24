@@ -36,6 +36,7 @@ namespace Myrmidon.Core.Actions {
                 else if (!doorPart.IsLocked && doorPart.IsClosed) {
                     doorSystem.Open(Door);
                     context.SignalQueue.Enqueue(new LogSignal(($"{identity.Name} opened {doorIdentity.Name}")));
+                    context.SignalQueue.Enqueue(new SoundSignal("doorslam"));
                 }
                 return new ActionResult(succeeded: true);
             }

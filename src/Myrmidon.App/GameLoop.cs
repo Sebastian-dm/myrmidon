@@ -1,4 +1,5 @@
-﻿using Myrmidon.App.Events;
+﻿using Myrmidon.App.Audio;
+using Myrmidon.App.Events;
 using Myrmidon.App.Input;
 using Myrmidon.App.Render;
 using Myrmidon.App.UI;
@@ -16,6 +17,7 @@ internal sealed class GameLoop : IGameLoop {
     private readonly InputController _inputController;
     private readonly SignalDispatcher _signalDispatcher;
     private readonly UiManager _uiManager;
+    private readonly AudioManager _audioManager;
     private readonly FpsCounter _fpsCounter;
 
     private bool _running = true;
@@ -26,12 +28,14 @@ internal sealed class GameLoop : IGameLoop {
         WorldManager worldManager,
         InputController inputController,
         SignalDispatcher signalDispatcher,
-        UiManager uiManager) {
+        UiManager uiManager,
+        AudioManager audioManager) {
         
         _worldManager = worldManager;
         _inputController = inputController;
         _signalDispatcher = signalDispatcher;
         _uiManager = uiManager;
+        _audioManager = audioManager;
         _fpsCounter = new FpsCounter(60);
 
         // Register event handlers
@@ -90,6 +94,7 @@ internal sealed class GameLoop : IGameLoop {
 
     private void Render() {
         _uiManager.Render();
+        _audioManager.Tick();
     }
 
     private void OnCommandRequested(

@@ -40,6 +40,7 @@ internal class PickupAction : IAction {
             context.Zone.EntityIndex.Remove(Item, posPerformer.Coords);
             
             context.SignalQueue.Enqueue(new LogSignal(($"{IdPerformer.Name} picked up {IdItem.Name}.")));
+            context.SignalQueue.Enqueue(new SoundSignal("eat"));
             return new ActionResult(succeeded: true);
         }
         else {
