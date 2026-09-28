@@ -124,6 +124,28 @@ public class TileMap {
         ];
         return result;
     }
+    
+    public Vec?[] GetAdjacentPositions(Vec pos) {
+        int w = Width;
+        int h = Height;
+        int x = pos.X;
+        int y = pos.Y;
+
+        Vec?[] result = [
+            (x <= 0   | y <= 0  ) ? null : new Vec(x-1, y-1),
+            (           y <= 0  ) ? null : new Vec(x  , y-1),
+            (x >= w-1 | y <= 0  ) ? null : new Vec(x+1, y-1),
+            (x >= w-1           ) ? null : new Vec(x+1, y  ),
+            (x >= w-1 | y >= h-1) ? null : new Vec(x+1, y+1),
+            (           y >= h-1) ? null : new Vec(x  , y+1),
+            (x <= 0   | y >= h-1) ? null : new Vec(x-1, y+1),
+            (x <= 0             ) ? null : new Vec(x-1, y  ),
+        ];
+        return result;
+    }
+    
+    
+    
 
 
 }

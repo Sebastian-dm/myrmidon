@@ -33,13 +33,24 @@ internal class PickupAction : IAction {
         
         if ((posItem.Coords-posPerformer.Coords).KingLength <= 1) {
             
-            var invPerformer = context.EcsWorld.Get<Inventory>(Performer);
-            invPerformer.Coins++;
+            // Treasure
+            if (IdItem.Groups.Contains("Treasure")) {
+                context.EcsWorld.Get<Inventory>(Performer).Coins++;
+            }
             
+            // Food
+            if (IdItem.Groups.Contains("Food")) {
+                var health = context.EcsWorld.Get<Health>(Performer);
+                if (health.Current < health.Maximum)
+                    health.Current++;
+            }
+
             context.EcsWorld.DestroyEntity(Item);
             context.Zone.EntityIndex.Remove(Item, posPerformer.Coords);
             
             context.SignalQueue.Enqueue(new LogSignal(($"{IdPerformer.Name} picked up {IdItem.Name}.")));
+            
+            
             context.SignalQueue.Enqueue(new SoundSignal("eat"));
             return new ActionResult(succeeded: true);
         }
