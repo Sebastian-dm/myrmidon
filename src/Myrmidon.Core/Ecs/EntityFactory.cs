@@ -27,17 +27,17 @@ public class EntityFactory {
 
     public EntityId CreatePlayer(int zoneId, Vec position) {
         EntityId entity = _world.CreateEntity();
-        _world.Add(entity, new Identity { Name = "Player" });
+        _world.Add(entity, new Identity { Name = "You" });
         _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
         _world.Add(entity, new Health {
-            Current = 20,
-            Maximum = 20
+            Current = 8,
+            Maximum = 8
         });
         _world.Add(entity, new CombatStats {
-            AttackChance = rng.Next(0, 100),
-            NoAttacks = rng.Next(0, 10),
-            BlockChance = rng.Next(0, 50),
-            NoBlocks = rng.Next(0, 10)
+            PlusToHit = 2,
+            NoAttacks = 1,
+            AC = 7,
+            Damage = "1d8"
         });
         _world.Add(entity, new Inventory());
         _world.Add(entity, new Renderable("etc/robert", (byte)22, "white", "B"));
@@ -53,30 +53,23 @@ public class EntityFactory {
         _world.Add(entity, new Brain());
         _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
         _world.Add(entity, new Health {
-            Current = 3,
-            Maximum = 3
+            Maximum = 6,
+            Current = 6,
         });
         _world.Add(entity, new CombatStats {
-            AttackChance = rng.Next(0, 50),
-            NoAttacks = rng.Next(0, 1),
-            BlockChance = rng.Next(0, 10),
-            NoBlocks = rng.Next(0, 1)
+            PlusToHit = 0,
+            NoAttacks = 1,
+            AC = 9,
+            Damage = "1d6"
         });
 
         var inv = new Inventory();
         _world.Add(entity, inv);
+        var treasure = CreateTreasure(entity);
+        inv.Items.Add(treasure);
 
-        EntityId remains = _world.CreateEntity();
-        _world.Add(remains, new Identity { Name = "remains", Groups = new List<string> { "Item" } });
-        _world.Add(remains, new Position { Container = entity });
-        _world.Add(remains, new Renderable("etc/robert", (byte)24, "r", colorAccent: "W"));
-        _world.Add(remains, new Perceptible());
-        inv.Items.Add(remains);
-
-
-
-        var tal = rng.Next(0, 100);
-        if (tal > 25)
+        var roll = rng.Next(0, 100);
+        if (roll > 33)
             _world.Add(entity, new Renderable("etc/robert", (byte)17, "white", colorAccent: "R"));
         else
             _world.Add(entity, new Renderable("etc/robert", (byte)23, "w", colorAccent: "white"));
@@ -86,11 +79,21 @@ public class EntityFactory {
         return entity;
     }
 
-
-    public EntityId CreateTreasure(int zoneId, Vec position) {
+    public EntityId CreateFood(int zoneId, Vec position)
+    {
         EntityId entity = _world.CreateEntity();
-        _world.Add(entity, new Identity { Name = "a pile of gold", Groups = new List<string> { "Treasure", "Item"} });
+        _world.Add(entity, new Identity { Name = "fungus", Groups = new List<string> { "Food", "Item"} });
         _world.Add(entity, new Position { Coords = position, ZoneId = zoneId });
+        _world.Add(entity, new Renderable("etc/robert", (byte)24, "g", colorAccent: "G"));
+        _world.Add(entity, new Perceptible());
+        return entity;
+    }
+
+
+    public EntityId CreateTreasure(EntityId owner) {
+        EntityId entity = _world.CreateEntity();
+        _world.Add(entity, new Identity { Name = "treasure", Groups = new List<string> { "Treasure", "Item" } });
+        _world.Add(entity, new Position { Container = owner });
         _world.Add(entity, new Renderable("etc/robert", (byte)21, "y", colorAccent: "W"));
         _world.Add(entity, new Perceptible());
         return entity;
