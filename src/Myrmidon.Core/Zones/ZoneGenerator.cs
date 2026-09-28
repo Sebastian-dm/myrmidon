@@ -52,13 +52,13 @@ public class ZoneGenerator : IZoneGenerator {
         if (zone.GenerationState == ZoneGenState.Unpopulated) {
             zone.GenerationState = ZoneGenState.Populating;
             CreateMonsters(zone);
-            CreateTreasure(zone);
+            CreateFood(zone);
             zone.GenerationState = ZoneGenState.Ready;
         }
     }
 
     public void CreateMonsters(Zone zone) {
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 80; i++) {
             Vec pos = GetRandomWalkablePosition(zone.TileMap);
             EntityId monsterEntity = _entityFactory.CreateMonster(zone.Id, pos);
             zone.EntityIndex.Add(monsterEntity, pos);
@@ -66,10 +66,10 @@ public class ZoneGenerator : IZoneGenerator {
     }
 
 
-    public void CreateTreasure(Zone zone) {
-        for (int i = 0; i < 20; i++) {
+    public void CreateFood(Zone zone) {
+        for (int i = 0; i < 80; i++) {
             Vec pos = GetRandomWalkablePosition(zone.TileMap);
-            EntityId lootEntity = _entityFactory.CreateTreasure(zone.Id, pos);
+            EntityId lootEntity = _entityFactory.CreateFood(zone.Id, pos);
             zone.EntityIndex.Add(lootEntity, pos);
         }
     }

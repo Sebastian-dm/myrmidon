@@ -60,6 +60,7 @@ public sealed class EntitySpatialIndex
             ? entities
             : [];
     }
+    
 
     public IEnumerable<EntityId> All() {
         return _entitiesByPosition.Values.SelectMany(hashSet => hashSet);
